@@ -1,0 +1,69 @@
+{
+  "hero": {
+    "badge": "Since 1989",
+    "name": "Sein Pan Electronic Repair Shop",
+    "tagline": "Expert electronics repair you can <1>trust</1>.",
+    "subtitle": "Televisions, audio systems, power boards and precision component-level repair — diagnosed honestly and fixed to last.",
+    "ctaPrimary": "Book a repair",
+    "ctaSecondary": "Our services"
+  },
+  "about": {
+    "label": "Master technician",
+    "name": "U Win Naing Swe",
+    "role": "Founder & Master Repair Technician",
+    "bio": "For more than 35 years, U Win Naing Swe has stood at the workbench of Sein Pan Electronic, repairing tens of thousands of televisions, audio systems and power boards. He founded the shop in 1989 on a simple promise: an honest diagnosis and a repair that lasts. Every device is treated with the same patience and precision that built the shop's reputation across the city.",
+    "expertiseLabel": "Specialized skills",
+    "expertise": [
+      "Board-level TV & display repair",
+      "Power supply diagnostics & rebuild",
+      "Audio & amplifier restoration",
+      "Component-level soldering (SMD / THT)"
+    ],
+    "stats": {
+      "yearsLabel": "Years of experience",
+      "yearsValue": "35+",
+      "repairsLabel": "Repairs completed",
+      "repairsValue": "20,000+"
+    },
+    "cta": "Talk to the technician"
+  },
+  "integrations": {
+    "label": "Integrations",
+    "title": "Connect with your <1>favorite components</1>",
+    "subtitle": "Browse parts, tools, and modules — trusted by Myanmar's makers since 1989."
+  },
+  "tools": {
+    "mcu": "Microcontrollers",
+    "power": "Power supply",
+    "sensors": "Sensors",
+    "resistors": "Resistors",
+    "capacitors": "Capacitors",
+    "leds": "LEDs",
+    "connectors": "Connectors",
+    "equipment": "Tools",
+    "modules": "Modules"
+  },
+  "insights": {
+    "label": "Customer insights",
+    "title": "Customer insights",
+    "subtitle": "Frosted glass cards over a holographic wash, themed to your brand.",
+    "cards": {
+      "conversion": {
+        "title": "Conversion tracking",
+        "body": "Track the journey from first click to final sale."
+      },
+      "analytics": {
+        "title": "Real-time analytics",
+        "body": "See clicks, leads, and sales in full detail, live."
+      },
+      "insights": {
+        "title": "Customer insights",
+        "body": "Understand journey, lifetime value, and retention."
+      },
+      "repair": {
+        "title": "Repair history",
+        "body": "Every service ticket since 1989, in one timeline."
+      }
+    }
+  }
+}

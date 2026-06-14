@@ -1,0 +1,26 @@
+{
+  "brand": "Sein Pan Electronic",
+  "since": "Since 1989",
+  "nav": {
+    "catalog": "Catalog",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "cta": {
+    "explore": "Explore catalog",
+    "learnMore": "Learn more",
+    "quote": "Request a quote"
+  },
+  "language": "Language",
+  "location": {
+    "address": "Address",
+    "hours": "Opening hours",
+    "phone": "Phone",
+    "callNow": "Call now",
+    "directions": "Get directions",
+    "viewOnMaps": "View on Google Maps",
+    "rating": "Rating",
+    "reviews": "reviews",
+    "openNow": "Open now"
+  }
+}

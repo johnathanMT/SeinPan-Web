@@ -1,0 +1,19 @@
+{
+  "title": "Product catalog",
+  "filters": {
+    "heading": "Filters",
+    "category": "Category",
+    "brand": "Brand",
+    "price": "Price",
+    "inStock": "In stock only",
+    "clear": "Clear all"
+  },
+  "card": {
+    "sku": "SKU",
+    "requestPrice": "Request price",
+    "inStock": "In stock",
+    "outOfStock": "Out of stock",
+    "datasheet": "Datasheet"
+  },
+  "empty": "No products match your filters."
+}
