@@ -27,6 +27,70 @@
     },
     "cta": "Talk to the technician"
   },
+  "contact": {
+    "label": "Get in touch",
+    "title": "Send us a message",
+    "subtitle": "Tell us about your device and we'll get back to you shortly.",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone (optional)",
+    "message": "Message",
+    "send": "Send message",
+    "sending": "Sending…",
+    "success": "Thanks — your message has been sent. We'll be in touch shortly.",
+    "error": "Something went wrong. Please try again, or call us directly.",
+    "required": "This field is required.",
+    "invalidEmail": "Please enter a valid email address.",
+    "placeholder": {
+      "name": "Your name",
+      "email": "you@example.com",
+      "phone": "+95 9 …",
+      "message": "Tell us the device model and what's wrong…"
+    }
+  },
+  "services": {
+    "label": "Our services",
+    "title": "Repair expertise you can rely on",
+    "subtitle": "Specialist screen and electronics repair, backed by 35+ years at the bench.",
+    "items": {
+      "led": {
+        "title": "LED TV Repair",
+        "body": "Backlight, panel, and driver-board faults diagnosed and repaired — picture brought back to life."
+      },
+      "lcd": {
+        "title": "LCD TV Repair",
+        "body": "No display, lines, or dim screens fixed at board level, from inverter to T-CON."
+      },
+      "plasma": {
+        "title": "Plasma TV Repair",
+        "body": "Buzzing, blinking, or dead plasma panels restored with genuine replacement parts."
+      },
+      "power": {
+        "title": "Power Board Repair",
+        "body": "Power supply and capacitor failures — the most common cause of a TV that won't turn on."
+      },
+      "audio": {
+        "title": "Audio & Amplifier",
+        "body": "Speakers, amplifiers, and sound boards restored to clear, full output."
+      },
+      "diagnostics": {
+        "title": "Free Diagnostics",
+        "body": "Honest assessment and a clear quote before any repair work begins."
+      }
+    },
+    "cta": "Book a repair"
+  },
+  "location": {
+    "label": "Location & contact",
+    "title": "Visit our repair shop",
+    "subtitle": "Find us in Yangon — drop your device off, or call ahead so we're ready for you.",
+    "name": "Sein Pan Electronic — LED, LCD & Plasma TV Repair Service",
+    "addressValue": "Yangon, Myanmar",
+    "hoursValue": "Mon – Sat · 9:00 AM – 6:00 PM",
+    "hoursNote": "Closed Sundays & public holidays",
+    "phoneValue": "+95 9 000 000 000",
+    "ratingValue": ""
+  },
   "integrations": {
     "label": "Integrations",
     "title": "Connect with your <1>favorite components</1>",

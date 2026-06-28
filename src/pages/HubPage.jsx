@@ -8,6 +8,8 @@ import CircuitTraces from "../components/canvas/CircuitTraces";
 import HoloBackdrop from "../components/canvas/HoloBackdrop";
 import Hero from "../components/sections/Hero";
 import TechnicianProfile from "../components/sections/TechnicianProfile";
+import ServicesSection from "../components/sections/ServicesSection";
+import LocationSection from "../components/sections/LocationSection";
 import { IntegrationGrid } from "../components/integrations/IntegrationGrid";
 import { BentoGrid } from "../components/bento/BentoGrid";
 import { BentoCard } from "../components/bento/BentoCard";
@@ -50,6 +52,11 @@ export default function HubPage() {
       {/* About — technician bio (glassmorphism bento) */}
       <section id="about">
         <TechnicianProfile />
+      </section>
+
+      {/* Services — repair expertise card grid */}
+      <section id="services">
+        <ServicesSection />
       </section>
 
       {/* Section 01 — integrations */}
@@ -96,6 +103,11 @@ export default function HubPage() {
           </BentoGrid>
         </div>
       </GridCanvas>
+
+      {/* Location & contact — map embed + glass details card */}
+      <section id="contact">
+        <LocationSection />
+      </section>
     </>
   );
 }

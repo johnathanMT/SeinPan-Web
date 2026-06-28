@@ -11,5 +11,16 @@
     "learnMore": "詳しく見る",
     "quote": "見積もりを依頼"
   },
-  "language": "言語"
+  "language": "言語",
+  "location": {
+    "address": "住所",
+    "hours": "営業時間",
+    "phone": "電話",
+    "callNow": "今すぐ電話",
+    "directions": "ルート案内",
+    "viewOnMaps": "Google マップで見る",
+    "rating": "評価",
+    "reviews": "件のレビュー",
+    "openNow": "営業中"
+  }
 }
