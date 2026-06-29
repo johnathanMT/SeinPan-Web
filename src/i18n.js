@@ -13,21 +13,15 @@ import enCatalog from "./locales/en/catalog.json";
 import myCommon from "./locales/my/common.json";
 import myHome from "./locales/my/home.json";
 import myCatalog from "./locales/my/catalog.json";
-import jaCommon from "./locales/ja/common.json";
-import jaHome from "./locales/ja/home.json";
-import jaCatalog from "./locales/ja/catalog.json";
-
 // Single source of truth for supported languages (used by LanguageSwitcher).
 export const SUPPORTED = [
   { code: "en", label: "English", native: "English", dir: "ltr" },
   { code: "my", label: "Myanmar", native: "မြန်မာ", dir: "ltr" },
-  { code: "ja", label: "Japanese", native: "日本語", dir: "ltr" },
 ];
 
 const resources = {
   en: { common: enCommon, home: enHome, catalog: enCatalog },
   my: { common: myCommon, home: myHome, catalog: myCatalog },
-  ja: { common: jaCommon, home: jaHome, catalog: jaCatalog },
 };
 
 i18n
@@ -36,7 +30,7 @@ i18n
   .init({
     resources,
     fallbackLng: "en",
-    supportedLngs: ["en", "my", "ja"],
+    supportedLngs: ["en", "my"],
     ns: ["common", "home", "catalog"],
     defaultNS: "common",
     interpolation: { escapeValue: false }, // React already escapes output

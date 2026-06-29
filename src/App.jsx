@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import Header from "./components/layout/Header";
 import HubPage from "./pages/HubPage";
 import ImmersivePage from "./pages/ImmersivePage";
+import SeinPanOfficialPage from "./pages/SeinPanOfficialPage";
 
 function RootLayout() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="/" element={<HubPage />} />
         </Route>
         <Route path="/immersive" element={<ImmersivePage />} />
+        <Route path="/official" element={<SeinPanOfficialPage />} />
       </Routes>
     </BrowserRouter>
   );
