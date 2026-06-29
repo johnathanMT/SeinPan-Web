@@ -34,7 +34,7 @@ function TechPhoto({ src, initials }) {
   );
 }
 
-export function TechnicianProfile({ photoSrc = "public/technician.jpg" }) {
+export function TechnicianProfile({ photoSrc = `${import.meta.env.BASE_URL}technician.jpg` }) {
   const { t } = useTranslation("home");
   const reduce = useReducedMotion();
   const expertise = t("about.expertise", { returnObjects: true }) || [];

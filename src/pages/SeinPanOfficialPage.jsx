@@ -367,6 +367,47 @@ function HeroSection({ setActive, isDark }) {
 }
 
 // ─────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
+// TECHNICIAN PHOTO — real image with graceful fallback to initials
+// ─────────────────────────────────────────────────────────────────
+function TechPhoto({ isDark }) {
+  const [failed, setFailed] = useState(false);
+  const src = `${import.meta.env.BASE_URL}technician.jpg`;
+
+  if (failed) {
+    return (
+      <div
+        className="flex h-full w-full items-center justify-center rounded-[14px] text-xl font-extrabold"
+        style={{
+          background: isDark
+            ? 'linear-gradient(135deg, #073123, #04211a)'
+            : 'linear-gradient(135deg, #d1fae5, #ecfdf5)',
+        }}
+      >
+        <span
+          style={{
+            background: 'linear-gradient(135deg, #22c06f, #d99f33)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          UW
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt="U Win Naing — Founder & Master Technician"
+      onError={() => setFailed(true)}
+      className="h-full w-full rounded-[14px] object-cover object-top"
+    />
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────
 // TECHNICIAN CARD  (compact, advanced, colourful)
 // ─────────────────────────────────────────────────────────────────
 function TechnicianCard({ isDark, setActive }) {
@@ -398,32 +439,15 @@ function TechnicianCard({ isDark, setActive }) {
 
             {/* ── Col 1: Avatar + identity ── */}
             <div className="flex items-center gap-5">
-              {/* Avatar ring */}
+              {/* Avatar ring with real photo */}
               <div className="relative flex-shrink-0">
                 <div
-                  className="h-20 w-20 rounded-2xl p-[3px]"
+                  className="h-20 w-20 overflow-hidden rounded-2xl p-[3px]"
                   style={{
                     background: 'conic-gradient(from 0deg, #0f9d58, #d99f33, #a78bfa, #22d3ee, #0f9d58)',
                   }}
                 >
-                  <div
-                    className="flex h-full w-full items-center justify-center rounded-[14px] text-xl font-extrabold"
-                    style={{
-                      background: isDark
-                        ? 'linear-gradient(135deg, #073123, #04211a)'
-                        : 'linear-gradient(135deg, #d1fae5, #ecfdf5)',
-                    }}
-                  >
-                    <span
-                      style={{
-                        background: 'linear-gradient(135deg, #22c06f, #d99f33)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                      }}
-                    >
-                      UW
-                    </span>
-                  </div>
+                  <TechPhoto isDark={isDark} />
                 </div>
                 {/* Online indicator */}
                 <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-forest-950 bg-pcb-500">
