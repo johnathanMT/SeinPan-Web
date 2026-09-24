@@ -168,8 +168,8 @@ const WHY_US = [
 ];
 
 const HOURS = [
-  { day: 'Monday – Friday', hours: '8:00 AM – 6:00 PM', open: true },
-  { day: 'Saturday',         hours: '8:00 AM – 4:00 PM', open: true },
+  { day: 'Monday – Friday', hours: '9:00 AM – 8:00 PM', open: true },
+  { day: 'Saturday',         hours: '8:00 AM – 8:00 PM', open: true },
   { day: 'Sunday',           hours: 'Closed',             open: false },
 ];
 

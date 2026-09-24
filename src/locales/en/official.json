@@ -14,7 +14,9 @@
     "bookARepair": "Book a Repair",
     "toggleTheme": "Toggle theme",
     "toggleMenu": "Toggle menu",
-    "switchLanguage": "Switch language"
+    "switchLanguage": "Switch language",
+    "backHome": "Back to Home",
+    "breadcrumb": "Breadcrumb"
   },
   "hero": {
     "eyebrow": "Sein Pan Electronic · Yangon",
@@ -239,10 +241,15 @@
     "mapArea": "North Okkalapa, Yangon",
     "mapLabel": "Maydarvi · North Okkalapa",
     "openMaps": "Open in Maps",
+    "mapAria": "Open Sein Pan Electronic's location in Google Maps (new tab)",
+    "facebookTitle": "Official Facebook Page",
+    "facebookBody": "Shop news, finished repairs and announcements.",
+    "facebookHandle": "facebook.com/seinpanelectronic",
+    "facebookCta": "Visit on Facebook",
     "days": [
-      { "day": "Monday – Friday", "time": "8:00 AM – 6:00 PM" },
-      { "day": "Saturday", "time": "8:00 AM – 5:00 PM" },
-      { "day": "Sunday", "time": "9:00 AM – 2:00 PM" }
+      { "day": "Monday – Friday", "time": "9:00 AM – 8:00 PM" },
+      { "day": "Saturday", "time": "8:00 AM – 8:00 PM" },
+      { "day": "Sunday", "time": "Closed" }
     ]
   },
   "footer": {
@@ -252,11 +259,14 @@
     "services": "Services",
     "contact": "Contact",
     "address": "Near Maydar Wee Market, North Okkalapa, Yangon",
-    "hours": "Mon–Fri · 8 AM – 6 PM",
     "rights": "Sein Pan Electronic Service. All rights reserved.",
     "est": "Est. 1989 · North Okkalapa, Yangon",
     "links": ["LED TV Repair", "LCD TV Repair", "Plasma TV Repair", "Remote Repair", "Component Soldering", "Smart TV Service"],
+    "connect": "Connect With Us",
+    "connectBody": "Follow us on Facebook or message us directly on Viber.",
     "social": {
+      "facebookAria": "Facebook page (opens in a new tab)",
+      "viberAria": "Message us on Viber — 09423858609",
       "facebook": "Facebook",
       "instagram": "Instagram",
       "youtube": "YouTube",

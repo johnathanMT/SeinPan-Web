@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "homepage": "https://seinpan.myothant.dev/",
+  "homepage": "https://seinpanelectronic.com",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

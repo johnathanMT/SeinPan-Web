@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Tv, Wrench, MapPin, Phone, Clock, Award, Shield,
   Upload, CheckCircle, X, Menu, ChevronRight, ChevronDown,
-  ArrowUpRight, Zap, Home, Info, ClipboardList, PhoneCall,
+  ArrowUpRight, ArrowLeft, Zap, Home, Info, ClipboardList, PhoneCall,
   Users, History, TrendingUp, BadgeCheck, Gauge, Sparkles,
   Monitor, Radio, Cpu, Sun, Moon, Lightbulb, Send, Quote,
 } from 'lucide-react';
@@ -24,6 +24,12 @@ const NAV_TABS = [
   { id: 'inquiry',  Icon: ClipboardList },
   { id: 'contact',  Icon: PhoneCall },
 ];
+
+const TAB_IDS = NAV_TABS.map(({ id }) => id);
+const tabFromHash = () => {
+  const id = window.location.hash.slice(1);
+  return TAB_IDS.includes(id) ? id : 'home';
+};
 
 function useOfficial() {
   const { t, i18n } = useTranslation('official');
@@ -117,10 +123,39 @@ const ABOUT_STATS = [
   { Icon: Award,      label: 'Years Active',     value: '37+' },
 ];
 
+const LINKS = {
+  maps:     'https://maps.app.goo.gl/18ACK194oobVr4uP9?g_st=ic',
+  facebook: 'https://www.facebook.com/seinpanelectronic',
+  viber:    'viber://chat?number=%2B959423858609',
+};
+
+// Every external link opens in a new tab without giving it window.opener.
+const EXTERNAL = { target: '_blank', rel: 'noopener noreferrer' };
+
+// lucide-react 1.x ships no brand logos, so these two are drawn inline.
+function FacebookIcon({ size = 18, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12Z" />
+    </svg>
+  );
+}
+
+function ViberIcon({ size = 18, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={className}>
+      <path d="M12 2.6c5.1 0 8.6 2.5 8.6 7.5v1.4c0 5-3.5 7.5-8.6 7.5-.9 0-1.8-.1-2.6-.3L6.3 21v-3.1c-1.9-1.2-2.9-3.4-2.9-6.4v-1.4c0-5 3.5-7.5 8.6-7.5Z" />
+      <path d="M9.3 7.4c.3-.3.8-.3 1 .1l.8 1.3c.2.3.1.7-.1.9l-.5.5c.4 1 1.2 1.8 2.2 2.2l.5-.5c.3-.3.7-.3.9-.1l1.3.8c.4.2.4.7.1 1l-.6.6c-.6.6-1.6.7-2.4.3a7.2 7.2 0 0 1-3.8-3.8c-.4-.8-.3-1.8.3-2.4Z" fill="currentColor" stroke="none" />
+      <path d="M13.2 5.6a4 4 0 0 1 3.5 3.5" />
+      <path d="M13.2 7.6a2 2 0 0 1 1.6 1.6" />
+    </svg>
+  );
+}
+
 const HOURS = [
-  { day: 'Monday – Friday', time: '8:00 AM – 6:00 PM', open: true },
-  { day: 'Saturday',         time: '8:00 AM – 5:00 PM', open: true },
-  { day: 'Sunday',           time: '9:00 AM – 2:00 PM', open: true },
+  { day: 'Monday – Friday', time: '9:00 AM – 8:00 PM', open: true },
+  { day: 'Saturday',         time: '8:00 AM – 8:00 PM', open: true },
+  { day: 'Sunday',           time: 'Closed',            open: false },
 ];
 
 const INQUIRY_STEPS = [
@@ -1414,17 +1449,20 @@ function ContactSection({ isDark }) {
                 <p className={`text-sm font-bold ${T.h}`}>{t('contact.hours')}</p>
               </div>
               <div className={`divide-y ${isDark ? 'divide-theme-color-2/10' : 'divide-theme-color-4/10'}`}>
-                {days.map(({ day, time }, i) => (
-                  <div key={day} className="flex items-center justify-between py-2.5">
-                    <span className={`text-xs ${T.muted}`}>{day}</span>
-                    <div className="flex items-center gap-2">
-                      <span className={`h-2 w-2 rounded-full ${HOURS[i]?.open ? 'bg-theme-color-1' : 'bg-theme-color-3'}`} />
-                      <span className={`text-xs font-semibold ${T.h}`}>
-                        {time}
-                      </span>
+                {days.map(({ day, time }, i) => {
+                  const open = HOURS[i]?.open;
+                  return (
+                    <div key={day} className="flex items-center justify-between gap-4 py-2.5">
+                      <span className={`text-xs ${T.muted}`}>{day}</span>
+                      <div className="flex items-center gap-2">
+                        <span className={`h-2 w-2 shrink-0 rounded-full ${open ? 'bg-theme-color-1' : 'bg-theme-color-3'}`} />
+                        <span className={`whitespace-nowrap text-xs font-semibold tabular-nums ${open ? T.h : 'text-theme-color-3'}`}>
+                          {time}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -1443,11 +1481,39 @@ function ContactSection({ isDark }) {
                 {t('contact.previous')}
               </p>
             </div>
+
+            {/* Facebook */}
+            <div className={`rounded-2xl border p-6 ${T.card}`}>
+              <div className="mb-4 flex items-center gap-3">
+                <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#1877F2] shadow-sm">
+                  <FacebookIcon size={19} className="text-white" />
+                </div>
+                <div className="min-w-0">
+                  <p className={`text-sm font-bold ${T.h}`}>{t('contact.facebookTitle')}</p>
+                  <p className={`truncate text-[11px] ${T.muted}`}>{t('contact.facebookHandle')}</p>
+                </div>
+              </div>
+              <p className={`mb-4 text-sm leading-relaxed ${T.body}`}>{keepWords(t('contact.facebookBody'))}</p>
+              <a
+                href={LINKS.facebook}
+                {...EXTERNAL}
+                className="group flex items-center justify-between rounded-xl bg-theme-color-1 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:scale-[1.02] hover:opacity-90"
+              >
+                <span className="inline-flex items-center gap-2">
+                  <FacebookIcon size={16} />
+                  {t('contact.facebookCta')}
+                </span>
+                <ArrowUpRight size={13} className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </a>
+            </div>
           </div>
 
-          {/* ── Right: Stylized Map ── */}
-          <div
-            className="relative min-h-[360px] overflow-hidden rounded-2xl bg-theme-color-1 shadow-md shadow-theme-color-4/15 lg:min-h-0"
+          {/* ── Right: Stylized Map (whole panel opens Google Maps) ── */}
+          <a
+            href={LINKS.maps}
+            {...EXTERNAL}
+            aria-label={t('contact.mapAria')}
+            className="group relative block min-h-[360px] overflow-hidden rounded-2xl bg-theme-color-1 shadow-md shadow-theme-color-4/15 transition hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-theme-color-3 lg:min-h-0"
           >
             {/* Map grid */}
             <div
@@ -1499,17 +1565,15 @@ function ContactSection({ isDark }) {
               {t('contact.mapLabel')}
             </p>
 
-            {/* Open in Maps */}
-            <a
-              href="https://maps.google.com/?q=Maydar+Wee+Market+North+Okkalapa+Yangon"
-              target="_blank"
-              rel="noreferrer"
-              className="absolute bottom-4 right-4 flex items-center gap-1.5 rounded-lg bg-theme-color-3 px-3 py-1.5 text-[11px] font-semibold text-white shadow-sm transition hover:scale-105 hover:opacity-90"
+            <span
+              aria-hidden="true"
+              className="absolute bottom-4 right-4 flex items-center gap-1.5 rounded-lg bg-theme-color-3 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition group-hover:scale-105 group-hover:opacity-90"
             >
+              <MapPin size={13} />
               {t('contact.openMaps')}
-              <ArrowUpRight size={11} />
-            </a>
-          </div>
+              <ArrowUpRight size={12} className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </span>
+          </a>
         </div>
       </div>
     </section>
@@ -1522,6 +1586,7 @@ function ContactSection({ isDark }) {
 function Footer({ setActive }) {
   const { t, list } = useOfficial();
   const links = list('footer.links');
+  const days = list('contact.days');
   return (
     <footer className="relative isolate overflow-hidden bg-theme-color-4 px-4 pb-28 pt-16 text-white md:pb-12">
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-1 bg-theme-color-3" />
@@ -1587,13 +1652,54 @@ function Footer({ setActive }) {
               </li>
               <li className="flex items-start gap-2.5">
                 <Clock size={15} className="mt-1 shrink-0 text-theme-color-2" />
-                {t('footer.hours')}
+                <dl className="space-y-1">
+                  {days.map(({ day, time }, i) => (
+                    <div key={day}>
+                      <dt className="inline">
+                        {day}
+                        <span aria-hidden="true" className="px-1.5 text-white/50">·</span>
+                      </dt>
+                      <dd className={`inline whitespace-nowrap ${HOURS[i]?.open ? '' : 'font-semibold text-theme-color-2'}`}>{time}</dd>
+                    </div>
+                  ))}
+                </dl>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-2 border-t border-theme-color-2/20 pt-6 text-xs text-white/80 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col gap-5 rounded-2xl border border-theme-color-2/15 bg-white/[0.04] p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold tracking-[0.16em] text-theme-color-2">{t('footer.connect')}</p>
+            <p className="mt-1.5 text-sm text-white/85">{keepWords(t('footer.connectBody'))}</p>
+          </div>
+          <ul className="flex flex-wrap gap-3">
+            <li>
+              <a
+                href={LINKS.facebook}
+                {...EXTERNAL}
+                aria-label={t('footer.social.facebookAria')}
+                className="inline-flex items-center gap-2.5 rounded-xl bg-[#1877F2] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-black/20 transition hover:-translate-y-0.5 hover:brightness-110"
+              >
+                <FacebookIcon size={18} />
+                {t('footer.social.facebook')}
+              </a>
+            </li>
+            <li>
+              <a
+                href={LINKS.viber}
+                {...EXTERNAL}
+                aria-label={t('footer.social.viberAria')}
+                className="inline-flex items-center gap-2.5 rounded-xl bg-[#7360F2] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-black/20 transition hover:-translate-y-0.5 hover:brightness-110"
+              >
+                <ViberIcon size={18} />
+                {t('footer.social.viber')}
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div className="mt-8 flex flex-col gap-2 border-t border-theme-color-2/20 pt-6 text-xs text-white/80 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} {t('footer.rights')}</p>
           <p className="inline-flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-theme-color-3" />
@@ -1606,12 +1712,75 @@ function Footer({ setActive }) {
 }
 
 // ─────────────────────────────────────────────────────────────────
+// BACK BAR — shown on every inner page
+// ─────────────────────────────────────────────────────────────────
+function BackBar({ active, onBack, isDark, top }) {
+  const { t } = useOfficial();
+  const T = getT(isDark);
+  return (
+    <div
+      style={{ top }}
+      className={`sticky z-40 border-b shadow-sm backdrop-blur-md ${
+        isDark ? 'border-theme-color-2/10 bg-theme-color-4/90' : 'border-theme-color-4/10 bg-theme-color-2/90'
+      }`}
+    >
+      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-2.5">
+        <button
+          onClick={onBack}
+          className="group inline-flex items-center gap-2 rounded-xl bg-theme-color-1 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:scale-105 hover:opacity-90"
+        >
+          <ArrowLeft size={16} className="shrink-0 transition group-hover:-translate-x-0.5" />
+          {t('nav.backHome')}
+        </button>
+        <nav aria-label={t('nav.breadcrumb')} className={`hidden items-center gap-1.5 text-xs sm:flex ${T.muted}`}>
+          <button onClick={onBack} className="transition hover:underline hover:underline-offset-4">
+            {t('nav.home')}
+          </button>
+          <ChevronRight size={12} aria-hidden="true" />
+          <span aria-current="page" className={`font-semibold ${T.h}`}>{t(`nav.${active}`)}</span>
+        </nav>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────
 // ROOT PAGE COMPONENT
 // ─────────────────────────────────────────────────────────────────
 export default function SeinPanOfficialPage() {
   const { t } = useOfficial();
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTabState] = useState(tabFromHash);
   const [isDark,    setIsDark]    = useState(false);
+
+  // Each page gets its own history entry so the phone / browser back button
+  // returns to the previous page instead of leaving the site.
+  const setActiveTab = (id) => {
+    if (id !== activeTab) {
+      const { pathname, search } = window.location;
+      window.history.pushState({ tab: id }, '', id === 'home' ? `${pathname}${search}` : `#${id}`);
+      setActiveTabState(id);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // The fixed header's height changes with language and breakpoint, so measure it.
+  const [headerH, setHeaderH] = useState(90);
+  useEffect(() => {
+    const header = document.querySelector('header');
+    if (!header) return undefined;
+    const update = () => setHeaderH(Math.ceil(header.getBoundingClientRect().height));
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(header);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const onPop = () => setActiveTabState(tabFromHash());
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
 
   useEffect(() => {
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -1660,7 +1829,10 @@ export default function SeinPanOfficialPage() {
       />
 
       {/* Scrollable content with navbar offset */}
-      <main className="pt-[61px] sm:pt-[90px]">
+      <main style={{ paddingTop: headerH }}>
+        {activeTab !== 'home' && (
+          <BackBar active={activeTab} onBack={() => setActiveTab('home')} isDark={isDark} top={headerH} />
+        )}
         <div className="transition-colors duration-300">
           {renderMain()}
         </div>
