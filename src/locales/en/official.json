@@ -89,24 +89,21 @@
       { "title": "We Fix It", "body": "Drop off your set or arrange collection in North Okkalapa township." }
     ]
   },
-  "testimonials": {
-    "label": "Neighbourhood trust",
-    "title": "Families who keep coming back.",
+  "why": {
+    "title": "Trusted Service",
+    "subtitle": "Why choose Sein Pan Electronic?",
     "items": [
       {
-        "name": "Daw Khin Myint",
-        "area": "North Okkalapa",
-        "quote": "Our LED went black the night before a family gathering. Sein Pan diagnosed it the same afternoon and the picture was perfect the next day."
+        "heading": "35+ years of experience",
+        "body": "Specialist electronics repair since 1989 — more than 35 years of skill at the bench."
       },
       {
-        "name": "Ko Htet Aung",
-        "area": "South Okkalapa",
-        "quote": "My parents have used this shop since the 14–15 junction days. The move to Maydarvi did not change the honesty or the workmanship."
+        "heading": "Fair prices and quality parts",
+        "body": "Reasonable prices for customers, and only quality parts fitted to every repair."
       },
       {
-        "name": "Ma Thiri",
-        "area": "Thingangyun",
-        "quote": "They explained the plasma fault in plain language, used a genuine board, and stood behind the repair. I would not take a set anywhere else."
+        "heading": "Work we stand behind",
+        "body": "Every finished repair is handled with full responsibility and completed on time."
       }
     ]
   },

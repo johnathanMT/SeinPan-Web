@@ -10,7 +10,7 @@ import {
   Upload, CheckCircle, X, Menu, ChevronRight, ChevronDown,
   ArrowUpRight, ArrowLeft, Zap, Home, Info, ClipboardList, PhoneCall,
   Users, History, TrendingUp, BadgeCheck, Gauge, Sparkles,
-  Monitor, Radio, Cpu, Sun, Moon, Lightbulb, Send, Quote,
+  Monitor, Radio, Cpu, Sun, Moon, Lightbulb, Send, ShieldCheck, Handshake,
 } from 'lucide-react';
 
 // ─────────────────────────────────────────────────────────────────
@@ -703,35 +703,34 @@ function ProcessStrip({ setActive, isDark }) {
   );
 }
 
-function Testimonials({ isDark }) {
+const WHY_ICONS = [Award, ShieldCheck, Handshake];
+
+function WhyChooseUs({ isDark }) {
   const { t, list } = useOfficial();
-  const items = list('testimonials.items');
+  const items = list('why.items');
   const T = getT(isDark);
   return (
     <section className={`px-4 py-20 sm:py-28 ${T.sec}`}>
       <div className="mx-auto max-w-6xl">
-        <Reveal className="max-w-2xl">
-          <SectionLabel T={T}>{t('testimonials.label')}</SectionLabel>
-          <SectionHeading T={T}>{t('testimonials.title')}</SectionHeading>
+        <Reveal className="max-w-3xl">
+          <SectionLabel T={T}>{t('why.title')}</SectionLabel>
+          <SectionHeading T={T}>{t('why.subtitle')}</SectionHeading>
         </Reveal>
         <div className="mt-12 grid gap-5 md:grid-cols-3">
-          {items.map(({ name, area, quote }, i) => (
-            <Reveal key={name} delay={i * 120} className="h-full">
-              <figure className={`flex h-full flex-col rounded-2xl border p-7 transition duration-300 hover:-translate-y-1 ${T.card} ${T.cardHov}`}>
-                <Quote size={26} className="text-theme-color-3" />
-                <blockquote className={`mt-5 flex-1 text-[15px] leading-loose ${T.body}`}>{keepWords(quote)}</blockquote>
-                <figcaption className={`mt-6 flex items-center gap-3 border-t pt-5 ${T.div}`}>
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-theme-color-1 text-sm font-bold text-theme-color-2">
-                    {[...name][0]}
-                  </span>
-                  <div>
-                    <p className={`text-sm font-semibold ${T.h}`}>{name}</p>
-                    <p className={`text-xs ${T.muted}`}>{area}</p>
+          {items.map(({ heading, body }, i) => {
+            const Icon = WHY_ICONS[i] || Award;
+            return (
+              <Reveal key={heading} delay={i * 120} className="h-full">
+                <article className={`flex h-full flex-col rounded-2xl border p-7 transition duration-300 hover:-translate-y-1 ${T.card} ${T.cardHov}`}>
+                  <div className="grid h-12 w-12 place-items-center rounded-xl bg-theme-color-1 shadow-sm">
+                    <Icon size={22} className="text-theme-color-2" />
                   </div>
-                </figcaption>
-              </figure>
-            </Reveal>
-          ))}
+                  <h3 className={`mt-6 text-lg font-bold leading-snug ${T.h}`}>{keepWords(heading)}</h3>
+                  <p className={`mt-3 flex-1 text-[15px] leading-loose ${T.body}`}>{keepWords(body)}</p>
+                </article>
+              </Reveal>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -1900,7 +1899,7 @@ export default function SeinPanOfficialPage() {
             <BrandMarquee isDark={isDark} />
             <HomeServices {...sp} />
             <ProcessStrip {...sp} />
-            <Testimonials isDark={isDark} />
+            <WhyChooseUs isDark={isDark} />
             <ClosingBand {...sp} />
           </>
         );
