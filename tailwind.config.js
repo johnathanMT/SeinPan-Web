@@ -28,7 +28,22 @@ export default {
       },
       fontFamily: {
         sans: ["var(--font-app)", "system-ui", "sans-serif"],
+        display: ['"Instrument Serif"', "Georgia", "serif"],
         mono: ["var(--font-mono)", "monospace"],
+      },
+      keyframes: {
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        trace: {
+          "0%": { strokeDashoffset: "0" },
+          "100%": { strokeDashoffset: "-280" },
+        },
+      },
+      animation: {
+        marquee: "marquee 32s linear infinite",
+        trace: "trace 9s linear infinite",
       },
       backgroundImage: {
         "dot-grid":

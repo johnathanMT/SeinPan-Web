@@ -10,7 +10,7 @@ import {
   ArrowUpRight, Zap, Home, Info, ClipboardList, PhoneCall,
   Users, History, TrendingUp, BadgeCheck, Gauge, Sparkles,
   Monitor, Radio, Cpu, Share2, Globe, SquarePlay, MessageSquare,
-  Mail, Sun, Moon, GraduationCap, Lightbulb, Send,
+  Mail, Sun, Moon, GraduationCap, Lightbulb, Send, Quote,
 } from 'lucide-react';
 
 // ─────────────────────────────────────────────────────────────────
@@ -121,6 +121,32 @@ const INQUIRY_STEPS = [
   { Icon: Wrench,         title: 'We Fix It',            body: 'Drop off your set or arrange collection in North Okkalapa township.' },
 ];
 
+const BRANDS = [
+  'Samsung', 'LG', 'Sony', 'Panasonic', 'Toshiba', 'Sharp',
+  'TCL', 'Hisense', 'Philips', 'Haier', 'Skyworth', 'Changhong',
+];
+
+const TESTIMONIALS = [
+  {
+    name: 'Daw Khin Myint',
+    area: 'North Okkalapa',
+    quote: 'Our LED went black the night before a family gathering. Sein Pan diagnosed it the same afternoon and the picture was perfect the next day.',
+  },
+  {
+    name: 'Ko Htet Aung',
+    area: 'South Okkalapa',
+    quote: 'My parents have used this shop since the 14–15 junction days. The move to Maydarvi did not change the honesty or the workmanship.',
+  },
+  {
+    name: 'Ma Thiri',
+    area: 'Thingangyun',
+    quote: 'They explained the plasma fault in plain language, used a genuine board, and stood behind the repair. I would not take a set anywhere else.',
+  },
+];
+
+const CTA =
+  'inline-flex items-center justify-center gap-2 rounded-xl bg-copper-500 px-7 py-3.5 text-sm font-bold text-pcb-950 shadow-glow transition hover:bg-copper-400 active:scale-[0.98]';
+
 // ─────────────────────────────────────────────────────────────────
 // THEME TOKENS
 // ─────────────────────────────────────────────────────────────────
@@ -165,7 +191,7 @@ function SectionLabel({ children, T }) {
 }
 function SectionHeading({ children, T }) {
   return (
-    <h2 className={`text-3xl font-bold leading-tight sm:text-4xl ${T.h}`}>{children}</h2>
+    <h2 className={`font-display text-4xl font-normal leading-[1.05] tracking-tight sm:text-5xl ${T.h}`}>{children}</h2>
   );
 }
 
@@ -178,7 +204,8 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
   const go = (id) => { setActive(id); setOpen(false); };
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-md ${T.nav}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-xl ${T.nav}`}>
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-copper-400/70 to-transparent" />
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
 
         {/* Logo */}
@@ -188,7 +215,7 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
           </div>
           <div className="text-left leading-none">
             <span className={`block text-[13px] font-extrabold tracking-wide ${T.h}`}>Sein Pan</span>
-            <span className={`block text-[10px] uppercase tracking-widest ${T.muted}`}>Electronic Service</span>
+            <span className={`block text-[10px] uppercase tracking-[0.18em] ${T.muted}`}>Since 1989 · Electronic Service</span>
           </div>
         </button>
 
@@ -225,7 +252,7 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
           {/* Book Repair CTA (desktop) */}
           <button
             onClick={() => go('inquiry')}
-            className="hidden items-center gap-2 rounded-xl bg-pcb-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-pcb-400 active:scale-95 md:flex"
+            className="hidden items-center gap-2 rounded-xl bg-copper-500 px-4 py-2 text-sm font-bold text-pcb-950 shadow-glow transition hover:bg-copper-400 active:scale-95 md:flex"
           >
             <Wrench size={14} />
             Book Repair
@@ -278,88 +305,218 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
 // ─────────────────────────────────────────────────────────────────
 // HERO SECTION
 // ─────────────────────────────────────────────────────────────────
-function HeroSection({ setActive, isDark }) {
-  const T = getT(isDark);
+function HeroSection({ setActive }) {
   return (
-    <section className="relative min-h-screen overflow-hidden bg-forest-950 flex items-center">
-      {/* PCB dot grid */}
+    <section className="relative overflow-hidden bg-forest-950 lg:flex lg:min-h-[88vh] lg:items-center">
       <div
-        className="pointer-events-none absolute inset-0 opacity-25"
+        className="pointer-events-none absolute inset-0 opacity-30"
         style={{
-          backgroundImage: 'radial-gradient(circle, rgba(15,157,88,0.18) 1px, transparent 1px)',
-          backgroundSize: '24px 24px',
+          backgroundImage: 'radial-gradient(circle, rgba(15,157,88,0.2) 1px, transparent 1px)',
+          backgroundSize: '22px 22px',
         }}
       />
-      {/* Glow orbs */}
-      <div className="pointer-events-none absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-pcb-900/50 blur-[100px]" />
-      <div className="pointer-events-none absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-forest-800/80 blur-3xl" />
-      {/* Horizontal scan line accent */}
-      <div className="pointer-events-none absolute left-0 right-0 top-1/3 h-px bg-gradient-to-r from-transparent via-pcb-500/10 to-transparent" />
+      <div className="pointer-events-none absolute -top-32 right-0 h-[520px] w-[520px] rounded-full bg-pcb-800/40 blur-[120px]" />
+      <div className="pointer-events-none absolute bottom-0 left-0 h-72 w-72 rounded-full bg-copper-900/30 blur-3xl" />
 
-      <div className="relative mx-auto w-full max-w-6xl px-4 pb-16 pt-28 sm:pt-36">
-        {/* Heritage badge */}
-        <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-copper-500/35 bg-copper-500/10 px-4 py-1.5">
-          <Star size={11} className="fill-copper-400 text-copper-400" />
-          <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-copper-300">
-            Established Since 1989
-          </span>
-          <Star size={11} className="fill-copper-400 text-copper-400" />
+      <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-50" viewBox="0 0 1200 700" fill="none" aria-hidden="true">
+        <path d="M-20 180 H280 V320 H520 V140 H820 V360 H1220" stroke="rgba(200,134,42,0.35)" strokeWidth="1.2" strokeDasharray="8 10" className="animate-trace" />
+        <path d="M-20 480 H180 V260 H460 V520 H760 V300 H1220" stroke="rgba(34,192,111,0.28)" strokeWidth="1.2" strokeDasharray="6 12" className="animate-trace" />
+        <circle cx="280" cy="180" r="3.5" fill="#e4b75a" />
+        <circle cx="520" cy="320" r="3.5" fill="#22c06f" />
+        <circle cx="820" cy="140" r="3.5" fill="#e4b75a" />
+        <circle cx="460" cy="520" r="3.5" fill="#22c06f" />
+      </svg>
+
+      <div className="relative mx-auto grid w-full max-w-6xl items-end gap-10 px-4 pb-10 pt-24 sm:pt-32 lg:grid-cols-[1.15fr_0.85fr] lg:pb-16">
+        <div>
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-copper-500/40 bg-copper-500/10 px-4 py-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-pcb-400" />
+            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-copper-300">
+              Yangon · LED · LCD · Plasma
+            </span>
+          </div>
+
+          <p className="font-display text-lg italic text-copper-300 sm:text-xl">Since 1989</p>
+          <h1 className="mt-2 max-w-xl font-display text-[2.35rem] leading-[1.02] tracking-tight text-white sm:text-6xl sm:leading-[0.95] lg:text-7xl">
+            Television repair with a thirty-seven year reputation.
+          </h1>
+
+          <p className="mt-4 max-w-lg text-sm leading-relaxed text-slate-400 sm:mt-6 sm:text-lg">
+            LED, LCD, and Plasma repair beside Maydar Wee Market. Genuine parts, and the same workshop U Win Naing opened in South Okkalapa in 1989.
+          </p>
+
+          <div className="mt-5 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center">
+            <button onClick={() => setActive('inquiry')} className={CTA}>
+              <ClipboardList size={15} />
+              Request a repair quote
+              <ArrowUpRight size={14} />
+            </button>
+            <button
+              onClick={() => setActive('services')}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 px-7 py-3.5 text-sm font-medium text-slate-200 transition hover:border-copper-400/40 hover:text-white"
+            >
+              Explore services
+              <ChevronRight size={14} />
+            </button>
+          </div>
+
+          <div className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-[11px] font-medium uppercase tracking-[0.14em] text-slate-500">
+            <span className="inline-flex items-center gap-1.5"><Shield size={12} className="text-pcb-400" /> Genuine parts</span>
+            <span className="inline-flex items-center gap-1.5"><Clock size={12} className="text-copper-400" /> Same-day diagnosis</span>
+            <span className="inline-flex items-center gap-1.5"><BadgeCheck size={12} className="text-pcb-300" /> No-fix, no-fee</span>
+          </div>
         </div>
 
-        {/* Headline */}
-        <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
-          Yangon&rsquo;s Most{' '}
-          <span className="text-pcb-400">Trusted</span>
-          <br />
-          Television Repair{' '}
-          <span className="text-copper-400">Experts</span>
-        </h1>
-
-        <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-400 sm:text-lg">
-          For over <strong className="font-semibold text-white">37 years</strong>, Sein Pan Electronic
-          Service has been restoring{' '}
-          <strong className="font-semibold text-white">LED, LCD &amp; Plasma TVs</strong> with genuine
-          parts and trusted craftsmanship — from South Okkalapa to North Okkalapa.
-        </p>
-
-        {/* CTAs */}
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <button
-            onClick={() => setActive('inquiry')}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-pcb-500 px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-pcb-900/50 transition hover:bg-pcb-400 active:scale-95"
-          >
-            <ClipboardList size={15} />
-            Submit Repair Inquiry
-            <ArrowUpRight size={13} />
-          </button>
-          <button
-            onClick={() => setActive('services')}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 px-7 py-3.5 text-sm font-medium text-slate-300 transition hover:border-white/25 hover:text-white"
-          >
-            View Services
-            <ChevronRight size={14} />
-          </button>
-        </div>
-
-        {/* Stats row */}
-        <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3">
           {HERO_STATS.map(({ value, label }) => (
             <div
               key={label}
-              className="rounded-xl border border-white/6 bg-white/[0.03] px-4 py-4 backdrop-blur-sm"
+              className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-md"
             >
-              <p className="text-2xl font-extrabold text-pcb-300 sm:text-3xl">{value}</p>
-              <p className="mt-0.5 text-[10px] uppercase tracking-wider text-slate-500">{label}</p>
+              <p className="font-display text-4xl text-copper-300 sm:text-5xl">{value}</p>
+              <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-slate-500">{label}</p>
             </div>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
 
-        {/* Scroll hint */}
-        <div className="mt-12 flex flex-col items-start gap-1.5">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-slate-600">
-            Scroll to explore
+function BrandMarquee() {
+  const row = [...BRANDS, ...BRANDS];
+  return (
+    <div className="overflow-hidden border-y border-white/5 bg-ink py-4">
+      <p className="mb-3 text-center text-[10px] font-bold uppercase tracking-[0.22em] text-slate-600">
+        Brands we service every week
+      </p>
+      <div className="flex w-max animate-marquee gap-10">
+        {row.map((brand, i) => (
+          <span key={`${brand}-${i}`} className="text-sm font-semibold tracking-[0.18em] text-slate-500">
+            {brand}
           </span>
-          <ChevronDown size={15} className="animate-bounce text-slate-600" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HomeServices({ setActive, isDark }) {
+  const T = getT(isDark);
+  return (
+    <section className={`px-4 py-20 ${T.sec}`}>
+      <div className="mx-auto max-w-6xl">
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <SectionLabel T={T}>The workshop</SectionLabel>
+            <SectionHeading T={T}>
+              Three technologies. <span className="font-display italic text-copper-400">One bench.</span>
+            </SectionHeading>
+          </div>
+          <button onClick={() => setActive('services')} className={`text-sm font-semibold ${T.accent}`}>
+            Full service list →
+          </button>
+        </div>
+        <div className="mt-10 grid gap-4 lg:grid-cols-3">
+          {SERVICES.map((svc) => (
+            <button
+              key={svc.id}
+              onClick={() => setActive('services')}
+              className={`group rounded-3xl border p-6 text-left transition duration-300 ${T.card} ${T.cardHov}`}
+            >
+              <div className="flex items-center justify-between">
+                <div className={`grid h-12 w-12 place-items-center rounded-2xl border ${svc.iconCls}`}>
+                  <svc.Icon size={20} />
+                </div>
+                <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${svc.badgeCls}`}>
+                  {svc.badge}
+                </span>
+              </div>
+              <h3 className={`mt-6 font-display text-3xl ${T.h}`}>{svc.label.replace(' Repair', '')}</h3>
+              <p className={`mt-3 text-sm leading-relaxed ${T.body}`}>{svc.desc}</p>
+              <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold text-copper-400">
+                See the repair list <ArrowUpRight size={12} className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProcessStrip({ setActive, isDark }) {
+  const T = getT(isDark);
+  return (
+    <section className={`px-4 py-16 ${T.altSec}`}>
+      <div className="mx-auto max-w-6xl">
+        <SectionLabel T={T}>How a repair begins</SectionLabel>
+        <SectionHeading T={T}>A clear path from symptom to picture.</SectionHeading>
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          {INQUIRY_STEPS.map(({ Icon, title, body }, i) => (
+            <div key={title} className={`rounded-3xl border p-6 ${T.card}`}>
+              <p className="font-display text-4xl text-copper-400">0{i + 1}</p>
+              <div className="mt-4 grid h-10 w-10 place-items-center rounded-xl border border-pcb-500/25 bg-pcb-500/10">
+                <Icon size={16} className="text-pcb-400" />
+              </div>
+              <h3 className={`mt-4 text-base font-bold ${T.h}`}>{title}</h3>
+              <p className={`mt-2 text-sm leading-relaxed ${T.body}`}>{body}</p>
+            </div>
+          ))}
+        </div>
+        <button onClick={() => setActive('inquiry')} className={`${CTA} mt-8`}>
+          Start an inquiry
+          <ArrowUpRight size={14} />
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function Testimonials({ isDark }) {
+  const T = getT(isDark);
+  return (
+    <section className={`px-4 py-20 ${T.sec}`}>
+      <div className="mx-auto max-w-6xl">
+        <SectionLabel T={T}>Neighbourhood trust</SectionLabel>
+        <SectionHeading T={T}>Families who keep coming back.</SectionHeading>
+        <div className="mt-10 grid gap-4 lg:grid-cols-3">
+          {TESTIMONIALS.map(({ name, area, quote }) => (
+            <figure key={name} className={`flex flex-col rounded-3xl border p-6 ${T.card}`}>
+              <Quote size={18} className="text-copper-400" />
+              <blockquote className={`mt-4 flex-1 text-sm leading-relaxed ${T.body}`}>&ldquo;{quote}&rdquo;</blockquote>
+              <figcaption className={`mt-6 border-t pt-4 ${T.div}`}>
+                <p className={`text-sm font-semibold ${T.h}`}>{name}</p>
+                <p className={`text-[11px] uppercase tracking-[0.14em] ${T.muted}`}>{area}</p>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ClosingBand({ setActive }) {
+  return (
+    <section className="px-4 pb-16">
+      <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2rem] border border-copper-500/25 bg-forest-950 px-6 py-12 sm:px-12">
+        <div className="pointer-events-none absolute -right-10 top-0 h-48 w-48 rounded-full bg-copper-500/20 blur-3xl" />
+        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-copper-300">Walk in or write first</p>
+        <h2 className="mt-3 max-w-xl font-display text-4xl leading-tight text-white sm:text-5xl">
+          Bring the set. Leave with a straight answer.
+        </h2>
+        <p className="mt-4 max-w-lg text-sm leading-relaxed text-slate-400">
+          Near Maydar Wee Market, North Okkalapa. Diagnosis before you commit, genuine parts, and a technician who has done this work since 1989.
+        </p>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <button onClick={() => setActive('inquiry')} className={CTA}>
+            Submit a repair inquiry
+          </button>
+          <a href="tel:09423850609" className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 px-7 py-3.5 text-sm font-semibold text-white">
+            <Phone size={14} />
+            09 423 850 609
+          </a>
         </div>
       </div>
     </section>
@@ -976,7 +1133,7 @@ function InquirySection({ isDark }) {
               {/* Submit */}
               <button
                 type="submit"
-                className="w-full rounded-xl bg-pcb-500 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-pcb-900/30 transition hover:bg-pcb-400 active:scale-[0.98]"
+                className="w-full rounded-xl bg-copper-500 px-6 py-3.5 text-sm font-bold text-pcb-950 shadow-glow transition hover:bg-copper-400 active:scale-[0.98]"
               >
                 Submit Repair Inquiry →
               </button>
@@ -1268,7 +1425,8 @@ const FOOTER_SERVICES = [
 
 function Footer({ setActive }) {
   return (
-    <footer className="border-t border-white/5 bg-ink px-4 py-14">
+    <footer className="border-t border-white/5 bg-ink px-4 py-14 pb-28 md:pb-14">
+      <div className="mx-auto mb-10 h-px max-w-6xl bg-gradient-to-r from-transparent via-copper-400/60 to-transparent" />
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
 
@@ -1405,7 +1563,12 @@ export default function SeinPanOfficialPage() {
         return (
           <>
             <HeroSection {...sp} />
+            <BrandMarquee />
+            <HomeServices {...sp} />
+            <ProcessStrip {...sp} />
             <TechnicianCard {...sp} />
+            <Testimonials isDark={isDark} />
+            <ClosingBand setActive={setActiveTab} />
           </>
         );
       case 'services':
@@ -1440,6 +1603,24 @@ export default function SeinPanOfficialPage() {
       </main>
 
       <Footer setActive={setActiveTab} />
+
+      <nav className={`fixed bottom-0 left-0 right-0 z-50 border-t backdrop-blur-xl md:hidden ${isDark ? 'border-white/10 bg-ink/95' : 'border-slate-200 bg-white/95'}`}>
+        <div className="grid grid-cols-5">
+          {NAV_TABS.map(({ id, label, Icon }) => {
+            const on = activeTab === id;
+            return (
+              <button
+                key={id}
+                onClick={() => setActiveTab(id)}
+                className={`flex flex-col items-center gap-1 py-2.5 text-[10px] font-semibold ${on ? 'text-copper-400' : isDark ? 'text-slate-500' : 'text-slate-400'}`}
+              >
+                <Icon size={16} />
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      </nav>
     </div>
   );
 }
