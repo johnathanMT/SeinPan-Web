@@ -1,10 +1,9 @@
 // src/App.jsx
 // App shell + routing.
 // Routes:
-//   /            -> RootLayout (mounts <Header/>) -> HubPage
+//   /            -> commercial shop site (the public front door)
+//   /hub         -> earlier catalog layout
 //   /immersive   -> ImmersivePage (full-screen, own floating switcher)
-// The <Header/> lives in RootLayout so it persists across all hub routes,
-// while the immersive page is intentionally chrome-free.
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import Header from "./components/layout/Header";
 import HubPage from "./pages/HubPage";
@@ -30,11 +29,12 @@ export default function App() {
   return (
     <BrowserRouter basename={basename}>
       <Routes>
+        <Route path="/" element={<SeinPanOfficialPage />} />
+        <Route path="/official" element={<SeinPanOfficialPage />} />
         <Route element={<RootLayout />}>
-          <Route path="/" element={<HubPage />} />
+          <Route path="/hub" element={<HubPage />} />
         </Route>
         <Route path="/immersive" element={<ImmersivePage />} />
-        <Route path="/official" element={<SeinPanOfficialPage />} />
       </Routes>
     </BrowserRouter>
   );

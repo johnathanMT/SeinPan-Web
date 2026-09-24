@@ -6,12 +6,11 @@
 import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Tv, Wrench, MapPin, Phone, Clock, Star, Award, Shield,
+  Tv, Wrench, MapPin, Phone, Clock, Award, Shield,
   Upload, CheckCircle, X, Menu, ChevronRight, ChevronDown,
   ArrowUpRight, Zap, Home, Info, ClipboardList, PhoneCall,
   Users, History, TrendingUp, BadgeCheck, Gauge, Sparkles,
-  Monitor, Radio, Cpu, Share2, Globe, SquarePlay, MessageSquare,
-  Mail, Sun, Moon, GraduationCap, Lightbulb, Send, Quote,
+  Monitor, Radio, Cpu, Sun, Moon, Lightbulb, Send, Quote,
 } from 'lucide-react';
 
 // ─────────────────────────────────────────────────────────────────
@@ -211,7 +210,7 @@ function SectionLabel({ children, T }) {
 }
 function SectionHeading({ children, T }) {
   return (
-    <h2 className={`font-display text-4xl font-normal leading-[1.05] tracking-tight sm:text-5xl ${T.h}`}>{children}</h2>
+    <h2 className={`font-display text-3xl font-normal leading-snug tracking-tight sm:text-5xl ${T.h}`}>{children}</h2>
   );
 }
 
@@ -227,6 +226,12 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-xl ${T.nav}`}>
       <div className="h-px w-full bg-gradient-to-r from-transparent via-copper-400/70 to-transparent" />
+      <div className={`hidden border-b sm:block ${isDark ? 'border-white/5 bg-black/30' : 'border-slate-200 bg-slate-50'}`}>
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1.5 text-[11px] tracking-[0.08em]">
+          <span className={T.muted}>{t('nav.utility')}</span>
+          <a href={`tel:${t('phone')}`} className="font-semibold text-copper-400">{t('phone')}</a>
+        </div>
+      </div>
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
 
         {/* Logo */}
@@ -235,18 +240,18 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
             <Tv size={17} className="text-pcb-400" />
           </div>
           <div className="text-left leading-none">
-            <span className={`block text-[13px] font-extrabold tracking-wide ${T.h}`}>{t('nav.brand')}</span>
-            <span className={`block text-[10px] uppercase tracking-[0.18em] ${T.muted}`}>{t('nav.tagline')}</span>
+            <span className={`block text-[13px] font-extrabold tracking-wide leading-snug ${T.h}`}>{t('nav.brand')}</span>
+            <span className={`hidden text-[10px] uppercase tracking-[0.18em] leading-snug xl:block ${T.muted}`}>{t('nav.tagline')}</span>
           </div>
         </button>
 
         {/* Desktop tabs */}
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-1 xl:flex">
           {NAV_TABS.map(({ id }) => (
             <button
               key={id}
               onClick={() => go(id)}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150 ${
+              className={`whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium leading-snug transition-all duration-150 ${
                 active === id ? T.tabActive : T.tabInact
               }`}
             >
@@ -275,7 +280,7 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
           {/* Book Repair CTA (desktop) */}
           <button
             onClick={() => go('inquiry')}
-            className="hidden items-center gap-2 rounded-xl bg-copper-500 px-4 py-2 text-sm font-bold text-pcb-950 shadow-glow transition hover:bg-copper-400 active:scale-95 md:flex"
+            className="hidden items-center gap-2 whitespace-nowrap rounded-xl bg-copper-500 px-4 py-2 text-sm font-bold leading-snug text-pcb-950 shadow-glow transition hover:bg-copper-400 active:scale-95 xl:flex"
           >
             <Wrench size={14} />
             {t('nav.bookRepair')}
@@ -283,7 +288,7 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
 
           {/* Hamburger (mobile) */}
           <button
-            className={`grid h-9 w-9 place-items-center rounded-lg border transition md:hidden ${
+            className={`grid h-9 w-9 place-items-center rounded-lg border transition xl:hidden ${
               isDark ? 'border-white/8 text-slate-400 hover:bg-white/5 hover:text-white'
                      : 'border-slate-200 text-slate-500 hover:bg-slate-100'
             }`}
@@ -297,7 +302,7 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
 
       {/* Mobile drawer */}
       {open && (
-        <div className={`border-t px-4 pb-4 pt-2 md:hidden ${isDark ? 'bg-ink-900 border-white/5' : 'bg-white border-slate-100'}`}>
+        <div className={`border-t px-4 pb-4 pt-2 xl:hidden ${isDark ? 'bg-ink-900 border-white/5' : 'bg-white border-slate-100'}`}>
           <div className="space-y-1">
             {NAV_TABS.map(({ id, Icon }) => (
               <button
@@ -362,7 +367,7 @@ function HeroSection({ setActive }) {
           </div>
 
           <p className="font-display text-lg italic text-copper-300 sm:text-xl">{t('hero.since')}</p>
-          <h1 className="mt-2 max-w-xl font-display text-[2.35rem] leading-[1.02] tracking-tight text-white sm:text-6xl sm:leading-[0.95] lg:text-7xl">
+          <h1 className="mt-2 max-w-3xl font-display text-[2.15rem] leading-[1.2] tracking-tight text-white sm:text-5xl lg:text-6xl">
             {t('hero.title')}
           </h1>
 
@@ -376,9 +381,16 @@ function HeroSection({ setActive }) {
               {t('hero.quote')}
               <ArrowUpRight size={14} />
             </button>
+            <a
+              href={`tel:${t('phone')}`}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 px-7 py-3.5 text-sm font-semibold text-white transition hover:border-copper-400/40"
+            >
+              <Phone size={14} />
+              {t('phone')}
+            </a>
             <button
               onClick={() => setActive('services')}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 px-7 py-3.5 text-sm font-medium text-slate-200 transition hover:border-copper-400/40 hover:text-white"
+              className="inline-flex items-center justify-center gap-2 px-2 py-3.5 text-sm font-medium text-slate-300 transition hover:text-white"
             >
               {t('hero.explore')}
               <ChevronRight size={14} />
@@ -659,13 +671,6 @@ function TechnicianCard({ isDark, setActive }) {
                   <BadgeCheck size={11} className="text-pcb-400" />
                   <span className="text-[10px] font-bold text-pcb-300">{t('tech.years')}</span>
                 </div>
-                {/* Star row */}
-                <div className="mt-1.5 flex gap-0.5">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={10} className="fill-copper-400 text-copper-400" />
-                  ))}
-                  <span className="ml-1 text-[10px] text-slate-500">5.0</span>
-                </div>
               </div>
             </div>
 
@@ -912,12 +917,7 @@ function AboutSection({ isDark, setActive }) {
                   <p className="mt-1 text-[11px] font-semibold text-copper-400">
                     {t('about.journey')}
                   </p>
-                  <div className="mt-2 flex gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={10} className="fill-copper-400 text-copper-400" />
-                    ))}
-                    <span className={`ml-1 text-[10px] ${T.muted}`}>{t('about.master')}</span>
-                  </div>
+                  <p className={`mt-2 text-[10px] font-semibold uppercase tracking-[0.12em] ${T.muted}`}>{t('about.master')}</p>
                 </div>
               </div>
             </div>
@@ -1492,25 +1492,10 @@ function Footer({ setActive }) {
               {t('footer.blurb')}
             </p>
 
-            {/* Social icons */}
-            <div className="mt-5 flex gap-2">
-              {[
-                { Icon: Share2,        label: t('footer.social.facebook') },
-                { Icon: Globe,         label: t('footer.social.instagram') },
-                { Icon: SquarePlay,    label: t('footer.social.youtube') },
-                { Icon: MessageSquare, label: t('footer.social.viber') },
-                { Icon: Mail,          label: t('footer.social.email') },
-              ].map(({ Icon, label }) => (
-                <a
-                  key={label}
-                  href="#"
-                  aria-label={label}
-                  className="grid h-8 w-8 place-items-center rounded-lg border border-white/5 text-slate-500 transition hover:border-pcb-500/25 hover:bg-pcb-500/10 hover:text-pcb-400"
-                >
-                  <Icon size={14} />
-                </a>
-              ))}
-            </div>
+            <a href={`tel:${t('phone')}`} className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-copper-300">
+              <Phone size={14} />
+              {t('phone')}
+            </a>
           </div>
 
           {/* Navigation col */}
@@ -1638,7 +1623,7 @@ export default function SeinPanOfficialPage() {
       />
 
       {/* Scrollable content with navbar offset */}
-      <main className="pt-[57px]">
+      <main className="pt-[57px] sm:pt-[88px]">
         <div className="transition-colors duration-300">
           {renderMain()}
         </div>

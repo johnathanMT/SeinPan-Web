@@ -16,6 +16,15 @@ html[data-lang="my"] {
   line-height: 1.85;
 }
 
+/* Instrument Serif has no Myanmar glyphs. Tight display leading
+   also stacks Burmese marks on top of each other. */
+html[data-lang="my"] .font-display {
+  font-family: "Noto Sans Myanmar", "Inter", sans-serif !important;
+  font-weight: 600;
+  letter-spacing: 0 !important;
+  line-height: 1.45 !important;
+}
+
 /* Japanese */
 html[data-lang="ja"] {
   --font-app: "Noto Sans JP", "Inter", sans-serif;

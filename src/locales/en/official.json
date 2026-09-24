@@ -8,7 +8,8 @@
     "inquiry": "Inquiry",
     "contact": "Contact",
     "brand": "Sein Pan",
-    "tagline": "Since 1989 · Electronic Service",
+    "tagline": "Television Service · Est. 1989",
+    "utility": "Yangon · Genuine parts · Diagnosis before you commit",
     "bookRepair": "Book Repair",
     "bookARepair": "Book a Repair",
     "toggleTheme": "Toggle theme",
@@ -16,10 +17,10 @@
     "switchLanguage": "Switch language"
   },
   "hero": {
-    "eyebrow": "Yangon · LED · LCD · Plasma",
+    "eyebrow": "Sein Pan Electronic · Yangon",
     "since": "Since 1989",
-    "title": "Television repair with a thirty-seven year reputation.",
-    "body": "LED, LCD, and Plasma repair beside Maydar Wee Market. Genuine parts, and the same workshop U Win Naing opened in South Okkalapa in 1989.",
+    "title": "Television service, held to an international standard.",
+    "body": "LED, LCD, and Plasma repair in North Okkalapa. Diagnosis before you commit, genuine parts, and the workshop U Win Naing has run since 1989.",
     "quote": "Request a repair quote",
     "explore": "Explore services",
     "genuine": "Genuine parts",
