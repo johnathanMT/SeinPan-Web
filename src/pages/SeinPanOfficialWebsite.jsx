@@ -578,7 +578,7 @@ export default function SeinPanOfficialWebsite() {
                 </div>
                 <div>
                   <p className="mb-0.5 text-xs font-semibold uppercase tracking-widest" style={{ color: C.copper400 }}>
-                    Founder &amp; Master Technician
+                    Founder &amp; Electronics Expert
                   </p>
                   <h3 className="text-lg font-bold text-white">U Win Naing</h3>
                   <p className="text-xs text-slate-500">Since 1989</p>

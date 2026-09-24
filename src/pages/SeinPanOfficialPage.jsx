@@ -1101,11 +1101,31 @@ function AboutSection({ isDark, setActive, featured = false }) {
 // ─────────────────────────────────────────────────────────────────
 const INITIAL_FORM = { fullName: '', phone: '', tvBrand: '', tvModel: '', issue: '', file: null };
 
+// Always Burmese, whatever the UI language, because the shop reads it.
+function buildInquiryMessage(f) {
+  return [
+    'ပြုပြင်မှု စုံစမ်းလွှာ အသစ်:',
+    `အမည်: ${f.fullName.trim()}`,
+    `ဖုန်းနံပါတ်: ${f.phone.trim()}`,
+    `အမှတ်တံဆိပ်: ${f.tvBrand.trim()}`,
+    `မော်ဒယ်: ${f.tvModel.trim() || '-'}`,
+    `ပြဿနာ: ${f.issue.trim()}`,
+  ].join('\n');
+}
+
+// If the page never loses focus or visibility within this window, assume no
+// app handled the viber:// link (typical on desktop without Viber installed).
+const VIBER_DETECT_MS = 1800;
+
 function InquirySection({ isDark }) {
   const [form, setForm]       = useState(INITIAL_FORM);
   const [errors, setErrors]   = useState({});
-  const [submitted, setSubmitted] = useState(false);
+  // null | 'opening' | 'opened' | 'fallback'
+  const [status, setStatus]   = useState(null);
+  const [message, setMessage] = useState('');
+  const [copied, setCopied]   = useState(false);
   const fileRef = useRef(null);
+  const detectRef = useRef(null);
   const { t, list } = useOfficial();
   const steps = list('process.steps');
   const tags = list('inquiry.tags');
@@ -1122,12 +1142,56 @@ function InquirySection({ isDark }) {
     return e;
   }
 
+  function stopDetecting() {
+    detectRef.current?.();
+    detectRef.current = null;
+  }
+
+  useEffect(() => stopDetecting, []);
+
+  function openViber(text) {
+    stopDetecting();
+    setStatus('opening');
+
+    let leftPage = false;
+    const onLeave = () => { leftPage = true; };
+    const onVisibility = () => { if (document.hidden) leftPage = true; };
+    window.addEventListener('blur', onLeave);
+    window.addEventListener('pagehide', onLeave);
+    document.addEventListener('visibilitychange', onVisibility);
+    const timer = setTimeout(() => {
+      stopDetecting();
+      setStatus(leftPage || document.hidden ? 'opened' : 'fallback');
+    }, VIBER_DETECT_MS);
+
+    detectRef.current = () => {
+      clearTimeout(timer);
+      window.removeEventListener('blur', onLeave);
+      window.removeEventListener('pagehide', onLeave);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+
+    window.location.href = `${LINKS.viber}&draft=${encodeURIComponent(text)}`;
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setErrors({});
-    setSubmitted(true);
+    const text = buildInquiryMessage(form);
+    setMessage(text);
+    setCopied(false);
+    openViber(text);
+  }
+
+  async function copyMessage() {
+    try {
+      await navigator.clipboard.writeText(message);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
   }
 
   function handleChange(field, val) {
@@ -1135,10 +1199,17 @@ function InquirySection({ isDark }) {
     if (errors[field]) setErrors((p) => ({ ...p, [field]: undefined }));
   }
 
+  function closeModal() {
+    stopDetecting();
+    setStatus(null);
+  }
+
   function resetForm() {
+    closeModal();
     setForm(INITIAL_FORM);
     setErrors({});
-    setSubmitted(false);
+    setMessage('');
+    setCopied(false);
     if (fileRef.current) fileRef.current.value = '';
   }
 
@@ -1304,31 +1375,37 @@ function InquirySection({ isDark }) {
               {/* Submit */}
               <button
                 type="submit"
-                className={`${CTA} w-full`}
+                disabled={status === 'opening'}
+                className={`${CTA} w-full disabled:cursor-wait disabled:opacity-70`}
               >
-                {t('inquiry.submit')}
+                <ViberIcon size={18} />
+                <span>{keepWords(t('inquiry.submit'))}</span>
               </button>
 
-              <p className={`text-center text-[10px] ${T.muted}`}>
-                {t('inquiry.note')}
+              <p className={`text-center text-[11px] leading-relaxed ${T.muted}`}>
+                {keepWords(t('inquiry.note'))}
               </p>
             </form>
           </div>
         </div>
       </div>
 
-      {/* ── Success Modal ── */}
-      {submitted && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-theme-color-4/60 px-4 backdrop-blur-sm">
+      {/* ── Viber hand-off dialog ── */}
+      {status && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-theme-color-4/60 px-4 py-8 backdrop-blur-sm">
           <div
-            className={`relative w-full max-w-md overflow-hidden rounded-2xl border p-8 text-center shadow-md ${
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="inquiry-status-title"
+            className={`relative w-full max-w-md overflow-hidden rounded-2xl border p-7 text-center shadow-md sm:p-8 ${
               isDark ? 'border-theme-color-2/15 bg-theme-color-4' : 'border-theme-color-4/10 bg-theme-color-2'
             }`}
           >
-            <div className="absolute left-0 right-0 top-0 h-1.5 bg-theme-color-3" />
+            <div className="absolute left-0 right-0 top-0 h-1.5 bg-[#7360F2]" />
 
             <button
-              onClick={resetForm}
+              onClick={closeModal}
+              aria-label={t('inquiry.close')}
               className={`absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-lg transition ${
                 isDark ? 'text-theme-color-2/70 hover:bg-white/10 hover:text-theme-color-2' : 'text-theme-color-4/70 hover:bg-theme-color-4/5'
               }`}
@@ -1336,56 +1413,79 @@ function InquirySection({ isDark }) {
               <X size={16} />
             </button>
 
-            <div className="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-full bg-theme-color-1 shadow-md">
-              <CheckCircle size={32} className="text-theme-color-2" />
+            <div
+              className={`mx-auto mb-5 grid h-16 w-16 place-items-center rounded-full shadow-md ${
+                status === 'fallback' ? 'bg-theme-color-1' : 'bg-[#7360F2]'
+              }`}
+            >
+              {status === 'fallback'
+                ? <CheckCircle size={30} className="text-theme-color-2" />
+                : <ViberIcon size={30} className={`text-white ${status === 'opening' ? 'motion-safe:animate-pulse' : ''}`} />}
             </div>
 
-            <h3 className={`text-xl font-extrabold ${T.h}`}>
-              {t('inquiry.successTitle')}
+            <h3 id="inquiry-status-title" className={`text-xl font-extrabold ${T.h}`}>
+              {t(`inquiry.${status}Title`)}
             </h3>
-            <p className={`mt-2 text-sm leading-relaxed ${T.body}`}>
-              {t('inquiry.thanks')}{' '}
-              <strong className={T.h}>{form.fullName}</strong>.{' '}
-              {t('inquiry.received')}{' '}
-              <strong className={T.h}>{form.tvBrand}</strong>{' '}
-              {t('inquiry.tvWord')}{' '}
-              {t('inquiry.callAt')}{' '}
-              <strong className={T.h}>{form.phone}</strong> {t('inquiry.within')}
+            <p aria-live="polite" className={`mt-2 text-sm leading-relaxed ${T.body}`}>
+              {keepWords(t(`inquiry.${status}Body`, { phone: t('phone') }))}
             </p>
 
-            <div className={`mt-5 rounded-xl border px-4 py-3 text-left text-xs ${T.soft}`}>
-              <p className={`mb-2 text-[10px] font-bold uppercase tracking-wider ${T.muted}`}>
-                {t('inquiry.summary')}
+            {form.file && (
+              <p className={`mt-3 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium ${T.soft}`}>
+                <Upload size={12} />
+                {keepWords(t('inquiry.photoTip'))}
               </p>
-              {[
-                { k: t('inquiry.sumName'),  v: form.fullName },
-                { k: t('inquiry.sumPhone'), v: form.phone },
-                { k: t('inquiry.sumTv'),    v: `${form.tvBrand} ${form.tvModel}`.trim() },
-                { k: t('inquiry.sumPhoto'), v: form.file ? form.file.name : t('inquiry.noPhoto') },
-              ].map(({ k, v }) => (
-                <div key={k} className={`flex justify-between border-b py-1 last:border-0 ${T.div}`}>
-                  <span className={T.muted}>{k}</span>
-                  <span className={`max-w-[55%] truncate font-medium ${T.h}`}>{v}</span>
-                </div>
-              ))}
+            )}
+
+            <div className={`mt-5 rounded-xl border px-4 py-3 text-left ${T.soft}`}>
+              <p className={`mb-2 text-[10px] font-bold uppercase tracking-wider ${T.muted}`}>
+                {t('inquiry.messagePreview')}
+              </p>
+              <p className={`whitespace-pre-line break-words text-xs leading-relaxed ${T.h}`}>{message}</p>
             </div>
 
-            <div className="mt-5 flex gap-3">
+            {status === 'opened' && (
+              <p className={`mt-3 text-xs leading-relaxed ${T.muted}`}>
+                {keepWords(t('inquiry.notOpenedHint', { phone: t('phone') }))}
+              </p>
+            )}
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <button
-                onClick={resetForm}
-                className={`flex-1 rounded-xl border-2 py-3 text-sm font-semibold transition hover:scale-105 ${
+                onClick={() => openViber(message)}
+                disabled={status === 'opening'}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#7360F2] px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:scale-105 hover:brightness-110 disabled:cursor-wait disabled:opacity-70 disabled:hover:scale-100"
+              >
+                <ViberIcon size={16} />
+                {t('inquiry.retryViber')}
+              </button>
+              <button
+                onClick={copyMessage}
+                className={`inline-flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition hover:scale-105 ${
                   isDark ? 'border-theme-color-2/40 text-theme-color-2 hover:bg-white/10' : 'border-theme-color-1 text-theme-color-1 hover:bg-theme-color-1 hover:text-white'
                 }`}
               >
-                {t('inquiry.another')}
-              </button>
-              <button
-                onClick={() => setSubmitted(false)}
-                className={`${CTA} flex-1 py-3`}
-              >
-                {t('inquiry.close')}
+                {copied ? <CheckCircle size={16} /> : <ClipboardList size={16} />}
+                {copied ? t('inquiry.copied') : t('inquiry.copy')}
               </button>
             </div>
+
+            {status !== 'opening' && (
+              <a
+                href={`tel:${t('phone')}`}
+                className={`${CTA} mt-3 w-full py-3`}
+              >
+                <Phone size={16} />
+                {t('inquiry.callShop')} · {t('phone')}
+              </a>
+            )}
+
+            <button
+              onClick={resetForm}
+              className={`mt-4 text-xs font-semibold underline-offset-4 transition hover:underline ${T.muted}`}
+            >
+              {t('inquiry.another')}
+            </button>
           </div>
         </div>
       )}
