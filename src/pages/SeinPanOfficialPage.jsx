@@ -4,10 +4,14 @@
 // ✦ Controlled inquiry form with validation  ✦ All icons verified for lucide-react@1.22
 
 import { Children, cloneElement, isValidElement, useState, useRef, useEffect } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { BRAND_LOGOS } from '../components/BrandLogos';
+import { WorkshopDecor } from '../components/WorkshopTools';
+import { CircuitDecor } from '../components/CircuitDecor';
 import {
   Tv, Wrench, MapPin, Phone, Clock, Award, Shield,
-  Upload, CheckCircle, X, Menu, ChevronRight, ChevronDown,
+  CheckCircle, X, Menu, ChevronRight, ChevronDown, User, Camera,
   ArrowUpRight, ArrowLeft, Zap, Home, Info, ClipboardList, PhoneCall,
   Users, History, TrendingUp, BadgeCheck, Gauge, Sparkles,
   Monitor, Radio, Cpu, Sun, Moon, Lightbulb, Send, ShieldCheck, Handshake,
@@ -124,9 +128,11 @@ const ABOUT_STATS = [
 ];
 
 const LINKS = {
-  maps:     'https://maps.app.goo.gl/18ACK194oobVr4uP9?g_st=ic',
-  facebook: 'https://www.facebook.com/seinpanelectronic',
-  viber:    'viber://chat?number=%2B959423858609',
+  maps:      'https://maps.app.goo.gl/18ACK194oobVr4uP9?g_st=ic',
+  facebook:  'https://www.facebook.com/seinpanelectronic',
+  messenger: 'https://m.me/seinpanelectronic',
+  viber:     'viber://chat?number=%2B959423858609',
+  tel:       'tel:+959423858609',
 };
 
 // Every external link opens in a new tab without giving it window.opener.
@@ -137,6 +143,14 @@ function FacebookIcon({ size = 18, className = '' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
       <path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12Z" />
+    </svg>
+  );
+}
+
+function MessengerIcon({ size = 18, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d="M12 2C6.48 2 2 6.14 2 11.25c0 2.92 1.46 5.52 3.74 7.24V22l3.42-1.88c.9.25 1.85.38 2.84.38 5.52 0 10-4.14 10-9.25S17.52 2 12 2Zm1.07 12.47-2.56-2.73-5 2.73 5.5-5.84 2.61 2.73 4.95-2.73-5.5 5.84Z" />
     </svg>
   );
 }
@@ -164,13 +178,8 @@ const INQUIRY_STEPS = [
   { Icon: Wrench,         title: 'We Fix It',            body: 'Drop off your set or arrange collection in North Okkalapa township.' },
 ];
 
-const BRANDS = [
-  'Samsung', 'LG', 'Sony', 'Panasonic', 'Toshiba', 'Sharp',
-  'TCL', 'Hisense', 'Philips', 'Haier', 'Skyworth', 'Changhong',
-];
-
 const CTA =
-  'inline-flex items-center justify-center gap-2 rounded-xl bg-theme-color-3 px-7 py-3.5 text-sm font-bold text-white shadow-md shadow-theme-color-4/20 transition duration-200 hover:scale-105 hover:opacity-90 hover:shadow-lg active:scale-100';
+  'neon-cta inline-flex items-center justify-center gap-2 rounded-xl bg-theme-color-3 px-7 py-3.5 text-sm font-bold text-white shadow-md shadow-theme-color-4/20 hover:scale-105 active:scale-100';
 
 const BADGE = 'rounded-full bg-theme-color-3 px-3 py-1 text-xs font-bold text-white shadow-sm';
 
@@ -192,35 +201,99 @@ const MY_DIGITS = '၀၁၂၃၄၅၆၇၈၉';
 const toLocalDigits = (value, lang) =>
   lang === 'my' ? String(value).replace(/[0-9]/g, (d) => MY_DIGITS[d]) : String(value);
 
-function Reveal({ children, className = '', delay = 0, as: Tag = 'div' }) {
-  const ref = useRef(null);
-  const [shown, setShown] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || typeof IntersectionObserver === 'undefined') {
-      setShown(true);
-      return undefined;
-    }
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShown(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+function Reveal({ children, className = '', delay = 0, as = 'div' }) {
+  const reduce = useReducedMotion();
+  const MotionTag = motion[as] || motion.div;
+  if (reduce) return <MotionTag className={className}>{children}</MotionTag>;
   return (
-    <Tag
-      ref={ref}
-      style={{ transitionDelay: `${delay}ms` }}
-      className={`transition-all duration-700 ease-out ${shown ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'} ${className}`}
+    <MotionTag
+      className={className}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.14, margin: '0px 0px -48px 0px' }}
+      variants={{
+        hidden: fadeUp.hidden,
+        show: {
+          ...fadeUp.show,
+          transition: { ...fadeUp.show.transition, delay: delay / 1000 },
+        },
+      }}
     >
       {children}
-    </Tag>
+    </MotionTag>
+  );
+}
+
+function RevealGroup({ children, className = '', stagger = 0.12, as = 'div' }) {
+  const reduce = useReducedMotion();
+  const MotionTag = motion[as] || motion.div;
+  if (reduce) {
+    const StaticTag = as === 'ol' ? 'ol' : as === 'ul' ? 'ul' : 'div';
+    return <StaticTag className={className}>{children}</StaticTag>;
+  }
+  return (
+    <MotionTag
+      className={className}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.12, margin: '0px 0px -48px 0px' }}
+      variants={{
+        hidden: {},
+        show: { transition: { staggerChildren: stagger, delayChildren: 0.04 } },
+      }}
+    >
+      {children}
+    </MotionTag>
+  );
+}
+
+function RevealItem({ children, className = '', as = 'div' }) {
+  const MotionTag = motion[as] || motion.div;
+  return (
+    <MotionTag className={className} variants={fadeUp}>
+      {children}
+    </MotionTag>
+  );
+}
+
+function GlitchTitle({ text, className = '', baseClassName = '' }) {
+  const [play, setPlay] = useState(true);
+  const timer = useRef(null);
+
+  const burst = () => {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    clearTimeout(timer.current);
+    setPlay(false);
+    requestAnimationFrame(() => {
+      setPlay(true);
+      timer.current = setTimeout(() => setPlay(false), 800);
+    });
+  };
+
+  useEffect(() => {
+    burst();
+    return () => clearTimeout(timer.current);
+  }, [text]);
+
+  return (
+    <span
+      className={`glitch-title ${play ? 'glitch-title--play' : ''} ${className}`}
+      onMouseEnter={burst}
+    >
+      <span className={`glitch-title__base ${baseClassName}`}>{keepWords(text)}</span>
+      <span aria-hidden="true" className="glitch-title__slice glitch-title__slice--cyan">{keepWords(text)}</span>
+      <span aria-hidden="true" className="glitch-title__slice glitch-title__slice--amber">{keepWords(text)}</span>
+      <span aria-hidden="true" className="glitch-title__scan" />
+    </span>
   );
 }
 
@@ -234,7 +307,7 @@ function getT(isDark) {
     sec:        isDark ? 'bg-theme-color-4'                       : 'bg-theme-color-2',
     altSec:     isDark ? 'bg-theme-color-1/40'                     : 'bg-theme-color-1/[0.08]',
     card:       isDark ? 'border border-theme-color-2/15 bg-white/5 shadow-sm' : 'border border-theme-color-4/10 bg-white/50 shadow-md shadow-theme-color-4/5',
-    cardHov:    isDark ? 'hover:border-theme-color-3/60' : 'hover:border-theme-color-3/40 hover:shadow-lg',
+    cardHov:    isDark ? 'neon-card hover:border-theme-color-3/60' : 'neon-card hover:border-theme-color-3/40',
     feature:    'bg-theme-color-1 text-white shadow-md shadow-theme-color-4/10',
     h:          isDark ? 'text-theme-color-2' : 'text-theme-color-4',
     body:       isDark ? 'text-theme-color-2/85' : 'text-theme-color-4/80',
@@ -471,9 +544,11 @@ function HeroSection({ setActive }) {
                           <span className="block py-1 text-5xl leading-relaxed text-white drop-shadow-[0_0_24px_rgba(255,255,255,0.25)] sm:text-7xl lg:text-8xl">
                             {t('hero.titleLine1')}
                           </span>
-                          <span className="mt-1 block bg-gradient-to-r from-theme-gold-light via-theme-gold to-theme-gold-deep bg-clip-text py-3 text-3xl leading-relaxed text-transparent drop-shadow-[0_0_18px_rgba(230,194,122,0.35)] sm:text-5xl lg:text-6xl">
-                            {keepWords(t('hero.titleLine2'))}
-                          </span>
+                          <GlitchTitle
+                            text={t('hero.titleLine2')}
+                            className="mt-1 block py-3 text-3xl leading-relaxed sm:text-5xl lg:text-6xl"
+                            baseClassName="bg-gradient-to-r from-theme-gold-light via-theme-gold to-theme-gold-deep bg-clip-text text-transparent drop-shadow-[0_0_18px_rgba(230,194,122,0.35)]"
+                          />
                         </h1>
                         <div aria-hidden="true" className="mx-auto mt-4 h-1 w-24 rounded-full bg-gradient-to-r from-theme-gold-deep via-theme-gold to-theme-gold-deep" />
                       </div>
@@ -556,24 +631,27 @@ function HeroSection({ setActive }) {
 
 function BrandMarquee({ isDark }) {
   const { t } = useOfficial();
-  const row = [...BRANDS, ...BRANDS];
+  const row = [...BRAND_LOGOS, ...BRAND_LOGOS];
   return (
     <section className={`border-y py-12 ${isDark ? 'border-theme-color-2/10 bg-theme-color-1/40' : 'border-theme-color-4/10 bg-theme-color-1/[0.08]'}`}>
       <p className={`mb-6 text-center text-xs font-semibold tracking-[0.2em] ${isDark ? 'text-theme-color-2/75' : 'text-theme-color-4/75'}`}>
         {t('brandsLabel')}
       </p>
-      <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
-        <div className="flex w-max animate-marquee items-center gap-14">
-          {row.map((brand, i) => (
+      <div className="group/marquee overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+        <div className="flex w-max items-center gap-12 motion-safe:animate-marquee group-hover/marquee:[animation-play-state:paused] sm:gap-16">
+          {row.map(({ id, Logo }, i) => (
             <span
-              key={`${brand}-${i}`}
-              className={`font-display text-2xl tracking-wide sm:text-3xl ${isDark ? 'text-theme-color-2/50' : 'text-theme-color-1/80'}`}
+              key={`${id}-${i}`}
+              className="inline-flex h-10 items-center"
             >
-              {brand}
+              <Logo />
             </span>
           ))}
         </div>
       </div>
+      <p className={`mx-auto mt-7 max-w-3xl px-6 text-center text-[10px] leading-relaxed sm:text-[11px] ${isDark ? 'text-theme-color-2/55' : 'text-theme-color-4/55'}`}>
+        {keepWords(t('brandsDisclaimer'))}
+      </p>
     </section>
   );
 }
@@ -584,26 +662,29 @@ function HomeServices({ setActive, isDark }) {
   const [lead, ...rest] = SERVICES;
   const leadFeatures = list(`services.${lead.id}.features`);
   return (
-    <section className={`px-4 py-20 sm:py-28 ${T.sec}`}>
-      <div className="mx-auto max-w-6xl">
-        <Reveal className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
-          <div>
-            <SectionLabel T={T}>{t('homeServices.label')}</SectionLabel>
-            <SectionHeading T={T}>
-              {t('homeServices.title')} <span className="text-theme-color-3">{t('homeServices.titleEm')}</span>
-            </SectionHeading>
-          </div>
-          <button onClick={() => setActive('services')} className={`group inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-sm font-semibold ${T.accent}`}>
-            {t('homeServices.all')}
-            <ArrowUpRight size={15} className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </button>
-        </Reveal>
+    <section className={`relative px-4 py-20 sm:py-28 ${T.sec}`}>
+      <div className="relative mx-auto max-w-6xl">
+        <div className="relative lg:px-28 xl:px-36">
+          <WorkshopDecor />
+          <Reveal className="relative z-10 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+            <div className="lg:max-w-xl xl:max-w-2xl">
+              <SectionLabel T={T}>{t('homeServices.label')}</SectionLabel>
+              <SectionHeading T={T}>
+                {t('homeServices.title')} <span className="text-theme-color-3">{t('homeServices.titleEm')}</span>
+              </SectionHeading>
+            </div>
+            <button onClick={() => setActive('services')} className={`group inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-sm font-semibold ${T.accent}`}>
+              {t('homeServices.all')}
+              <ArrowUpRight size={15} className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </button>
+          </Reveal>
+        </div>
 
-        <div className="mt-12 grid gap-5 lg:grid-cols-2 lg:grid-rows-2">
-          <Reveal className="lg:row-span-2">
+        <RevealGroup className="mt-12 grid gap-5 lg:grid-cols-2 lg:grid-rows-2" stagger={0.12}>
+          <RevealItem className="lg:row-span-2">
             <button
               onClick={() => setActive('services')}
-              className="group relative flex h-full w-full flex-col overflow-hidden rounded-2xl bg-theme-color-1 p-8 text-left text-white shadow-md shadow-theme-color-4/15 transition duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-10"
+              className="neon-card-dark group relative flex h-full w-full flex-col overflow-hidden rounded-2xl bg-theme-color-1 p-8 text-left text-white shadow-md shadow-theme-color-4/15 hover:-translate-y-1 sm:p-10"
             >
               <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-theme-color-3/35 blur-3xl transition duration-500 group-hover:bg-theme-color-3/50" />
               <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-grid-lines bg-[length:40px_40px] opacity-60 [mask-image:linear-gradient(to_bottom,black,transparent_70%)]" />
@@ -630,10 +711,10 @@ function HomeServices({ setActive, isDark }) {
                 <ArrowUpRight size={15} className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </span>
             </button>
-          </Reveal>
+          </RevealItem>
 
-          {rest.map((svc, i) => (
-            <Reveal key={svc.id} delay={(i + 1) * 120} className="h-full">
+          {rest.map((svc) => (
+            <RevealItem key={svc.id} className="h-full">
               <button
                 onClick={() => setActive('services')}
                 className={`group flex h-full w-full flex-col rounded-2xl border p-8 text-left transition duration-300 hover:-translate-y-1 ${T.card} ${T.cardHov}`}
@@ -653,9 +734,9 @@ function HomeServices({ setActive, isDark }) {
                   <ArrowUpRight size={15} className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </span>
               </button>
-            </Reveal>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </div>
     </section>
   );
@@ -716,11 +797,11 @@ function WhyChooseUs({ isDark }) {
           <SectionLabel T={T}>{t('why.title')}</SectionLabel>
           <SectionHeading T={T}>{t('why.subtitle')}</SectionHeading>
         </Reveal>
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
+        <RevealGroup className="mt-12 grid gap-5 md:grid-cols-3">
           {items.map(({ heading, body }, i) => {
             const Icon = WHY_ICONS[i] || Award;
             return (
-              <Reveal key={heading} delay={i * 120} className="h-full">
+              <RevealItem key={heading} className="h-full">
                 <article className={`flex h-full flex-col rounded-2xl border p-7 transition duration-300 hover:-translate-y-1 ${T.card} ${T.cardHov}`}>
                   <div className="grid h-12 w-12 place-items-center rounded-xl bg-theme-color-1 shadow-sm">
                     <Icon size={22} className="text-theme-color-2" />
@@ -728,10 +809,10 @@ function WhyChooseUs({ isDark }) {
                   <h3 className={`mt-6 text-lg font-bold leading-snug ${T.h}`}>{keepWords(heading)}</h3>
                   <p className={`mt-3 flex-1 text-[15px] leading-loose ${T.body}`}>{keepWords(body)}</p>
                 </article>
-              </Reveal>
+              </RevealItem>
             );
           })}
-        </div>
+        </RevealGroup>
       </div>
     </section>
   );
@@ -902,16 +983,21 @@ function ServicesSection({ isDark, setActive }) {
   const T = getT(isDark);
 
   return (
-    <section className={`min-h-screen px-4 py-20 sm:py-28 ${T.sec}`}>
-      <div className="mx-auto max-w-6xl">
-        <SectionLabel T={T}>{t('services.pageLabel')}</SectionLabel>
-        <SectionHeading T={T}>
-          {t('services.pageTitle')}{' '}
-          <span className="text-theme-color-3">{t('services.pageTitleEm')}</span>
-        </SectionHeading>
-        <p className={`mt-4 max-w-lg text-sm leading-relaxed sm:text-base ${T.body}`}>
-          {t('services.pageBody')}
-        </p>
+    <section className={`relative min-h-screen px-4 py-20 sm:py-28 ${T.sec}`}>
+      <div className="relative mx-auto max-w-6xl">
+        <div className="relative lg:px-28 xl:px-36">
+          <WorkshopDecor />
+          <div className="relative z-10 max-w-2xl lg:max-w-xl xl:max-w-2xl">
+            <SectionLabel T={T}>{t('services.pageLabel')}</SectionLabel>
+            <SectionHeading T={T}>
+              {t('services.pageTitle')}{' '}
+              <span className="text-theme-color-3">{t('services.pageTitleEm')}</span>
+            </SectionHeading>
+            <p className={`mt-4 max-w-lg text-sm leading-relaxed sm:text-base ${T.body}`}>
+              {t('services.pageBody')}
+            </p>
+          </div>
+        </div>
 
         {/* Service cards */}
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -921,7 +1007,7 @@ function ServicesSection({ isDark, setActive }) {
             return (
               <div
                 key={svc.id}
-                className={`group flex flex-col rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden hover:-translate-y-1 ${T.card} ${T.cardHov}`}
+                className={`neon-card group flex cursor-pointer flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 ${T.card} ${T.cardHov}`}
                 onClick={() => setExpanded(isOpen ? null : svc.id)}
               >
                 <div className="h-1.5 w-full" style={{ background: svc.accentHex }} />
@@ -1007,27 +1093,30 @@ function AboutSection({ isDark, setActive, featured = false }) {
   const T = getT(isDark);
   return (
     <section className={`relative overflow-hidden px-4 ${featured ? 'py-16 sm:py-20' : 'min-h-screen py-20 sm:py-28'} ${T.altSec}`}>
+      <CircuitDecor isDark={isDark} />
       <div aria-hidden="true" className="pointer-events-none absolute -right-24 top-0 h-80 w-80 rounded-full bg-theme-color-3/15 blur-3xl" />
       <div aria-hidden="true" className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-theme-color-1/15 blur-3xl" />
 
-      <div className="relative mx-auto max-w-6xl">
+      <div className="relative z-10 mx-auto max-w-6xl">
         <div className="grid gap-14 lg:grid-cols-2 lg:items-start">
 
-          <Reveal>
-            <SectionLabel T={T}>{t('about.label')}</SectionLabel>
-            <SectionHeading T={T}>
-              {t('about.title')}{' '}
-              <span className="text-theme-color-3">{t('about.titleTrust')}</span>{t('about.titleAfter')}
-            </SectionHeading>
+          <RevealGroup className="space-y-6" stagger={0.1}>
+            <RevealItem>
+              <SectionLabel T={T}>{t('about.label')}</SectionLabel>
+              <SectionHeading T={T}>
+                {t('about.title')}{' '}
+                <span className="text-theme-color-3">{t('about.titleTrust')}</span>{t('about.titleAfter')}
+              </SectionHeading>
+            </RevealItem>
 
-            <div className={`mt-6 flex gap-4 rounded-2xl border-l-4 border-theme-color-3 p-5 shadow-sm ${isDark ? 'bg-white/5' : 'bg-white/60'}`}>
+            <RevealItem className={`flex gap-4 rounded-2xl border-l-4 border-theme-color-3 p-5 shadow-sm ${isDark ? 'bg-white/5' : 'bg-white/60'}`}>
               <MapPin size={20} className="mt-1 shrink-0 text-theme-color-3" />
               <p className={`text-[15px] font-medium leading-loose sm:text-base ${T.h}`}>
                 {keepWords(t('about.notice'))}
               </p>
-            </div>
+            </RevealItem>
 
-            <div className={`mt-6 space-y-4 text-[15px] leading-loose sm:text-base ${T.body}`}>
+            <RevealItem className={`space-y-4 text-[15px] leading-loose sm:text-base ${T.body}`}>
               <p>
                 {keepWords(t('about.p1a'))}{' '}
                 <strong className={`font-semibold ${T.h}`}>{t('about.p1name')}</strong> {t('about.p1b')}{' '}
@@ -1039,10 +1128,10 @@ function AboutSection({ isDark, setActive, featured = false }) {
                 <strong className={`font-semibold ${T.accent}`}>{t('about.p3place')}</strong>
                 {keepWords(t('about.p3b'))}
               </p>
-            </div>
+            </RevealItem>
 
             {!featured && (
-              <div className={`mt-8 flex items-center gap-4 rounded-2xl p-5 ${T.card}`}>
+              <RevealItem className={`flex items-center gap-4 rounded-2xl p-5 ${T.card}`}>
                 <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-theme-color-3 p-[3px]">
                   <TechPhoto isDark />
                 </div>
@@ -1051,20 +1140,22 @@ function AboutSection({ isDark, setActive, featured = false }) {
                   <p className={`text-xs ${T.muted}`}>{t('tech.role')}</p>
                   <p className={`mt-1 text-xs font-semibold ${T.accent}`}>{t('about.journey')}</p>
                 </div>
-              </div>
+              </RevealItem>
             )}
 
-            <button onClick={() => setActive('inquiry')} className={`${CTA} mt-8`}>
-              <ClipboardList size={14} />
-              {t('about.book')}
-            </button>
-          </Reveal>
+            <RevealItem>
+              <button onClick={() => setActive('inquiry')} className={`${CTA} mt-2`}>
+                <ClipboardList size={14} />
+                {t('about.book')}
+              </button>
+            </RevealItem>
+          </RevealGroup>
 
           <div className="relative">
             <div aria-hidden="true" className="absolute bottom-6 left-[1.2rem] top-6 w-0.5 bg-gradient-to-b from-theme-color-3 via-theme-color-1 to-transparent" />
-            <ol className="space-y-5">
-              {timeline.map(({ year, title, body }, i) => (
-                <Reveal as="li" key={year} delay={i * 110} className="relative pl-14">
+            <RevealGroup as="ol" className="space-y-5" stagger={0.1}>
+              {timeline.map(({ year, title, body }) => (
+                <RevealItem as="li" key={year} className="relative pl-14">
                   <span className="absolute left-0 top-5 grid h-10 w-10 place-items-center rounded-full bg-theme-color-1 shadow-md shadow-theme-color-4/15">
                     <span className="h-2.5 w-2.5 rounded-full bg-theme-color-2" />
                   </span>
@@ -1073,23 +1164,23 @@ function AboutSection({ isDark, setActive, featured = false }) {
                     <h3 className={`mt-1 text-base font-bold ${T.h}`}>{title}</h3>
                     <p className={`mt-2 text-sm leading-loose ${T.body}`}>{keepWords(body)}</p>
                   </div>
-                </Reveal>
+                </RevealItem>
               ))}
-            </ol>
+            </RevealGroup>
           </div>
         </div>
 
-        <div className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <RevealGroup className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4" stagger={0.08}>
           {ABOUT_STATS.map(({ Icon }, i) => (
-            <Reveal key={stats[i]?.label || i} delay={i * 80} className={`rounded-2xl px-4 py-7 text-center ${T.feature}`}>
+            <RevealItem key={stats[i]?.label || i} className={`rounded-2xl px-4 py-7 text-center ${T.feature}`}>
               <div className="mx-auto mb-3 grid h-10 w-10 place-items-center rounded-xl bg-theme-color-3">
                 <Icon size={18} className="text-white" />
               </div>
               <p className="font-display text-3xl text-theme-gold">{stats[i]?.value}</p>
               <p className="mt-1 text-xs text-white">{stats[i]?.label}</p>
-            </Reveal>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </div>
     </section>
   );
@@ -1098,396 +1189,74 @@ function AboutSection({ isDark, setActive, featured = false }) {
 // ─────────────────────────────────────────────────────────────────
 // INQUIRY SECTION
 // ─────────────────────────────────────────────────────────────────
-const INITIAL_FORM = { fullName: '', phone: '', tvBrand: '', tvModel: '', issue: '', file: null };
-
-// Always Burmese, whatever the UI language, because the shop reads it.
-function buildInquiryMessage(f) {
-  return [
-    'ပြုပြင်မှု စုံစမ်းလွှာ အသစ်:',
-    `အမည်: ${f.fullName.trim()}`,
-    `ဖုန်းနံပါတ်: ${f.phone.trim()}`,
-    `အမှတ်တံဆိပ်: ${f.tvBrand.trim()}`,
-    `မော်ဒယ်: ${f.tvModel.trim() || '-'}`,
-    `ပြဿနာ: ${f.issue.trim()}`,
-  ].join('\n');
-}
-
-// If the page never loses focus or visibility within this window, assume no
-// app handled the viber:// link (typical on desktop without Viber installed).
-const VIBER_DETECT_MS = 1800;
+const GUIDE_ICONS = [User, Tv, ClipboardList, Camera];
 
 function InquirySection({ isDark }) {
-  const [form, setForm]       = useState(INITIAL_FORM);
-  const [errors, setErrors]   = useState({});
-  // null | 'opening' | 'opened' | 'fallback'
-  const [status, setStatus]   = useState(null);
-  const [message, setMessage] = useState('');
-  const [copied, setCopied]   = useState(false);
-  const fileRef = useRef(null);
-  const detectRef = useRef(null);
   const { t, list } = useOfficial();
-  const steps = list('process.steps');
-  const tags = list('inquiry.tags');
+  const steps = list('inquiry.steps');
   const T = getT(isDark);
-
-  function validate() {
-    const e = {};
-    if (!form.fullName.trim())  e.fullName = t('inquiry.errName');
-    if (!form.phone.trim())     e.phone = t('inquiry.errPhone');
-    else if (!/^[0-9+()\-\s]{7,}$/.test(form.phone.trim()))
-      e.phone = t('inquiry.errPhoneInvalid');
-    if (!form.tvBrand.trim())   e.tvBrand = t('inquiry.errBrand');
-    if (!form.issue.trim())     e.issue = t('inquiry.errIssue');
-    return e;
-  }
-
-  function stopDetecting() {
-    detectRef.current?.();
-    detectRef.current = null;
-  }
-
-  useEffect(() => stopDetecting, []);
-
-  function openViber(text) {
-    stopDetecting();
-    setStatus('opening');
-
-    let leftPage = false;
-    const onLeave = () => { leftPage = true; };
-    const onVisibility = () => { if (document.hidden) leftPage = true; };
-    window.addEventListener('blur', onLeave);
-    window.addEventListener('pagehide', onLeave);
-    document.addEventListener('visibilitychange', onVisibility);
-    const timer = setTimeout(() => {
-      stopDetecting();
-      setStatus(leftPage || document.hidden ? 'opened' : 'fallback');
-    }, VIBER_DETECT_MS);
-
-    detectRef.current = () => {
-      clearTimeout(timer);
-      window.removeEventListener('blur', onLeave);
-      window.removeEventListener('pagehide', onLeave);
-      document.removeEventListener('visibilitychange', onVisibility);
-    };
-
-    window.location.href = `${LINKS.viber}&draft=${encodeURIComponent(text)}`;
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    const errs = validate();
-    if (Object.keys(errs).length) { setErrors(errs); return; }
-    setErrors({});
-    const text = buildInquiryMessage(form);
-    setMessage(text);
-    setCopied(false);
-    openViber(text);
-  }
-
-  async function copyMessage() {
-    try {
-      await navigator.clipboard.writeText(message);
-      setCopied(true);
-    } catch {
-      setCopied(false);
-    }
-  }
-
-  function handleChange(field, val) {
-    setForm((p) => ({ ...p, [field]: val }));
-    if (errors[field]) setErrors((p) => ({ ...p, [field]: undefined }));
-  }
-
-  function closeModal() {
-    stopDetecting();
-    setStatus(null);
-  }
-
-  function resetForm() {
-    closeModal();
-    setForm(INITIAL_FORM);
-    setErrors({});
-    setMessage('');
-    setCopied(false);
-    if (fileRef.current) fileRef.current.value = '';
-  }
 
   return (
     <section className={`min-h-screen px-4 py-20 sm:py-28 ${T.sec}`}>
-      <div className="mx-auto max-w-6xl">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
-
-          {/* ── Left: intro ── */}
-          <div>
-            <SectionLabel T={T}>{t('inquiry.label')}</SectionLabel>
-            <SectionHeading T={T}>
-              {t('inquiry.title')}{' '}
-              <span className="text-theme-color-3">{t('inquiry.titleEm')}</span>{t('inquiry.titleEnd')}
-            </SectionHeading>
-            <p className={`mt-4 text-sm leading-relaxed sm:text-base ${T.body}`}>
-              {t('inquiry.bodyBefore')}{' '}
-              <strong className={`font-semibold ${T.h}`}>{t('inquiry.bodyHours')}</strong>{' '}
-              {t('inquiry.bodyAfter')}
+      <div className="mx-auto max-w-3xl">
+        <Reveal>
+          <article className={`overflow-hidden rounded-[1.75rem] border p-6 shadow-md sm:p-10 ${T.card}`}>
+            <SectionLabel T={T}>{t('nav.inquiry')}</SectionLabel>
+            <SectionHeading T={T}>{t('inquiry.title')}</SectionHeading>
+            <p className={`mt-4 text-sm leading-loose sm:text-base ${T.body}`}>
+              {keepWords(t('inquiry.subtitle'))}
             </p>
 
-            <div className="mt-8 space-y-5">
-              {steps.map(({ title, body }, i) => {
-                const Icon = INQUIRY_STEPS[i]?.Icon || ClipboardList;
+            <ol className="mt-10 space-y-4">
+              {steps.map((step, i) => {
+                const Icon = GUIDE_ICONS[i] || ClipboardList;
                 return (
-                <div key={title} className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-theme-color-1 shadow-sm">
-                      <Icon size={15} className="text-theme-color-2" />
-                    </div>
-                    {i < INQUIRY_STEPS.length - 1 && (
-                      <div className={`mt-2 w-0.5 flex-1 ${isDark ? 'bg-theme-color-2/15' : 'bg-theme-color-4/10'}`} />
-                    )}
-                  </div>
-                  <div className="pb-5">
-                    <p className={`text-sm font-bold ${T.h}`}>{title}</p>
-                    <p className={`mt-0.5 text-xs ${T.body}`}>{body}</p>
-                  </div>
-                </div>
+                  <li key={step} className={`flex items-start gap-4 rounded-2xl border px-4 py-4 sm:px-5 ${T.soft}`}>
+                    <span className="relative grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-theme-color-1 shadow-sm">
+                      <Icon size={20} className="text-theme-color-2" />
+                      <span className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full bg-theme-color-3 text-[10px] font-bold text-white">
+                        {i + 1}
+                      </span>
+                    </span>
+                    <p className={`pt-2.5 text-sm font-semibold leading-snug sm:text-[15px] ${T.h}`}>
+                      {keepWords(step)}
+                    </p>
+                  </li>
                 );
               })}
-            </div>
+            </ol>
 
-            {/* Feature pills */}
-            <div className="mt-6 flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-theme-color-3 px-3 py-1 text-[11px] font-semibold text-white shadow-sm"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* ── Right: form ── */}
-          <div className={`rounded-2xl border p-6 sm:p-8 ${T.card}`}>
-            <h3 className={`mb-6 text-lg font-bold ${T.h}`}>{t('inquiry.formTitle')}</h3>
-
-            <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-              {/* Full Name */}
-              <div>
-                <label className={`mb-1.5 block text-xs font-semibold ${T.muted}`}>
-                  {t('inquiry.fullName')} <span className="text-theme-color-3">*</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder={t('inquiry.fullNamePh')}
-                  value={form.fullName}
-                  onChange={(e) => handleChange('fullName', e.target.value)}
-                  className={T.input(errors.fullName)}
-                />
-                {errors.fullName && <p className={`mt-1 text-xs font-semibold ${T.h}`}>{errors.fullName}</p>}
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label className={`mb-1.5 block text-xs font-semibold ${T.muted}`}>
-                  {t('inquiry.phone')} <span className="text-theme-color-3">*</span>
-                </label>
-                <input
-                  type="tel"
-                  placeholder={t('inquiry.phonePh')}
-                  value={form.phone}
-                  onChange={(e) => handleChange('phone', e.target.value)}
-                  className={T.input(errors.phone)}
-                />
-                {errors.phone && <p className={`mt-1 text-xs font-semibold ${T.h}`}>{errors.phone}</p>}
-              </div>
-
-              {/* Brand + Model */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className={`mb-1.5 block text-xs font-semibold ${T.muted}`}>
-                    {t('inquiry.brand')} <span className="text-theme-color-3">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder={t('inquiry.brandPh')}
-                    value={form.tvBrand}
-                    onChange={(e) => handleChange('tvBrand', e.target.value)}
-                    className={T.input(errors.tvBrand)}
-                  />
-                  {errors.tvBrand && <p className={`mt-1 text-xs font-semibold ${T.h}`}>{errors.tvBrand}</p>}
-                </div>
-                <div>
-                  <label className={`mb-1.5 block text-xs font-semibold ${T.muted}`}>
-                    {t('inquiry.model')} <span className={`font-normal ${T.muted}`}>{t('inquiry.optional')}</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder={t('inquiry.modelPh')}
-                    value={form.tvModel}
-                    onChange={(e) => handleChange('tvModel', e.target.value)}
-                    className={T.input(false)}
-                  />
-                </div>
-              </div>
-
-              {/* Issue */}
-              <div>
-                <label className={`mb-1.5 block text-xs font-semibold ${T.muted}`}>
-                  {t('inquiry.issue')} <span className="text-theme-color-3">*</span>
-                </label>
-                <textarea
-                  rows={4}
-                  placeholder={t('inquiry.issuePh')}
-                  value={form.issue}
-                  onChange={(e) => handleChange('issue', e.target.value)}
-                  className={`${T.input(errors.issue)} resize-none`}
-                />
-                {errors.issue && <p className={`mt-1 text-xs font-semibold ${T.h}`}>{errors.issue}</p>}
-              </div>
-
-              {/* File upload */}
-              <div>
-                <label className={`mb-1.5 block text-xs font-semibold ${T.muted}`}>
-                  {t('inquiry.photo')}{' '}
-                  <span className={`font-normal ${T.muted}`}>{t('inquiry.photoHint')}</span>
-                </label>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => handleChange('file', e.target.files?.[0] ?? null)}
-                />
-                <button
-                  type="button"
-                  onClick={() => fileRef.current?.click()}
-                  className={`flex w-full items-center justify-center gap-2 rounded-xl border border-dashed px-4 py-4 text-xs font-medium transition ${
-                    isDark
-                      ? 'border-theme-color-2/25 bg-white/5 text-theme-color-2/80 hover:border-theme-color-3 hover:text-theme-color-2'
-                      : 'border-theme-color-4/25 bg-theme-color-2/60 text-theme-color-4/80 hover:border-theme-color-3 hover:text-theme-color-4'
-                  }`}
-                >
-                  <Upload size={14} />
-                  {form.file ? form.file.name : t('inquiry.upload')}
-                </button>
-              </div>
-
-              {/* Submit */}
-              <button
-                type="submit"
-                disabled={status === 'opening'}
-                className={`${CTA} w-full disabled:cursor-wait disabled:opacity-70`}
+            <div className="mt-10 grid gap-3 sm:grid-cols-3">
+              <a
+                href={LINKS.messenger}
+                {...EXTERNAL}
+                aria-label={t('inquiry.messengerAria')}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0084FF] px-4 py-3.5 text-sm font-semibold text-white shadow-md shadow-black/10 transition hover:-translate-y-0.5 hover:brightness-110"
+              >
+                <MessengerIcon size={18} />
+                <span>{keepWords(t('inquiry.messenger'))}</span>
+              </a>
+              <a
+                href={LINKS.viber}
+                {...EXTERNAL}
+                aria-label={t('inquiry.viberAria')}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#7360F2] px-4 py-3.5 text-sm font-semibold text-white shadow-md shadow-black/10 transition hover:-translate-y-0.5 hover:brightness-110"
               >
                 <ViberIcon size={18} />
-                <span>{keepWords(t('inquiry.submit'))}</span>
-              </button>
-
-              <p className={`text-center text-[11px] leading-relaxed ${T.muted}`}>
-                {keepWords(t('inquiry.note'))}
-              </p>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Viber hand-off dialog ── */}
-      {status && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-theme-color-4/60 px-4 py-8 backdrop-blur-sm">
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="inquiry-status-title"
-            className={`relative w-full max-w-md overflow-hidden rounded-2xl border p-7 text-center shadow-md sm:p-8 ${
-              isDark ? 'border-theme-color-2/15 bg-theme-color-4' : 'border-theme-color-4/10 bg-theme-color-2'
-            }`}
-          >
-            <div className="absolute left-0 right-0 top-0 h-1.5 bg-[#7360F2]" />
-
-            <button
-              onClick={closeModal}
-              aria-label={t('inquiry.close')}
-              className={`absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-lg transition ${
-                isDark ? 'text-theme-color-2/70 hover:bg-white/10 hover:text-theme-color-2' : 'text-theme-color-4/70 hover:bg-theme-color-4/5'
-              }`}
-            >
-              <X size={16} />
-            </button>
-
-            <div
-              className={`mx-auto mb-5 grid h-16 w-16 place-items-center rounded-full shadow-md ${
-                status === 'fallback' ? 'bg-theme-color-1' : 'bg-[#7360F2]'
-              }`}
-            >
-              {status === 'fallback'
-                ? <CheckCircle size={30} className="text-theme-color-2" />
-                : <ViberIcon size={30} className={`text-white ${status === 'opening' ? 'motion-safe:animate-pulse' : ''}`} />}
-            </div>
-
-            <h3 id="inquiry-status-title" className={`text-xl font-extrabold ${T.h}`}>
-              {t(`inquiry.${status}Title`)}
-            </h3>
-            <p aria-live="polite" className={`mt-2 text-sm leading-relaxed ${T.body}`}>
-              {keepWords(t(`inquiry.${status}Body`, { phone: t('phone') }))}
-            </p>
-
-            {form.file && (
-              <p className={`mt-3 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium ${T.soft}`}>
-                <Upload size={12} />
-                {keepWords(t('inquiry.photoTip'))}
-              </p>
-            )}
-
-            <div className={`mt-5 rounded-xl border px-4 py-3 text-left ${T.soft}`}>
-              <p className={`mb-2 text-[10px] font-bold uppercase tracking-wider ${T.muted}`}>
-                {t('inquiry.messagePreview')}
-              </p>
-              <p className={`whitespace-pre-line break-words text-xs leading-relaxed ${T.h}`}>{message}</p>
-            </div>
-
-            {status === 'opened' && (
-              <p className={`mt-3 text-xs leading-relaxed ${T.muted}`}>
-                {keepWords(t('inquiry.notOpenedHint', { phone: t('phone') }))}
-              </p>
-            )}
-
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <button
-                onClick={() => openViber(message)}
-                disabled={status === 'opening'}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#7360F2] px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:scale-105 hover:brightness-110 disabled:cursor-wait disabled:opacity-70 disabled:hover:scale-100"
-              >
-                <ViberIcon size={16} />
-                {t('inquiry.retryViber')}
-              </button>
-              <button
-                onClick={copyMessage}
-                className={`inline-flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition hover:scale-105 ${
-                  isDark ? 'border-theme-color-2/40 text-theme-color-2 hover:bg-white/10' : 'border-theme-color-1 text-theme-color-1 hover:bg-theme-color-1 hover:text-white'
-                }`}
-              >
-                {copied ? <CheckCircle size={16} /> : <ClipboardList size={16} />}
-                {copied ? t('inquiry.copied') : t('inquiry.copy')}
-              </button>
-            </div>
-
-            {status !== 'opening' && (
+                <span>{keepWords(t('inquiry.viber'))}</span>
+              </a>
               <a
-                href={`tel:${t('phone')}`}
-                className={`${CTA} mt-3 w-full py-3`}
+                href={LINKS.tel}
+                aria-label={t('inquiry.callAria')}
+                className={`${CTA} px-4 shadow-md shadow-black/10`}
               >
                 <Phone size={16} />
-                {t('inquiry.callShop')} · {t('phone')}
+                <span>{keepWords(t('inquiry.call'))}</span>
               </a>
-            )}
-
-            <button
-              onClick={resetForm}
-              className={`mt-4 text-xs font-semibold underline-offset-4 transition hover:underline ${T.muted}`}
-            >
-              {t('inquiry.another')}
-            </button>
-          </div>
-        </div>
-      )}
+            </div>
+          </article>
+        </Reveal>
+      </div>
     </section>
   );
 }
@@ -1502,23 +1271,25 @@ function ContactSection({ isDark }) {
   return (
     <section className={`min-h-screen px-4 py-20 sm:py-28 ${T.altSec}`}>
       <div className="mx-auto max-w-6xl">
-        <SectionLabel T={T}>{t('contact.label')}</SectionLabel>
-        <SectionHeading T={T}>
-          {t('contact.title')}
-          <span className="text-theme-color-3">{t('contact.titleEm')}</span>
-          {t('contact.titleEnd')}
-        </SectionHeading>
-        <p className={`mt-4 max-w-lg text-sm leading-relaxed sm:text-base ${T.body}`}>
-          {t('contact.body')}
-        </p>
+        <Reveal>
+          <SectionLabel T={T}>{t('contact.label')}</SectionLabel>
+          <SectionHeading T={T}>
+            {t('contact.title')}
+            <span className="text-theme-color-3">{t('contact.titleEm')}</span>
+            {t('contact.titleEnd')}
+          </SectionHeading>
+          <p className={`mt-4 max-w-lg text-sm leading-relaxed sm:text-base ${T.body}`}>
+            {t('contact.body')}
+          </p>
+        </Reveal>
 
         <div className="mt-12 grid gap-6 lg:grid-cols-2">
 
           {/* ── Left: Details ── */}
-          <div className="space-y-4">
+          <RevealGroup className="space-y-4" stagger={0.1}>
 
             {/* Phone */}
-            <div className={`rounded-2xl border p-6 ${T.card}`}>
+            <RevealItem className={`rounded-2xl border p-6 ${T.card} ${T.cardHov}`}>
               <div className="mb-4 flex items-center gap-3">
                 <div className="grid h-10 w-10 place-items-center rounded-xl bg-theme-color-1 shadow-sm">
                   <Phone size={17} className="text-theme-color-2" />
@@ -1530,17 +1301,17 @@ function ContactSection({ isDark }) {
                   <a
                     key={num}
                     href={`tel:${num.replace(/\s/g, '')}`}
-                    className="group flex items-center justify-between rounded-xl bg-theme-color-3 px-4 py-3 text-sm text-white shadow-sm transition hover:scale-[1.02] hover:opacity-90"
+                    className="neon-cta group flex items-center justify-between rounded-xl bg-theme-color-3 px-4 py-3 text-sm text-white shadow-sm hover:scale-[1.02]"
                   >
                     <span className="font-semibold">{num}</span>
                     <ArrowUpRight size={13} className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                   </a>
                 ))}
               </div>
-            </div>
+            </RevealItem>
 
             {/* Hours */}
-            <div className={`rounded-2xl border p-6 ${T.card}`}>
+            <RevealItem className={`rounded-2xl border p-6 ${T.card} ${T.cardHov}`}>
               <div className="mb-4 flex items-center gap-3">
                 <div className="grid h-10 w-10 place-items-center rounded-xl bg-theme-color-1 shadow-sm">
                   <Clock size={17} className="text-theme-color-2" />
@@ -1563,10 +1334,10 @@ function ContactSection({ isDark }) {
                   );
                 })}
               </div>
-            </div>
+            </RevealItem>
 
             {/* Address */}
-            <div className={`rounded-2xl border p-6 ${T.card}`}>
+            <RevealItem className={`rounded-2xl border p-6 ${T.card} ${T.cardHov}`}>
               <div className="mb-4 flex items-center gap-3">
                 <div className="grid h-10 w-10 place-items-center rounded-xl bg-theme-color-1 shadow-sm">
                   <MapPin size={17} className="text-theme-color-2" />
@@ -1579,10 +1350,10 @@ function ContactSection({ isDark }) {
               <p className={`mt-3 text-[11px] ${T.muted}`}>
                 {t('contact.previous')}
               </p>
-            </div>
+            </RevealItem>
 
             {/* Facebook */}
-            <div className={`rounded-2xl border p-6 ${T.card}`}>
+            <RevealItem className={`rounded-2xl border p-6 ${T.card} ${T.cardHov}`}>
               <div className="mb-4 flex items-center gap-3">
                 <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#1877F2] shadow-sm">
                   <FacebookIcon size={19} className="text-white" />
@@ -1604,15 +1375,16 @@ function ContactSection({ isDark }) {
                 </span>
                 <ArrowUpRight size={13} className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </a>
-            </div>
-          </div>
+            </RevealItem>
+          </RevealGroup>
 
           {/* ── Right: Stylized Map (whole panel opens Google Maps) ── */}
+          <Reveal className="h-full">
           <a
             href={LINKS.maps}
             {...EXTERNAL}
             aria-label={t('contact.mapAria')}
-            className="group relative block min-h-[360px] overflow-hidden rounded-2xl bg-theme-color-1 shadow-md shadow-theme-color-4/15 transition hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-theme-color-3 lg:min-h-0"
+            className="neon-card-dark group relative block min-h-[360px] h-full overflow-hidden rounded-2xl bg-theme-color-1 shadow-md shadow-theme-color-4/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-theme-color-3 lg:min-h-0"
           >
             {/* Map grid */}
             <div
@@ -1673,6 +1445,7 @@ function ContactSection({ isDark }) {
               <ArrowUpRight size={12} className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </span>
           </a>
+          </Reveal>
         </div>
       </div>
     </section>
@@ -1798,11 +1571,16 @@ function Footer({ setActive }) {
           </ul>
         </div>
 
-        <div className="mt-8 flex flex-col gap-2 border-t border-theme-color-2/20 pt-6 text-xs text-white/80 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} {t('footer.rights')}</p>
-          <p className="inline-flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-theme-color-3" />
-            {t('footer.est')}
+        <div className="mt-8 flex flex-col gap-3 border-t border-theme-color-2/20 pt-6 text-xs text-white/80">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <p>© {new Date().getFullYear()} {t('footer.rights')}</p>
+            <p className="inline-flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-theme-color-3" />
+              {t('footer.est')}
+            </p>
+          </div>
+          <p className="max-w-3xl text-[10px] leading-relaxed text-white/55 sm:text-[11px]">
+            {keepWords(t('brandsDisclaimer'))}
           </p>
         </div>
       </div>
