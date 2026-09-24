@@ -1,11 +1,11 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// IMPORTANT: `base` must match your GitHub repo name exactly (case-sensitive),
-// with leading and trailing slashes. Repo: johnathanMT/SeinPan-Web
-// -> site served at https://johnathanMT.github.io/SeinPan-Web/
+// Custom domain (seinpan.myothant.dev) is served from the site root.
+// A project-site base like "/SeinPan-Web/" makes the browser request
+// /SeinPan-Web/assets/*, which 404s and leaves a blank page.
 export default defineConfig({
-  base: "/SeinPan-Web/",
+  base: "/",
   plugins: [react()],
   server: { port: 5173, open: true },
 });

@@ -22,8 +22,7 @@ function RootLayout() {
   );
 }
 
-// Vite injects import.meta.env.BASE_URL ("/SeinPan-Web/" in prod, "/" in dev),
-// so routing works both locally and under the GitHub Pages subpath.
+// Vite injects import.meta.env.BASE_URL ("/" on the custom domain).
 // React Router wants the basename without a trailing slash.
 const basename = import.meta.env.BASE_URL.replace(/\/$/, "");
 
