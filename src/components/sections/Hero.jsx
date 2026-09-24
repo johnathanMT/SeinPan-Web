@@ -69,7 +69,7 @@ export function Hero() {
         >
           <a
             href="#contact"
-            className="w-full rounded-full bg-copper-500 px-7 py-3 text-sm font-semibold text-forest-950 shadow-glow transition hover:bg-copper-400 sm:w-auto"
+            className="w-full rounded-full bg-copper-500 px-7 py-3 text-sm font-semibold text-white shadow-glow transition hover:bg-copper-400 sm:w-auto"
           >
             {t("hero.ctaPrimary")}
           </a>

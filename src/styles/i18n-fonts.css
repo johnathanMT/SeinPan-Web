@@ -25,6 +25,16 @@ html[data-lang="my"] .font-display {
   line-height: 1.45 !important;
 }
 
+html[data-lang="my"] .font-display.font-bold {
+  font-weight: 700;
+}
+
+/* Burmese snippets shown while the page is in another language
+   (e.g. the language switch label). */
+[lang="my"] {
+  font-family: "Noto Sans Myanmar", "Inter", sans-serif;
+}
+
 /* Japanese */
 html[data-lang="ja"] {
   --font-app: "Noto Sans JP", "Inter", sans-serif;

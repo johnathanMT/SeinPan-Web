@@ -117,7 +117,7 @@ export function LocationSection() {
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <a
                 href={telHref}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-copper-500 px-5 py-2.5 text-sm font-medium text-forest-950 transition hover:bg-copper-400"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-copper-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-copper-400"
               >
                 <span aria-hidden>📞</span>
                 {t("location.callNow", { ns: "common" })}

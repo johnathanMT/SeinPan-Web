@@ -19,8 +19,8 @@
   "hero": {
     "eyebrow": "Sein Pan Electronic · Yangon",
     "since": "Since 1989",
-    "title": "Television service, held to an international standard.",
-    "body": "LED, LCD, and Plasma repair in North Okkalapa. Diagnosis before you commit, genuine parts, and the workshop U Win Naing has run since 1989.",
+    "titleLine1": "Ko Win Naing",
+    "titleLine2": "Sein Pan Electronic",
     "quote": "Request a repair quote",
     "explore": "Explore services",
     "genuine": "Genuine parts",
@@ -38,7 +38,7 @@
     "label": "The workshop",
     "title": "Three technologies.",
     "titleEm": "One bench.",
-    "all": "Full service list →",
+    "all": "Full service list",
     "seeList": "See the repair list"
   },
   "services": {
@@ -115,10 +115,13 @@
     "submit": "Submit a repair inquiry"
   },
   "tech": {
-    "name": "U Win Naing",
+    "label": "The technician",
+    "bio": "Started in South Okkalapa in 1989, and today personally diagnoses and repairs LED, LCD and Plasma sets near Maydar Wee Market, North Okkalapa.",
+    "values": ["5K+", "37", "100%"],
+    "name": "Ko Win Naing",
     "role": "Founder & Master Technician",
     "years": "37 Yrs Experience",
-    "alt": "U Win Naing — Founder & Master Technician",
+    "alt": "Ko Win Naing — Founder & Master Technician",
     "skillsLabel": "Core Specialisations",
     "skills": ["LED Technology", "LCD Mastery", "Plasma Systems", "Circuit Diagnostics", "Smart TV Firmware", "Component Soldering"],
     "repaired": "Repaired",
@@ -130,9 +133,11 @@
     "label": "Our Heritage",
     "title": "A Legacy Built on",
     "titleTrust": "Trust",
+    "titleAfter": " & Skill",
     "titleSkill": "Skill",
+    "notice": "Ko Win Naing Electronic Service first opened in 1989 on Yadanar Road, at the 14–15 junction, 12 Quarter, South Okkalapa. The workshop has since moved to North Okkalapa, near Maydar Wee Market, and now serves under the name Sein Pan Electronic Service.",
     "p1a": "Sein Pan Electronic Service was born from a simple belief — every broken television deserves an honest repair at a fair price. Founder",
-    "p1name": "U Win Naing",
+    "p1name": "Ko Win Naing",
     "p1b": "started this journey in",
     "p1year": "1989",
     "p1c": "with nothing but a toolkit, deep electronics knowledge, and an unwavering commitment to his community.",
@@ -153,12 +158,17 @@
       {
         "year": "1989",
         "title": "The Beginning",
-        "body": "U Win Naing founded Sein Pan Electronic Service near the 14–15 junction, Yadanar Road, 12 Quarter, South Okkalapa — serving the neighbourhood with honest, skilled TV repair."
+        "body": "Ko Win Naing founded Sein Pan Electronic Service near the 14–15 junction, Yadanar Road, 12 Quarter, South Okkalapa — serving the neighbourhood with honest, skilled TV repair."
       },
       {
         "year": "2000s",
         "title": "Growing Reputation",
-        "body": "Word spread across Yangon. Customers from neighbouring townships sought Sein Pan specifically for their LCD and Plasma sets — trusting only U Win Naing's hands."
+        "body": "Word spread across Yangon. Customers from neighbouring townships sought Sein Pan specifically for their LCD and Plasma sets — trusting only Ko Win Naing's hands."
+      },
+      {
+        "year": "2010s",
+        "title": "From CRT to the new screens",
+        "body": "The bench changed with the sets. Ko Win Naing took on LED backlights, LCD boards, and the plasma displays other shops had begun to turn away, while the same families kept the shop."
       },
       {
         "year": "Today",
@@ -171,7 +181,7 @@
     "label": "Online Repair Inquiry",
     "title": "Book Your",
     "titleEm": "TV Repair",
-    "titleEnd": "Today",
+    "titleEnd": " Today",
     "bodyBefore": "Fill in the form and our team will contact you within",
     "bodyHours": "24 hours",
     "bodyAfter": "to confirm your appointment. No upfront fees — you only pay after the repair is complete.",
@@ -215,8 +225,9 @@
   },
   "contact": {
     "label": "Get In Touch",
-    "title": "Find Us in",
+    "title": "Find Us in ",
     "titleEm": "North Okkalapa",
+    "titleEnd": ".",
     "body": "Visit us near Maydar Wee Market (Maydarvi), North Okkalapa township, Yangon. Walk-ins welcome during business hours.",
     "phones": "Phone Numbers",
     "hours": "Business Hours",
@@ -236,7 +247,7 @@
   },
   "footer": {
     "service": "Electronic Service",
-    "blurb": "LED, LCD & Plasma TV Repair Service. Established in 1989 by U Win Naing. Serving Yangon with trust and expertise for over 37 years.",
+    "blurb": "LED, LCD & Plasma TV Repair Service. Established in 1989 by Ko Win Naing. Serving Yangon with trust and expertise for over 37 years.",
     "navigation": "Navigation",
     "services": "Services",
     "contact": "Contact",

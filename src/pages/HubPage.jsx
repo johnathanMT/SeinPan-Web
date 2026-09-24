@@ -19,7 +19,7 @@ function ProfileSummary() {
   return (
     <div>
       <div className="mb-3 flex items-center gap-3">
-        <div className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-pcb-500 to-copper-500 text-sm font-semibold text-ink-900">
+        <div className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-pcb-500 to-copper-500 text-sm font-semibold text-white">
           EC
         </div>
         <div>

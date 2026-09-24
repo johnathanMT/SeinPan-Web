@@ -108,7 +108,7 @@ export function TechnicianProfile({ photoSrc = `${import.meta.env.BASE_URL}techn
 
             <a
               href="#contact"
-              className="inline-flex w-fit items-center gap-2 rounded-full bg-copper-500 px-5 py-2.5 text-sm font-medium text-forest-950 transition hover:bg-copper-400"
+              className="inline-flex w-fit items-center gap-2 rounded-full bg-copper-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-copper-400"
             >
               {t("about.cta")}
               <span aria-hidden>→</span>

@@ -45,7 +45,7 @@ export function BentoCard({
     >
       <span
         aria-hidden
-        className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-500 group-hover:opacity-100 bg-[conic-gradient(from_180deg_at_50%_50%,#0f9d5833,#818cf833,#e4b75a33,#0f9d5833)] blur-2xl"
+        className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-500 group-hover:opacity-100 bg-[conic-gradient(from_180deg_at_50%_50%,#E6394633,#FF450033,#FF7A6633,#E6394633)] blur-2xl"
       />
 
       <div className="relative">

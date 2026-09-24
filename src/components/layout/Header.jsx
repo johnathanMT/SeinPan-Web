@@ -68,7 +68,7 @@ export function Header() {
         <div className="hidden items-center gap-3 md:flex">
           <a
             href="#quote"
-            className="rounded-full bg-copper-500 px-4 py-1.5 text-sm font-medium text-ink-900 transition hover:bg-copper-400"
+            className="rounded-full bg-copper-500 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-copper-400"
           >
             {t("cta.quote")}
           </a>
@@ -106,7 +106,7 @@ export function Header() {
             <a
               href="#quote"
               onClick={() => setMenuOpen(false)}
-              className="mt-2 rounded-full bg-copper-500 px-4 py-2 text-center text-sm font-medium text-ink-900"
+              className="mt-2 rounded-full bg-copper-500 px-4 py-2 text-center text-sm font-medium text-white"
             >
               {t("cta.quote")}
             </a>

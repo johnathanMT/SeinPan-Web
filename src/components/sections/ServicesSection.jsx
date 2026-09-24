@@ -76,7 +76,7 @@ export function ServicesSection() {
       <div className="relative mt-10">
         <a
           href="#contact"
-          className="inline-flex items-center gap-2 rounded-full bg-copper-500 px-6 py-3 text-sm font-semibold text-forest-950 transition hover:bg-copper-400"
+          className="inline-flex items-center gap-2 rounded-full bg-copper-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-copper-400"
         >
           {t("services.cta")}
           <span aria-hidden>→</span>

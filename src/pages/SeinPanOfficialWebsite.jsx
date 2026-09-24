@@ -36,18 +36,18 @@ import {
 
 // ─── Brand colour tokens (mirror tailwind.config.js) ──────────────────────────
 const C = {
-  ink:        '#05080a',
-  ink900:     '#0a0f12',
-  ink800:     '#0e1518',
-  forest:     '#04211a',
-  forest800:  '#073123',
-  pcb500:     '#0f9d58',
-  pcb400:     '#22c06f',
-  pcb300:     '#57db96',
-  copper400:  '#d99f33',
-  copper500:  '#c8862a',
-  copper300:  '#e4b75a',
-  line:       'rgba(148,163,184,0.12)',
+  ink:        '#0B2412',
+  ink900:     '#0F291E',
+  ink800:     '#1A3A26',
+  forest:     '#0F291E',
+  forest800:  '#1A3A26',
+  pcb500:     '#E63946',
+  pcb400:     '#FF4500',
+  pcb300:     '#FF7A66',
+  copper400:  '#FF4500',
+  copper500:  '#E63946',
+  copper300:  '#FF7A66',
+  line:       'rgba(209,213,219,0.14)',
 };
 
 // ─── Shared micro-components ──────────────────────────────────────────────────

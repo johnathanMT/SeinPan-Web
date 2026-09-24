@@ -171,7 +171,7 @@ export function ContactForm() {
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-copper-500 px-6 py-3 text-sm font-semibold text-forest-950 transition hover:bg-copper-400 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-copper-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-copper-400 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         >
           {status === "submitting" ? t("contact.sending") : t("contact.send")}
           {status !== "submitting" && <span aria-hidden>→</span>}

@@ -34,7 +34,7 @@ export default function ImmersivePage() {
         <div className="mt-8 flex items-center justify-center gap-3">
           <a
             href="#catalog"
-            className="rounded-full bg-copper-500 px-6 py-2.5 text-sm font-medium text-ink-900 transition hover:bg-copper-400"
+            className="rounded-full bg-copper-500 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-copper-400"
           >
             {t("cta.explore", { ns: "common" })}
           </a>
