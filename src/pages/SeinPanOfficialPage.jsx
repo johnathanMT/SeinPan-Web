@@ -4,6 +4,7 @@
 // ✦ Controlled inquiry form with validation  ✦ All icons verified for lucide-react@1.22
 
 import { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Tv, Wrench, MapPin, Phone, Clock, Star, Award, Shield,
   Upload, CheckCircle, X, Menu, ChevronRight, ChevronDown,
@@ -18,12 +19,56 @@ import {
 // ─────────────────────────────────────────────────────────────────
 
 const NAV_TABS = [
-  { id: 'home',     label: 'Home',     Icon: Home },
-  { id: 'services', label: 'Services', Icon: Cpu },
-  { id: 'about',    label: 'About',    Icon: Info },
-  { id: 'inquiry',  label: 'Inquiry',  Icon: ClipboardList },
-  { id: 'contact',  label: 'Contact',  Icon: PhoneCall },
+  { id: 'home',     Icon: Home },
+  { id: 'services', Icon: Cpu },
+  { id: 'about',    Icon: Info },
+  { id: 'inquiry',  Icon: ClipboardList },
+  { id: 'contact',  Icon: PhoneCall },
 ];
+
+function useOfficial() {
+  const { t, i18n } = useTranslation('official');
+  const lang = (i18n.resolvedLanguage || i18n.language || 'my').split('-')[0] === 'en' ? 'en' : 'my';
+  const list = (key) => {
+    const value = t(key, { returnObjects: true });
+    return Array.isArray(value) ? value : [];
+  };
+  return { t, i18n, lang, list };
+}
+
+function LangToggle({ isDark }) {
+  const { t, i18n, lang } = useOfficial();
+  return (
+    <div
+      className={`flex overflow-hidden rounded-lg border text-[11px] font-bold ${
+        isDark ? 'border-white/10' : 'border-slate-200'
+      }`}
+      role="group"
+      aria-label={t('nav.switchLanguage')}
+    >
+      {[
+        ['my', t('lang.my')],
+        ['en', t('lang.en')],
+      ].map(([code, label]) => (
+        <button
+          key={code}
+          type="button"
+          onClick={() => i18n.changeLanguage(code)}
+          aria-pressed={lang === code}
+          className={`px-2.5 py-2 transition ${
+            lang === code
+              ? 'bg-copper-500 text-pcb-950'
+              : isDark
+                ? 'text-slate-400 hover:text-white'
+                : 'text-slate-500 hover:text-slate-900'
+          }`}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 const SERVICES = [
   {
@@ -56,13 +101,6 @@ const SERVICES = [
     desc: 'One of the few remaining service centres still expertly servicing vintage and modern plasma display units across Yangon.',
     features: ['Y & Z Sustain Board', 'Voltage Regulation Fix', 'Plasma Cell Diagnostics', 'High-voltage Safety Check'],
   },
-];
-
-const HERO_STATS = [
-  { value: '1989',   label: 'Established' },
-  { value: '37+',    label: 'Years of Trust' },
-  { value: '5,000+', label: 'TVs Repaired' },
-  { value: '3',      label: 'Technologies' },
 ];
 
 const TIMELINE = [
@@ -126,24 +164,6 @@ const BRANDS = [
   'TCL', 'Hisense', 'Philips', 'Haier', 'Skyworth', 'Changhong',
 ];
 
-const TESTIMONIALS = [
-  {
-    name: 'Daw Khin Myint',
-    area: 'North Okkalapa',
-    quote: 'Our LED went black the night before a family gathering. Sein Pan diagnosed it the same afternoon and the picture was perfect the next day.',
-  },
-  {
-    name: 'Ko Htet Aung',
-    area: 'South Okkalapa',
-    quote: 'My parents have used this shop since the 14–15 junction days. The move to Maydarvi did not change the honesty or the workmanship.',
-  },
-  {
-    name: 'Ma Thiri',
-    area: 'Thingangyun',
-    quote: 'They explained the plasma fault in plain language, used a genuine board, and stood behind the repair. I would not take a set anywhere else.',
-  },
-];
-
 const CTA =
   'inline-flex items-center justify-center gap-2 rounded-xl bg-copper-500 px-7 py-3.5 text-sm font-bold text-pcb-950 shadow-glow transition hover:bg-copper-400 active:scale-[0.98]';
 
@@ -200,6 +220,7 @@ function SectionHeading({ children, T }) {
 // ─────────────────────────────────────────────────────────────────
 function Navbar({ active, setActive, isDark, toggleTheme }) {
   const [open, setOpen] = useState(false);
+  const { t } = useOfficial();
   const T = getT(isDark);
   const go = (id) => { setActive(id); setOpen(false); };
 
@@ -214,14 +235,14 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
             <Tv size={17} className="text-pcb-400" />
           </div>
           <div className="text-left leading-none">
-            <span className={`block text-[13px] font-extrabold tracking-wide ${T.h}`}>Sein Pan</span>
-            <span className={`block text-[10px] uppercase tracking-[0.18em] ${T.muted}`}>Since 1989 · Electronic Service</span>
+            <span className={`block text-[13px] font-extrabold tracking-wide ${T.h}`}>{t('nav.brand')}</span>
+            <span className={`block text-[10px] uppercase tracking-[0.18em] ${T.muted}`}>{t('nav.tagline')}</span>
           </div>
         </button>
 
         {/* Desktop tabs */}
         <nav className="hidden items-center gap-1 md:flex">
-          {NAV_TABS.map(({ id, label }) => (
+          {NAV_TABS.map(({ id }) => (
             <button
               key={id}
               onClick={() => go(id)}
@@ -229,7 +250,7 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
                 active === id ? T.tabActive : T.tabInact
               }`}
             >
-              {label}
+              {t(`nav.${id}`)}
             </button>
           ))}
         </nav>
@@ -244,10 +265,12 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
                 ? 'border-white/8 bg-white/[0.04] text-slate-400 hover:text-amber-400 hover:border-amber-400/30'
                 : 'border-slate-200 bg-white text-slate-500 hover:text-amber-600 hover:border-amber-400/50 shadow-sm'
             }`}
-            aria-label="Toggle theme"
+            aria-label={t('nav.toggleTheme')}
           >
             {isDark ? <Sun size={16} /> : <Moon size={16} />}
           </button>
+
+          <LangToggle isDark={isDark} />
 
           {/* Book Repair CTA (desktop) */}
           <button
@@ -255,7 +278,7 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
             className="hidden items-center gap-2 rounded-xl bg-copper-500 px-4 py-2 text-sm font-bold text-pcb-950 shadow-glow transition hover:bg-copper-400 active:scale-95 md:flex"
           >
             <Wrench size={14} />
-            Book Repair
+            {t('nav.bookRepair')}
           </button>
 
           {/* Hamburger (mobile) */}
@@ -265,7 +288,7 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
                      : 'border-slate-200 text-slate-500 hover:bg-slate-100'
             }`}
             onClick={() => setOpen((v) => !v)}
-            aria-label="Toggle menu"
+            aria-label={t('nav.toggleMenu')}
           >
             {open ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -276,7 +299,7 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
       {open && (
         <div className={`border-t px-4 pb-4 pt-2 md:hidden ${isDark ? 'bg-ink-900 border-white/5' : 'bg-white border-slate-100'}`}>
           <div className="space-y-1">
-            {NAV_TABS.map(({ id, label, Icon }) => (
+            {NAV_TABS.map(({ id, Icon }) => (
               <button
                 key={id}
                 onClick={() => go(id)}
@@ -285,7 +308,7 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
                 }`}
               >
                 <Icon size={16} />
-                {label}
+                {t(`nav.${id}`)}
               </button>
             ))}
           </div>
@@ -294,7 +317,7 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-pcb-500 py-3 text-sm font-semibold text-white transition hover:bg-pcb-400"
           >
             <Wrench size={14} />
-            Book a Repair
+            {t('nav.bookARepair')}
           </button>
         </div>
       )}
@@ -306,6 +329,8 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
 // HERO SECTION
 // ─────────────────────────────────────────────────────────────────
 function HeroSection({ setActive }) {
+  const { t, list } = useOfficial();
+  const stats = list('hero.stats');
   return (
     <section className="relative overflow-hidden bg-forest-950 lg:flex lg:min-h-[88vh] lg:items-center">
       <div
@@ -332,43 +357,43 @@ function HeroSection({ setActive }) {
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-copper-500/40 bg-copper-500/10 px-4 py-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-pcb-400" />
             <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-copper-300">
-              Yangon · LED · LCD · Plasma
+              {t('hero.eyebrow')}
             </span>
           </div>
 
-          <p className="font-display text-lg italic text-copper-300 sm:text-xl">Since 1989</p>
+          <p className="font-display text-lg italic text-copper-300 sm:text-xl">{t('hero.since')}</p>
           <h1 className="mt-2 max-w-xl font-display text-[2.35rem] leading-[1.02] tracking-tight text-white sm:text-6xl sm:leading-[0.95] lg:text-7xl">
-            Television repair with a thirty-seven year reputation.
+            {t('hero.title')}
           </h1>
 
           <p className="mt-4 max-w-lg text-sm leading-relaxed text-slate-400 sm:mt-6 sm:text-lg">
-            LED, LCD, and Plasma repair beside Maydar Wee Market. Genuine parts, and the same workshop U Win Naing opened in South Okkalapa in 1989.
+            {t('hero.body')}
           </p>
 
           <div className="mt-5 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center">
             <button onClick={() => setActive('inquiry')} className={CTA}>
               <ClipboardList size={15} />
-              Request a repair quote
+              {t('hero.quote')}
               <ArrowUpRight size={14} />
             </button>
             <button
               onClick={() => setActive('services')}
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 px-7 py-3.5 text-sm font-medium text-slate-200 transition hover:border-copper-400/40 hover:text-white"
             >
-              Explore services
+              {t('hero.explore')}
               <ChevronRight size={14} />
             </button>
           </div>
 
           <div className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-[11px] font-medium uppercase tracking-[0.14em] text-slate-500">
-            <span className="inline-flex items-center gap-1.5"><Shield size={12} className="text-pcb-400" /> Genuine parts</span>
-            <span className="inline-flex items-center gap-1.5"><Clock size={12} className="text-copper-400" /> Same-day diagnosis</span>
-            <span className="inline-flex items-center gap-1.5"><BadgeCheck size={12} className="text-pcb-300" /> No-fix, no-fee</span>
+            <span className="inline-flex items-center gap-1.5"><Shield size={12} className="text-pcb-400" /> {t('hero.genuine')}</span>
+            <span className="inline-flex items-center gap-1.5"><Clock size={12} className="text-copper-400" /> {t('hero.sameDay')}</span>
+            <span className="inline-flex items-center gap-1.5"><BadgeCheck size={12} className="text-pcb-300" /> {t('hero.noFee')}</span>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          {HERO_STATS.map(({ value, label }) => (
+          {stats.map(({ value, label }) => (
             <div
               key={label}
               className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-md"
@@ -384,11 +409,12 @@ function HeroSection({ setActive }) {
 }
 
 function BrandMarquee() {
+  const { t } = useOfficial();
   const row = [...BRANDS, ...BRANDS];
   return (
     <div className="overflow-hidden border-y border-white/5 bg-ink py-4">
       <p className="mb-3 text-center text-[10px] font-bold uppercase tracking-[0.22em] text-slate-600">
-        Brands we service every week
+        {t('brandsLabel')}
       </p>
       <div className="flex w-max animate-marquee gap-10">
         {row.map((brand, i) => (
@@ -402,19 +428,20 @@ function BrandMarquee() {
 }
 
 function HomeServices({ setActive, isDark }) {
+  const { t } = useOfficial();
   const T = getT(isDark);
   return (
     <section className={`px-4 py-20 ${T.sec}`}>
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <SectionLabel T={T}>The workshop</SectionLabel>
+            <SectionLabel T={T}>{t('homeServices.label')}</SectionLabel>
             <SectionHeading T={T}>
-              Three technologies. <span className="font-display italic text-copper-400">One bench.</span>
+              {t('homeServices.title')} <span className="font-display italic text-copper-400">{t('homeServices.titleEm')}</span>
             </SectionHeading>
           </div>
           <button onClick={() => setActive('services')} className={`text-sm font-semibold ${T.accent}`}>
-            Full service list →
+            {t('homeServices.all')}
           </button>
         </div>
         <div className="mt-10 grid gap-4 lg:grid-cols-3">
@@ -429,13 +456,13 @@ function HomeServices({ setActive, isDark }) {
                   <svc.Icon size={20} />
                 </div>
                 <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${svc.badgeCls}`}>
-                  {svc.badge}
+                  {t(`services.${svc.id}.badge`)}
                 </span>
               </div>
-              <h3 className={`mt-6 font-display text-3xl ${T.h}`}>{svc.label.replace(' Repair', '')}</h3>
-              <p className={`mt-3 text-sm leading-relaxed ${T.body}`}>{svc.desc}</p>
+              <h3 className={`mt-6 font-display text-3xl ${T.h}`}>{t(`services.${svc.id}.short`)}</h3>
+              <p className={`mt-3 text-sm leading-relaxed ${T.body}`}>{t(`services.${svc.id}.desc`)}</p>
               <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold text-copper-400">
-                See the repair list <ArrowUpRight size={12} className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                {t('homeServices.seeList')} <ArrowUpRight size={12} className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </span>
             </button>
           ))}
@@ -446,14 +473,18 @@ function HomeServices({ setActive, isDark }) {
 }
 
 function ProcessStrip({ setActive, isDark }) {
+  const { t, list } = useOfficial();
+  const steps = list('process.steps');
   const T = getT(isDark);
   return (
     <section className={`px-4 py-16 ${T.altSec}`}>
       <div className="mx-auto max-w-6xl">
-        <SectionLabel T={T}>How a repair begins</SectionLabel>
-        <SectionHeading T={T}>A clear path from symptom to picture.</SectionHeading>
+        <SectionLabel T={T}>{t('process.label')}</SectionLabel>
+        <SectionHeading T={T}>{t('process.title')}</SectionHeading>
         <div className="mt-10 grid gap-4 md:grid-cols-3">
-          {INQUIRY_STEPS.map(({ Icon, title, body }, i) => (
+          {steps.map(({ title, body }, i) => {
+            const Icon = INQUIRY_STEPS[i]?.Icon || ClipboardList;
+            return (
             <div key={title} className={`rounded-3xl border p-6 ${T.card}`}>
               <p className="font-display text-4xl text-copper-400">0{i + 1}</p>
               <div className="mt-4 grid h-10 w-10 place-items-center rounded-xl border border-pcb-500/25 bg-pcb-500/10">
@@ -462,10 +493,11 @@ function ProcessStrip({ setActive, isDark }) {
               <h3 className={`mt-4 text-base font-bold ${T.h}`}>{title}</h3>
               <p className={`mt-2 text-sm leading-relaxed ${T.body}`}>{body}</p>
             </div>
-          ))}
+          );
+          })}
         </div>
         <button onClick={() => setActive('inquiry')} className={`${CTA} mt-8`}>
-          Start an inquiry
+          {t('process.start')}
           <ArrowUpRight size={14} />
         </button>
       </div>
@@ -474,14 +506,16 @@ function ProcessStrip({ setActive, isDark }) {
 }
 
 function Testimonials({ isDark }) {
+  const { t, list } = useOfficial();
+  const items = list('testimonials.items');
   const T = getT(isDark);
   return (
     <section className={`px-4 py-20 ${T.sec}`}>
       <div className="mx-auto max-w-6xl">
-        <SectionLabel T={T}>Neighbourhood trust</SectionLabel>
-        <SectionHeading T={T}>Families who keep coming back.</SectionHeading>
+        <SectionLabel T={T}>{t('testimonials.label')}</SectionLabel>
+        <SectionHeading T={T}>{t('testimonials.title')}</SectionHeading>
         <div className="mt-10 grid gap-4 lg:grid-cols-3">
-          {TESTIMONIALS.map(({ name, area, quote }) => (
+          {items.map(({ name, area, quote }) => (
             <figure key={name} className={`flex flex-col rounded-3xl border p-6 ${T.card}`}>
               <Quote size={18} className="text-copper-400" />
               <blockquote className={`mt-4 flex-1 text-sm leading-relaxed ${T.body}`}>&ldquo;{quote}&rdquo;</blockquote>
@@ -498,24 +532,25 @@ function Testimonials({ isDark }) {
 }
 
 function ClosingBand({ setActive }) {
+  const { t } = useOfficial();
   return (
     <section className="px-4 pb-16">
       <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2rem] border border-copper-500/25 bg-forest-950 px-6 py-12 sm:px-12">
         <div className="pointer-events-none absolute -right-10 top-0 h-48 w-48 rounded-full bg-copper-500/20 blur-3xl" />
-        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-copper-300">Walk in or write first</p>
+        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-copper-300">{t('closing.label')}</p>
         <h2 className="mt-3 max-w-xl font-display text-4xl leading-tight text-white sm:text-5xl">
-          Bring the set. Leave with a straight answer.
+          {t('closing.title')}
         </h2>
         <p className="mt-4 max-w-lg text-sm leading-relaxed text-slate-400">
-          Near Maydar Wee Market, North Okkalapa. Diagnosis before you commit, genuine parts, and a technician who has done this work since 1989.
+          {t('closing.body')}
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <button onClick={() => setActive('inquiry')} className={CTA}>
-            Submit a repair inquiry
+            {t('closing.submit')}
           </button>
-          <a href="tel:09423850609" className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 px-7 py-3.5 text-sm font-semibold text-white">
+          <a href={`tel:${t('phone')}`} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 px-7 py-3.5 text-sm font-semibold text-white">
             <Phone size={14} />
-            09 423 850 609
+            {t('phone')}
           </a>
         </div>
       </div>
@@ -528,6 +563,7 @@ function ClosingBand({ setActive }) {
 // TECHNICIAN PHOTO — real image with graceful fallback to initials
 // ─────────────────────────────────────────────────────────────────
 function TechPhoto({ isDark }) {
+  const { t } = useOfficial();
   const [failed, setFailed] = useState(false);
   const src = `${import.meta.env.BASE_URL}technician.jpg`;
 
@@ -557,7 +593,7 @@ function TechPhoto({ isDark }) {
   return (
     <img
       src={src}
-      alt="U Win Naing — Founder & Master Technician"
+      alt={t('tech.alt')}
       onError={() => setFailed(true)}
       className="h-full w-full rounded-[14px] object-cover object-top"
     />
@@ -568,6 +604,8 @@ function TechPhoto({ isDark }) {
 // TECHNICIAN CARD  (compact, advanced, colourful)
 // ─────────────────────────────────────────────────────────────────
 function TechnicianCard({ isDark, setActive }) {
+  const { t, list } = useOfficial();
+  const skills = list('tech.skills');
   const T = getT(isDark);
   return (
     <section className={`px-4 py-10 ${T.altSec}`}>
@@ -613,13 +651,13 @@ function TechnicianCard({ isDark, setActive }) {
               </div>
 
               <div>
-                <p className={`text-lg font-extrabold leading-tight ${T.h}`}>U Win Naing</p>
+                <p className={`text-lg font-extrabold leading-tight ${T.h}`}>{t('tech.name')}</p>
                 <p className="mt-0.5 text-xs font-semibold text-copper-400">
-                  Founder &amp; Master Technician
+                  {t('tech.role')}
                 </p>
                 <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-pcb-500/30 bg-pcb-500/15 px-2.5 py-0.5">
                   <BadgeCheck size={11} className="text-pcb-400" />
-                  <span className="text-[10px] font-bold text-pcb-300">37 Yrs Experience</span>
+                  <span className="text-[10px] font-bold text-pcb-300">{t('tech.years')}</span>
                 </div>
                 {/* Star row */}
                 <div className="mt-1.5 flex gap-0.5">
@@ -634,16 +672,16 @@ function TechnicianCard({ isDark, setActive }) {
             {/* ── Col 2: Skills grid ── */}
             <div>
               <p className={`mb-3 text-[10px] font-bold uppercase tracking-[0.14em] ${T.muted}`}>
-                Core Specialisations
+                {t('tech.skillsLabel')}
               </p>
               <div className="flex flex-wrap gap-2">
-                {TECH_SKILLS.map(({ label, cls, Icon }) => (
+                {TECH_SKILLS.map(({ cls, Icon }, i) => (
                   <span
-                    key={label}
+                    key={skills[i] || i}
                     className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-semibold ${cls}`}
                   >
                     <Icon size={10} />
-                    {label}
+                    {skills[i]}
                   </span>
                 ))}
               </div>
@@ -653,9 +691,9 @@ function TechnicianCard({ isDark, setActive }) {
             <div className="flex flex-col gap-4">
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { value: '5K+',  label: 'Repaired', color: 'text-pcb-400' },
-                  { value: '37',   label: 'Years',    color: 'text-copper-400' },
-                  { value: '100%', label: 'Genuine',  color: 'text-violet-400' },
+                  { value: '5K+',  label: t('tech.repaired'), color: 'text-pcb-400' },
+                  { value: '37',   label: t('tech.yearsShort'), color: 'text-copper-400' },
+                  { value: '100%', label: t('tech.genuine'), color: 'text-violet-400' },
                 ].map(({ value, label, color }) => (
                   <div
                     key={label}
@@ -671,7 +709,7 @@ function TechnicianCard({ isDark, setActive }) {
                 className="flex items-center justify-center gap-2 rounded-xl border border-pcb-500/30 bg-pcb-500/10 py-2.5 text-sm font-semibold text-pcb-300 transition hover:bg-pcb-500/20 hover:text-pcb-200"
               >
                 <Info size={14} />
-                Full Story &amp; Heritage
+                {t('tech.story')}
                 <ChevronRight size={13} />
               </button>
             </div>
@@ -687,25 +725,27 @@ function TechnicianCard({ isDark, setActive }) {
 // ─────────────────────────────────────────────────────────────────
 function ServicesSection({ isDark, setActive }) {
   const [expanded, setExpanded] = useState(null);
+  const { t, list } = useOfficial();
+  const trust = list('trust');
   const T = getT(isDark);
 
   return (
     <section className={`min-h-screen px-4 py-20 sm:py-28 ${T.sec}`}>
       <div className="mx-auto max-w-6xl">
-        <SectionLabel T={T}>What We Fix</SectionLabel>
+        <SectionLabel T={T}>{t('services.pageLabel')}</SectionLabel>
         <SectionHeading T={T}>
-          Specialized Repair for{' '}
-          <span className="text-pcb-400">Every Screen</span>
+          {t('services.pageTitle')}{' '}
+          <span className="text-pcb-400">{t('services.pageTitleEm')}</span>
         </SectionHeading>
         <p className={`mt-4 max-w-lg text-sm leading-relaxed sm:text-base ${T.body}`}>
-          Whether it&rsquo;s the latest 4K LED panel or a beloved vintage plasma set, our
-          certified technicians have the tools and expertise to bring it back to life.
+          {t('services.pageBody')}
         </p>
 
         {/* Service cards */}
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {SERVICES.map((svc) => {
             const isOpen = expanded === svc.id;
+            const features = list(`services.${svc.id}.features`);
             return (
               <div
                 key={svc.id}
@@ -730,19 +770,19 @@ function ServicesSection({ isDark, setActive }) {
                       <svc.Icon size={22} />
                     </div>
                     <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${svc.badgeCls}`}>
-                      {svc.badge}
+                      {t(`services.${svc.id}.badge`)}
                     </span>
                   </div>
 
-                  <h3 className={`mt-4 text-lg font-bold ${T.h}`}>{svc.label}</h3>
-                  <p className={`mt-2 flex-1 text-sm leading-relaxed ${T.body}`}>{svc.desc}</p>
+                  <h3 className={`mt-4 text-lg font-bold ${T.h}`}>{t(`services.${svc.id}.label`)}</h3>
+                  <p className={`mt-2 flex-1 text-sm leading-relaxed ${T.body}`}>{t(`services.${svc.id}.desc`)}</p>
 
                   {/* Expand toggle */}
                   <button
                     className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-pcb-400 transition hover:text-pcb-300"
                     onClick={(e) => { e.stopPropagation(); setExpanded(isOpen ? null : svc.id); }}
                   >
-                    {isOpen ? 'Hide details' : 'See what we fix'}
+                    {isOpen ? t('services.hide') : t('services.see')}
                     <ChevronDown
                       size={12}
                       className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
@@ -752,7 +792,7 @@ function ServicesSection({ isDark, setActive }) {
                   {/* Expandable feature list */}
                   {isOpen && (
                     <ul className={`mt-4 space-y-2 border-t pt-4 ${T.div}`}>
-                      {svc.features.map((f) => (
+                      {features.map((f) => (
                         <li key={f} className="flex items-center gap-2 text-xs text-slate-300">
                           <CheckCircle size={12} className="shrink-0 text-pcb-500" />
                           {f}
@@ -768,13 +808,13 @@ function ServicesSection({ isDark, setActive }) {
 
         {/* Trust badge strip */}
         <div className="mt-14 flex flex-wrap gap-3">
-          {TRUST_BADGES.map(({ Icon, text }) => (
+          {TRUST_BADGES.map(({ Icon }, i) => (
             <div
-              key={text}
+              key={trust[i] || i}
               className={`flex items-center gap-2 rounded-full border px-4 py-2 ${T.card}`}
             >
               <Icon size={14} className="text-copper-400" />
-              <span className={`text-xs font-medium ${T.body}`}>{text}</span>
+              <span className={`text-xs font-medium ${T.body}`}>{trust[i]}</span>
             </div>
           ))}
         </div>
@@ -786,7 +826,7 @@ function ServicesSection({ isDark, setActive }) {
             className="inline-flex items-center gap-2 rounded-xl bg-pcb-500 px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-pcb-900/30 transition hover:bg-pcb-400 active:scale-95"
           >
             <Send size={14} />
-            Book a Repair — It&rsquo;s Free to Inquire
+            {t('services.book')}
             <ArrowUpRight size={13} />
           </button>
         </div>
@@ -799,6 +839,9 @@ function ServicesSection({ isDark, setActive }) {
 // ABOUT SECTION
 // ─────────────────────────────────────────────────────────────────
 function AboutSection({ isDark, setActive }) {
+  const { t, list } = useOfficial();
+  const timeline = list('about.timeline');
+  const stats = list('about.stats');
   const T = getT(isDark);
   return (
     <section className={`min-h-screen relative overflow-hidden px-4 py-20 sm:py-28 ${T.altSec}`}>
@@ -811,30 +854,23 @@ function AboutSection({ isDark, setActive }) {
 
           {/* ── Left: Story ── */}
           <div>
-            <SectionLabel T={T}>Our Heritage</SectionLabel>
+            <SectionLabel T={T}>{t('about.label')}</SectionLabel>
             <SectionHeading T={T}>
-              A Legacy Built on{' '}
-              <span className="text-copper-400">Trust</span> &amp; Skill
+              {t('about.title')}{' '}
+              <span className="text-copper-400">{t('about.titleTrust')}</span> &amp; {t('about.titleSkill')}
             </SectionHeading>
 
             <div className={`mt-5 space-y-3 text-sm leading-relaxed sm:text-base ${T.body}`}>
               <p>
-                Sein Pan Electronic Service was born from a simple belief — every broken television
-                deserves an honest repair at a fair price. Founder{' '}
-                <strong className={`font-semibold ${T.h}`}>U Win Naing</strong> started this journey
-                in <strong className={`font-semibold ${T.h}`}>1989</strong> with nothing but a
-                toolkit, deep electronics knowledge, and an unwavering commitment to his community.
+                {t('about.p1a')}{' '}
+                <strong className={`font-semibold ${T.h}`}>{t('about.p1name')}</strong> {t('about.p1b')}{' '}
+                <strong className={`font-semibold ${T.h}`}>{t('about.p1year')}</strong> {t('about.p1c')}
               </p>
+              <p>{t('about.p2')}</p>
               <p>
-                Over more than three decades, the shop evolved from servicing bulky CRT sets to
-                mastering modern LED, LCD, and plasma technologies — always staying ahead of the
-                curve while keeping that same neighbourhood warmth and trusted reputation.
-              </p>
-              <p>
-                Now located near{' '}
-                <strong className="font-semibold text-pcb-400">Maydar Wee Market (Maydarvi)</strong>,
-                North Okkalapa township, the shop is more accessible than ever, continuing to serve
-                Yangon families with the same dedication that built its 37-year legacy.
+                {t('about.p3a')}{' '}
+                <strong className="font-semibold text-pcb-400">{t('about.p3place')}</strong>
+                {t('about.p3b')}
               </p>
             </div>
 
@@ -871,16 +907,16 @@ function AboutSection({ isDark, setActive }) {
                   </span>
                 </div>
                 <div>
-                  <p className={`font-extrabold ${T.h}`}>U Win Naing</p>
-                  <p className={`text-xs ${T.muted}`}>Founder &amp; Master Technician</p>
+                  <p className={`font-extrabold ${T.h}`}>{t('tech.name')}</p>
+                  <p className={`text-xs ${T.muted}`}>{t('tech.role')}</p>
                   <p className="mt-1 text-[11px] font-semibold text-copper-400">
-                    37+ Years · South Okkalapa → North Okkalapa
+                    {t('about.journey')}
                   </p>
                   <div className="mt-2 flex gap-1">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} size={10} className="fill-copper-400 text-copper-400" />
                     ))}
-                    <span className={`ml-1 text-[10px] ${T.muted}`}>Master-level expertise</span>
+                    <span className={`ml-1 text-[10px] ${T.muted}`}>{t('about.master')}</span>
                   </div>
                 </div>
               </div>
@@ -891,7 +927,7 @@ function AboutSection({ isDark, setActive }) {
               className="mt-6 inline-flex items-center gap-2 rounded-xl bg-pcb-500 px-6 py-3 text-sm font-bold text-white transition hover:bg-pcb-400 active:scale-95"
             >
               <ClipboardList size={14} />
-              Book a Repair Today
+              {t('about.book')}
             </button>
           </div>
 
@@ -899,30 +935,33 @@ function AboutSection({ isDark, setActive }) {
           <div className="relative">
             <div className={`absolute left-5 top-4 bottom-4 w-px ${isDark ? 'bg-white/5' : 'bg-slate-200'}`} />
             <div className="space-y-8 pl-14">
-              {TIMELINE.map(({ year, title, body, yearCls, dotBorder, dotBg, dotFill }, i) => (
+              {timeline.map(({ year, title, body }, i) => {
+                const meta = TIMELINE[i] || TIMELINE[0];
+                return (
                 <div key={year} className="relative">
                   {/* Timeline dot */}
                   <div
-                    className={`absolute -left-9 top-0.5 grid h-8 w-8 place-items-center rounded-full border-2 ${dotBorder} ${dotBg}`}
+                    className={`absolute -left-9 top-0.5 grid h-8 w-8 place-items-center rounded-full border-2 ${meta.dotBorder} ${meta.dotBg}`}
                   >
-                    <div className={`h-2.5 w-2.5 rounded-full ${dotFill}`} />
+                    <div className={`h-2.5 w-2.5 rounded-full ${meta.dotFill}`} />
                   </div>
-                  <p className={`text-xs font-bold uppercase tracking-[0.15em] ${yearCls}`}>{year}</p>
+                  <p className={`text-xs font-bold uppercase tracking-[0.15em] ${meta.yearCls}`}>{year}</p>
                   <h3 className={`mt-1 text-base font-bold ${T.h}`}>{title}</h3>
                   <p className={`mt-1.5 text-sm leading-relaxed ${T.body}`}>{body}</p>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
 
         {/* Stats bar */}
         <div className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {ABOUT_STATS.map(({ Icon, label, value }) => (
-            <div key={label} className={`rounded-xl border px-4 py-5 text-center ${T.card}`}>
+          {ABOUT_STATS.map(({ Icon }, i) => (
+            <div key={stats[i]?.label || i} className={`rounded-xl border px-4 py-5 text-center ${T.card}`}>
               <Icon size={20} className="mx-auto mb-2 text-copper-500" />
-              <p className={`text-2xl font-extrabold ${T.h}`}>{value}</p>
-              <p className={`mt-0.5 text-[10px] uppercase tracking-wider ${T.muted}`}>{label}</p>
+              <p className={`text-2xl font-extrabold ${T.h}`}>{stats[i]?.value}</p>
+              <p className={`mt-0.5 text-[10px] uppercase tracking-wider ${T.muted}`}>{stats[i]?.label}</p>
             </div>
           ))}
         </div>
@@ -941,16 +980,19 @@ function InquirySection({ isDark }) {
   const [errors, setErrors]   = useState({});
   const [submitted, setSubmitted] = useState(false);
   const fileRef = useRef(null);
+  const { t, list } = useOfficial();
+  const steps = list('process.steps');
+  const tags = list('inquiry.tags');
   const T = getT(isDark);
 
   function validate() {
     const e = {};
-    if (!form.fullName.trim())  e.fullName = 'Full name is required.';
-    if (!form.phone.trim())     e.phone = 'Phone number is required.';
+    if (!form.fullName.trim())  e.fullName = t('inquiry.errName');
+    if (!form.phone.trim())     e.phone = t('inquiry.errPhone');
     else if (!/^[0-9+()\-\s]{7,}$/.test(form.phone.trim()))
-      e.phone = 'Enter a valid phone number.';
-    if (!form.tvBrand.trim())   e.tvBrand = 'TV brand is required.';
-    if (!form.issue.trim())     e.issue = 'Please describe the issue.';
+      e.phone = t('inquiry.errPhoneInvalid');
+    if (!form.tvBrand.trim())   e.tvBrand = t('inquiry.errBrand');
+    if (!form.issue.trim())     e.issue = t('inquiry.errIssue');
     return e;
   }
 
@@ -981,19 +1023,21 @@ function InquirySection({ isDark }) {
 
           {/* ── Left: intro ── */}
           <div>
-            <SectionLabel T={T}>Online Repair Inquiry</SectionLabel>
+            <SectionLabel T={T}>{t('inquiry.label')}</SectionLabel>
             <SectionHeading T={T}>
-              Book Your{' '}
-              <span className="text-pcb-400">TV Repair</span> Today
+              {t('inquiry.title')}{' '}
+              <span className="text-pcb-400">{t('inquiry.titleEm')}</span> {t('inquiry.titleEnd')}
             </SectionHeading>
             <p className={`mt-4 text-sm leading-relaxed sm:text-base ${T.body}`}>
-              Fill in the form and our team will contact you within{' '}
-              <strong className={`font-semibold ${T.h}`}>24 hours</strong> to confirm your
-              appointment. No upfront fees — you only pay after the repair is complete.
+              {t('inquiry.bodyBefore')}{' '}
+              <strong className={`font-semibold ${T.h}`}>{t('inquiry.bodyHours')}</strong>{' '}
+              {t('inquiry.bodyAfter')}
             </p>
 
             <div className="mt-8 space-y-5">
-              {INQUIRY_STEPS.map(({ Icon, title, body }, i) => (
+              {steps.map(({ title, body }, i) => {
+                const Icon = INQUIRY_STEPS[i]?.Icon || ClipboardList;
+                return (
                 <div key={title} className="flex gap-4">
                   <div className="flex flex-col items-center">
                     <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-pcb-500/20 bg-pcb-500/10">
@@ -1008,12 +1052,13 @@ function InquirySection({ isDark }) {
                     <p className={`mt-0.5 text-xs ${T.body}`}>{body}</p>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Feature pills */}
             <div className="mt-6 flex flex-wrap gap-2">
-              {['Free Consultation', 'No-Fix No-Fee', 'Same-Day Estimate', 'Genuine Parts'].map((tag) => (
+              {tags.map((tag) => (
                 <span
                   key={tag}
                   className="rounded-full border border-pcb-500/25 bg-pcb-500/10 px-3 py-1 text-[11px] font-semibold text-pcb-300"
@@ -1026,17 +1071,17 @@ function InquirySection({ isDark }) {
 
           {/* ── Right: form ── */}
           <div className={`rounded-2xl border p-6 sm:p-8 ${T.card}`}>
-            <h3 className={`mb-6 text-lg font-bold ${T.h}`}>Repair Inquiry Form</h3>
+            <h3 className={`mb-6 text-lg font-bold ${T.h}`}>{t('inquiry.formTitle')}</h3>
 
             <form onSubmit={handleSubmit} className="space-y-5" noValidate>
               {/* Full Name */}
               <div>
                 <label className={`mb-1.5 block text-xs font-semibold ${T.muted}`}>
-                  Full Name <span className="text-red-400">*</span>
+                  {t('inquiry.fullName')} <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Mg Aung Kyaw"
+                  placeholder={t('inquiry.fullNamePh')}
                   value={form.fullName}
                   onChange={(e) => handleChange('fullName', e.target.value)}
                   className={T.input(errors.fullName)}
@@ -1047,11 +1092,11 @@ function InquirySection({ isDark }) {
               {/* Phone */}
               <div>
                 <label className={`mb-1.5 block text-xs font-semibold ${T.muted}`}>
-                  Phone Number <span className="text-red-400">*</span>
+                  {t('inquiry.phone')} <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="tel"
-                  placeholder="e.g. 09 423 850 609"
+                  placeholder={t('inquiry.phonePh')}
                   value={form.phone}
                   onChange={(e) => handleChange('phone', e.target.value)}
                   className={T.input(errors.phone)}
@@ -1063,11 +1108,11 @@ function InquirySection({ isDark }) {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={`mb-1.5 block text-xs font-semibold ${T.muted}`}>
-                    TV Brand <span className="text-red-400">*</span>
+                    {t('inquiry.brand')} <span className="text-red-400">*</span>
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Samsung"
+                    placeholder={t('inquiry.brandPh')}
                     value={form.tvBrand}
                     onChange={(e) => handleChange('tvBrand', e.target.value)}
                     className={T.input(errors.tvBrand)}
@@ -1076,11 +1121,11 @@ function InquirySection({ isDark }) {
                 </div>
                 <div>
                   <label className={`mb-1.5 block text-xs font-semibold ${T.muted}`}>
-                    Model <span className={`font-normal ${T.muted}`}>(optional)</span>
+                    {t('inquiry.model')} <span className={`font-normal ${T.muted}`}>{t('inquiry.optional')}</span>
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. UA55TU7000"
+                    placeholder={t('inquiry.modelPh')}
                     value={form.tvModel}
                     onChange={(e) => handleChange('tvModel', e.target.value)}
                     className={T.input(false)}
@@ -1091,11 +1136,11 @@ function InquirySection({ isDark }) {
               {/* Issue */}
               <div>
                 <label className={`mb-1.5 block text-xs font-semibold ${T.muted}`}>
-                  Describe the Issue <span className="text-red-400">*</span>
+                  {t('inquiry.issue')} <span className="text-red-400">*</span>
                 </label>
                 <textarea
                   rows={4}
-                  placeholder="e.g. Screen goes black after 10 minutes but sound still works…"
+                  placeholder={t('inquiry.issuePh')}
                   value={form.issue}
                   onChange={(e) => handleChange('issue', e.target.value)}
                   className={`${T.input(errors.issue)} resize-none`}
@@ -1106,8 +1151,8 @@ function InquirySection({ isDark }) {
               {/* File upload */}
               <div>
                 <label className={`mb-1.5 block text-xs font-semibold ${T.muted}`}>
-                  Attach Photo{' '}
-                  <span className={`font-normal ${T.muted}`}>(optional — helps with diagnosis)</span>
+                  {t('inquiry.photo')}{' '}
+                  <span className={`font-normal ${T.muted}`}>{t('inquiry.photoHint')}</span>
                 </label>
                 <input
                   ref={fileRef}
@@ -1126,7 +1171,7 @@ function InquirySection({ isDark }) {
                   }`}
                 >
                   <Upload size={14} />
-                  {form.file ? form.file.name : 'Click to upload an image of your TV'}
+                  {form.file ? form.file.name : t('inquiry.upload')}
                 </button>
               </div>
 
@@ -1135,11 +1180,11 @@ function InquirySection({ isDark }) {
                 type="submit"
                 className="w-full rounded-xl bg-copper-500 px-6 py-3.5 text-sm font-bold text-pcb-950 shadow-glow transition hover:bg-copper-400 active:scale-[0.98]"
               >
-                Submit Repair Inquiry →
+                {t('inquiry.submit')}
               </button>
 
               <p className={`text-center text-[10px] ${T.muted}`}>
-                No upfront payment. Our team will contact you within 24 hours.
+                {t('inquiry.note')}
               </p>
             </form>
           </div>
@@ -1174,15 +1219,16 @@ function InquirySection({ isDark }) {
             </div>
 
             <h3 className={`text-xl font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>
-              Inquiry Received!
+              {t('inquiry.successTitle')}
             </h3>
             <p className={`mt-2 text-sm leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-              Thank you,{' '}
-              <strong className={isDark ? 'text-white' : 'text-slate-900'}>{form.fullName}</strong>! We&rsquo;ve
-              received your repair inquiry for your{' '}
-              <strong className={isDark ? 'text-white' : 'text-slate-900'}>{form.tvBrand}</strong> TV.
-              Our team will call you at{' '}
-              <strong className="text-pcb-400">{form.phone}</strong> within 24 hours.
+              {t('inquiry.thanks')}{' '}
+              <strong className={isDark ? 'text-white' : 'text-slate-900'}>{form.fullName}</strong>.{' '}
+              {t('inquiry.received')}{' '}
+              <strong className={isDark ? 'text-white' : 'text-slate-900'}>{form.tvBrand}</strong>{' '}
+              {t('inquiry.tvWord')}{' '}
+              {t('inquiry.callAt')}{' '}
+              <strong className="text-pcb-400">{form.phone}</strong> {t('inquiry.within')}
             </p>
 
             {/* Summary table */}
@@ -1192,13 +1238,13 @@ function InquirySection({ isDark }) {
               }`}
             >
               <p className={`mb-2 text-[10px] font-bold uppercase tracking-wider ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                Submission Summary
+                {t('inquiry.summary')}
               </p>
               {[
-                { k: 'Name',  v: form.fullName },
-                { k: 'Phone', v: form.phone },
-                { k: 'TV',    v: `${form.tvBrand} ${form.tvModel}`.trim() },
-                { k: 'Photo', v: form.file ? form.file.name : 'Not attached' },
+                { k: t('inquiry.sumName'),  v: form.fullName },
+                { k: t('inquiry.sumPhone'), v: form.phone },
+                { k: t('inquiry.sumTv'),    v: `${form.tvBrand} ${form.tvModel}`.trim() },
+                { k: t('inquiry.sumPhoto'), v: form.file ? form.file.name : t('inquiry.noPhoto') },
               ].map(({ k, v }) => (
                 <div key={k} className={`flex justify-between py-1 ${isDark ? 'border-b border-white/[0.04]' : 'border-b border-slate-100'} last:border-0`}>
                   <span className={isDark ? 'text-slate-500' : 'text-slate-400'}>{k}</span>
@@ -1212,13 +1258,13 @@ function InquirySection({ isDark }) {
                 onClick={resetForm}
                 className="flex-1 rounded-xl border border-pcb-500/30 py-3 text-sm font-semibold text-pcb-400 transition hover:bg-pcb-500/10"
               >
-                Submit Another
+                {t('inquiry.another')}
               </button>
               <button
                 onClick={() => setSubmitted(false)}
                 className="flex-1 rounded-xl bg-pcb-500 py-3 text-sm font-bold text-white transition hover:bg-pcb-400"
               >
-                Close
+                {t('inquiry.close')}
               </button>
             </div>
           </div>
@@ -1232,18 +1278,19 @@ function InquirySection({ isDark }) {
 // CONTACT SECTION
 // ─────────────────────────────────────────────────────────────────
 function ContactSection({ isDark }) {
+  const { t, list } = useOfficial();
+  const days = list('contact.days');
   const T = getT(isDark);
   return (
     <section className={`min-h-screen px-4 py-20 sm:py-28 ${T.altSec}`}>
       <div className="mx-auto max-w-6xl">
-        <SectionLabel T={T}>Get In Touch</SectionLabel>
+        <SectionLabel T={T}>{t('contact.label')}</SectionLabel>
         <SectionHeading T={T}>
-          Find Us in{' '}
-          <span className="text-copper-400">North Okkalapa</span>
+          {t('contact.title')}{' '}
+          <span className="text-copper-400">{t('contact.titleEm')}</span>
         </SectionHeading>
         <p className={`mt-4 max-w-lg text-sm leading-relaxed sm:text-base ${T.body}`}>
-          Visit us near Maydar Wee Market (Maydarvi), North Okkalapa township, Yangon.
-          Walk-ins welcome during business hours.
+          {t('contact.body')}
         </p>
 
         <div className="mt-12 grid gap-6 lg:grid-cols-2">
@@ -1257,10 +1304,10 @@ function ContactSection({ isDark }) {
                 <div className="grid h-10 w-10 place-items-center rounded-xl border border-pcb-500/20 bg-pcb-500/10">
                   <Phone size={17} className="text-pcb-400" />
                 </div>
-                <p className={`text-sm font-bold ${T.h}`}>Phone Numbers</p>
+                <p className={`text-sm font-bold ${T.h}`}>{t('contact.phones')}</p>
               </div>
               <div className="space-y-2">
-                {['09 423 850 609'].map((num) => (
+                {[t('phone')].map((num) => (
                   <a
                     key={num}
                     href={`tel:${num.replace(/\s/g, '')}`}
@@ -1283,14 +1330,14 @@ function ContactSection({ isDark }) {
                 <div className="grid h-10 w-10 place-items-center rounded-xl border border-copper-500/20 bg-copper-500/10">
                   <Clock size={17} className="text-copper-400" />
                 </div>
-                <p className={`text-sm font-bold ${T.h}`}>Business Hours</p>
+                <p className={`text-sm font-bold ${T.h}`}>{t('contact.hours')}</p>
               </div>
               <div className={`divide-y ${isDark ? 'divide-white/[0.04]' : 'divide-slate-100'}`}>
-                {HOURS.map(({ day, time, open }) => (
+                {days.map(({ day, time }, i) => (
                   <div key={day} className="flex items-center justify-between py-2.5">
                     <span className={`text-xs ${T.muted}`}>{day}</span>
                     <div className="flex items-center gap-2">
-                      <span className={`h-1.5 w-1.5 rounded-full ${open ? 'bg-pcb-400' : 'bg-red-400'}`} />
+                      <span className={`h-1.5 w-1.5 rounded-full ${HOURS[i]?.open ? 'bg-pcb-400' : 'bg-red-400'}`} />
                       <span className={`text-xs font-semibold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
                         {time}
                       </span>
@@ -1308,15 +1355,13 @@ function ContactSection({ isDark }) {
                 }`}>
                   <MapPin size={17} className={isDark ? 'text-slate-400' : 'text-slate-600'} />
                 </div>
-                <p className={`text-sm font-bold ${T.h}`}>Address</p>
+                <p className={`text-sm font-bold ${T.h}`}>{t('contact.address')}</p>
               </div>
-              <p className={`text-sm leading-relaxed ${T.body}`}>
-                Near Maydar Wee Market (Maydarvi),<br />
-                North Okkalapa Township,<br />
-                Yangon, Myanmar
+              <p className={`whitespace-pre-line text-sm leading-relaxed ${T.body}`}>
+                {t('contact.addressLines')}
               </p>
               <p className={`mt-3 text-[11px] ${T.muted}`}>
-                Previous location: 14–15 Junction, Yadanar Road, 12 Quarter, South Okkalapa
+                {t('contact.previous')}
               </p>
             </div>
           </div>
@@ -1371,11 +1416,11 @@ function ContactSection({ isDark }) {
                 }}
               >
                 <p className={`text-xs font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                  Sein Pan Electronic
+                  {t('contact.mapName')}
                 </p>
-                <p className="text-[10px] font-semibold text-pcb-400">Near Maydar Wee Market</p>
+                <p className="text-[10px] font-semibold text-pcb-400">{t('contact.mapPlace')}</p>
                 <p className={`text-[10px] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                  North Okkalapa, Yangon
+                  {t('contact.mapArea')}
                 </p>
               </div>
             </div>
@@ -1391,7 +1436,7 @@ function ContactSection({ isDark }) {
 
             {/* Label */}
             <p className={`absolute bottom-4 left-4 text-[9px] uppercase tracking-[0.15em] ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
-              Maydarvi · North Okkalapa
+              {t('contact.mapLabel')}
             </p>
 
             {/* Open in Maps */}
@@ -1405,7 +1450,7 @@ function ContactSection({ isDark }) {
                   : 'border-slate-200 bg-white/80 text-slate-600 hover:border-pcb-500/30 hover:text-pcb-600'
               }`}
             >
-              Open in Maps
+              {t('contact.openMaps')}
               <ArrowUpRight size={11} />
             </a>
           </div>
@@ -1418,12 +1463,9 @@ function ContactSection({ isDark }) {
 // ─────────────────────────────────────────────────────────────────
 // FOOTER  (always dark for impact)
 // ─────────────────────────────────────────────────────────────────
-const FOOTER_SERVICES = [
-  'LED TV Repair', 'LCD TV Repair', 'Plasma TV Repair',
-  'Remote Repair', 'Component Soldering', 'Smart TV Service',
-];
-
 function Footer({ setActive }) {
+  const { t, list } = useOfficial();
+  const links = list('footer.links');
   return (
     <footer className="border-t border-white/5 bg-ink px-4 py-14 pb-28 md:pb-14">
       <div className="mx-auto mb-10 h-px max-w-6xl bg-gradient-to-r from-transparent via-copper-400/60 to-transparent" />
@@ -1440,25 +1482,24 @@ function Footer({ setActive }) {
                 <Tv size={18} className="text-pcb-400" />
               </div>
               <div className="text-left leading-none">
-                <span className="block text-sm font-extrabold text-white">Sein Pan</span>
+                <span className="block text-sm font-extrabold text-white">{t('nav.brand')}</span>
                 <span className="block text-[10px] uppercase tracking-[0.15em] text-slate-500">
-                  Electronic Service
+                  {t('footer.service')}
                 </span>
               </div>
             </button>
             <p className="max-w-xs text-xs leading-relaxed text-slate-500">
-              LED, LCD &amp; Plasma TV Repair Service. Established in 1989 by U Win Naing.
-              Serving Yangon with trust and expertise for over 37 years.
+              {t('footer.blurb')}
             </p>
 
             {/* Social icons */}
             <div className="mt-5 flex gap-2">
               {[
-                { Icon: Share2,        label: 'Facebook' },
-                { Icon: Globe,         label: 'Instagram' },
-                { Icon: SquarePlay,    label: 'YouTube' },
-                { Icon: MessageSquare, label: 'Viber' },
-                { Icon: Mail,          label: 'Email' },
+                { Icon: Share2,        label: t('footer.social.facebook') },
+                { Icon: Globe,         label: t('footer.social.instagram') },
+                { Icon: SquarePlay,    label: t('footer.social.youtube') },
+                { Icon: MessageSquare, label: t('footer.social.viber') },
+                { Icon: Mail,          label: t('footer.social.email') },
               ].map(({ Icon, label }) => (
                 <a
                   key={label}
@@ -1475,16 +1516,16 @@ function Footer({ setActive }) {
           {/* Navigation col */}
           <div>
             <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
-              Navigation
+              {t('footer.navigation')}
             </p>
             <ul className="space-y-2.5">
-              {NAV_TABS.map(({ id, label }) => (
+              {NAV_TABS.map(({ id }) => (
                 <li key={id}>
                   <button
                     onClick={() => setActive(id)}
                     className="text-xs text-slate-400 transition hover:text-white"
                   >
-                    {label}
+                    {t(`nav.${id}`)}
                   </button>
                 </li>
               ))}
@@ -1495,10 +1536,10 @@ function Footer({ setActive }) {
           <div className="space-y-8">
             <div>
               <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                Services
+                {t('footer.services')}
               </p>
               <ul className="space-y-2.5">
-                {FOOTER_SERVICES.map((s) => (
+                {links.map((s) => (
                   <li key={s}>
                     <button
                       onClick={() => setActive('services')}
@@ -1512,20 +1553,20 @@ function Footer({ setActive }) {
             </div>
             <div>
               <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                Contact
+                {t('footer.contact')}
               </p>
               <ul className="space-y-2.5">
                 <li className="flex items-start gap-2 text-xs text-slate-400">
                   <MapPin size={11} className="mt-0.5 shrink-0 text-copper-500" />
-                  Near Maydar Wee Market, North Okkalapa, Yangon
+                  {t('footer.address')}
                 </li>
                 <li className="flex items-center gap-2 text-xs text-slate-400">
                   <Phone size={11} className="shrink-0 text-pcb-500" />
-                  09 423 850 609
+                  <a href={`tel:${t('phone')}`}>{t('phone')}</a>
                 </li>
                 <li className="flex items-center gap-2 text-xs text-slate-400">
                   <Clock size={11} className="shrink-0 text-slate-500" />
-                  Mon–Fri · 8 AM – 6 PM
+                  {t('footer.hours')}
                 </li>
               </ul>
             </div>
@@ -1535,11 +1576,11 @@ function Footer({ setActive }) {
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col gap-2 border-t border-white/5 pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-[11px] text-slate-600">
-            © {new Date().getFullYear()} Sein Pan Electronic Service. All rights reserved.
+            © {new Date().getFullYear()} {t('footer.rights')}
           </p>
           <div className="flex items-center gap-3">
             <span className="h-1 w-1 rounded-full bg-pcb-500" />
-            <p className="text-[11px] text-slate-600">Est. 1989 · North Okkalapa, Yangon</p>
+            <p className="text-[11px] text-slate-600">{t('footer.est')}</p>
           </div>
         </div>
       </div>
@@ -1551,6 +1592,7 @@ function Footer({ setActive }) {
 // ROOT PAGE COMPONENT
 // ─────────────────────────────────────────────────────────────────
 export default function SeinPanOfficialPage() {
+  const { t } = useOfficial();
   const [activeTab, setActiveTab] = useState('home');
   const [isDark,    setIsDark]    = useState(true);
 
@@ -1606,7 +1648,7 @@ export default function SeinPanOfficialPage() {
 
       <nav className={`fixed bottom-0 left-0 right-0 z-50 border-t backdrop-blur-xl md:hidden ${isDark ? 'border-white/10 bg-ink/95' : 'border-slate-200 bg-white/95'}`}>
         <div className="grid grid-cols-5">
-          {NAV_TABS.map(({ id, label, Icon }) => {
+          {NAV_TABS.map(({ id, Icon }) => {
             const on = activeTab === id;
             return (
               <button
@@ -1615,7 +1657,7 @@ export default function SeinPanOfficialPage() {
                 className={`flex flex-col items-center gap-1 py-2.5 text-[10px] font-semibold ${on ? 'text-copper-400' : isDark ? 'text-slate-500' : 'text-slate-400'}`}
               >
                 <Icon size={16} />
-                {label}
+                {t(`nav.${id}`)}
               </button>
             );
           })}

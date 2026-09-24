@@ -43,7 +43,7 @@ function Row({ icon, label, children }) {
 export function LocationSection() {
   const { t, i18n } = useTranslation(["home", "common"]);
   const reduce = useReducedMotion();
-  const lang = (i18n.language || "en").split("-")[0];
+  const lang = (i18n.resolvedLanguage || i18n.language || "my").split("-")[0];
 
   const phone = t("location.phoneValue");
   const telHref = `tel:${phone.replace(/[^\d+]/g, "")}`;

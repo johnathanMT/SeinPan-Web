@@ -10,18 +10,21 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import enCommon from "./locales/en/common.json";
 import enHome from "./locales/en/home.json";
 import enCatalog from "./locales/en/catalog.json";
+import enOfficial from "./locales/en/official.json";
 import myCommon from "./locales/my/common.json";
 import myHome from "./locales/my/home.json";
 import myCatalog from "./locales/my/catalog.json";
+import myOfficial from "./locales/my/official.json";
 // Single source of truth for supported languages (used by LanguageSwitcher).
+// Burmese is first: it is the default for first-time visitors.
 export const SUPPORTED = [
-  { code: "en", label: "English", native: "English", dir: "ltr" },
   { code: "my", label: "Myanmar", native: "မြန်မာ", dir: "ltr" },
+  { code: "en", label: "English", native: "English", dir: "ltr" },
 ];
 
 const resources = {
-  en: { common: enCommon, home: enHome, catalog: enCatalog },
-  my: { common: myCommon, home: myHome, catalog: myCatalog },
+  en: { common: enCommon, home: enHome, catalog: enCatalog, official: enOfficial },
+  my: { common: myCommon, home: myHome, catalog: myCatalog, official: myOfficial },
 };
 
 i18n
@@ -29,18 +32,20 @@ i18n
   .use(initReactI18next) // wire into React via context
   .init({
     resources,
-    fallbackLng: "en",
-    supportedLngs: ["en", "my"],
-    ns: ["common", "home", "catalog"],
+    // First-time visitors see Burmese. A saved choice (localStorage/cookie)
+    // still wins, so switching to English sticks. Browser language is ignored
+    // so an English OS does not override the shop default.
+    fallbackLng: "my",
+    supportedLngs: ["my", "en"],
+    load: "languageOnly",
+    ns: ["common", "home", "catalog", "official"],
     defaultNS: "common",
     interpolation: { escapeValue: false }, // React already escapes output
     detection: {
-      // Order in which a saved/preferred language is looked up.
-      order: ["localStorage", "cookie", "navigator", "htmlTag"],
-      // Persistence: writing here is what makes the choice survive reloads.
+      order: ["localStorage", "cookie"],
       caches: ["localStorage", "cookie"],
-      lookupLocalStorage: "sp_lang",
-      lookupCookie: "sp_lang",
+      lookupLocalStorage: "seinpan_lang",
+      lookupCookie: "seinpan_lang",
     },
     react: { useSuspense: false },
   });
