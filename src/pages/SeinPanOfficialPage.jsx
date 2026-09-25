@@ -363,7 +363,7 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
       <div className="hidden bg-theme-color-4 sm:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1.5 text-[11px] tracking-[0.06em]">
           <span className="text-theme-color-2/85">{t('nav.utility')}</span>
-          <a href={`tel:${t('phone')}`} className="inline-flex items-center gap-1.5 font-semibold text-theme-color-2 transition hover:text-white">
+          <a href={LINKS.tel} className="inline-flex items-center gap-1.5 font-semibold text-theme-color-2 transition hover:text-white hover:underline hover:underline-offset-4">
             <Phone size={11} />
             {t('phone')}
           </a>
@@ -395,6 +395,14 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
           </nav>
 
           <div className="flex items-center gap-2">
+            <a
+              href={LINKS.tel}
+              className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-theme-color-2/25 px-2.5 text-[12px] font-semibold text-theme-color-2 transition hover:bg-white/10 hover:text-white sm:hidden"
+              aria-label={t('phone')}
+            >
+              <Phone size={14} />
+              {t('phone')}
+            </a>
             <button
               onClick={toggleTheme}
               className="grid h-9 w-9 place-items-center rounded-xl border border-theme-color-2/25 text-theme-color-2 transition hover:bg-white/10"
@@ -438,6 +446,13 @@ function Navbar({ active, setActive, isDark, toggleTheme }) {
                 </button>
               ))}
             </div>
+            <a
+              href={LINKS.tel}
+              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-theme-color-2/30 px-4 py-3 text-sm font-semibold text-theme-color-2 transition hover:bg-white/10 hover:text-white"
+            >
+              <Phone size={14} />
+              {t('phone')}
+            </a>
             <button onClick={() => go('inquiry')} className={`${CTA} mt-3 w-full`}>
               <Wrench size={14} />
               {t('nav.bookARepair')}
@@ -570,7 +585,7 @@ function HeroSection({ setActive }) {
                           <ArrowUpRight size={15} />
                         </button>
                         <a
-                          href={`tel:${t('phone')}`}
+                          href={LINKS.tel}
                           className={isTvOn
                             ? 'inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-theme-color-2/70 px-7 py-3.5 text-sm font-semibold text-theme-color-2 transition hover:scale-105 hover:bg-theme-color-2 hover:text-theme-color-4 sm:w-auto'
                             : 'inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#E6C27A]/80 bg-black/30 px-7 py-3.5 text-sm font-semibold text-[#ffe7a3] shadow-[0_0_16px_rgba(230,194,122,0.4)] [text-shadow:0_0_8px_rgba(230,194,122,0.9)] transition hover:scale-105 sm:w-auto'}
@@ -870,7 +885,7 @@ function ClosingBand({ setActive, isDark }) {
             {t('closing.submit')}
           </button>
           <a
-            href={`tel:${t('phone')}`}
+            href={LINKS.tel}
             className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-theme-color-2/70 px-7 py-3.5 text-sm font-semibold text-theme-color-2 transition hover:scale-105 hover:bg-theme-color-2 hover:text-theme-color-4"
           >
             <Phone size={15} />
@@ -1326,7 +1341,7 @@ function ContactSection({ isDark }) {
                 {[t('phone')].map((num) => (
                   <a
                     key={num}
-                    href={`tel:${num.replace(/\s/g, '')}`}
+                    href={LINKS.tel}
                     className="neon-cta group flex items-center justify-between rounded-xl bg-theme-color-3 px-4 py-3 text-sm text-white shadow-sm hover:scale-[1.02]"
                   >
                     <span className="font-semibold">{num}</span>
@@ -1503,7 +1518,7 @@ function Footer({ setActive }) {
             </button>
             <p className="max-w-xs text-sm leading-loose text-white/90">{keepWords(t('footer.blurb'))}</p>
             <a
-              href={`tel:${t('phone')}`}
+              href={LINKS.tel}
               className="mt-6 inline-flex items-center gap-2 rounded-xl bg-theme-color-3 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-theme-color-4/20 transition hover:scale-105 hover:opacity-90"
             >
               <Phone size={14} />
@@ -1546,7 +1561,7 @@ function Footer({ setActive }) {
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone size={15} className="shrink-0 text-theme-color-2" />
-                <a href={`tel:${t('phone')}`} className="transition hover:text-theme-color-2">{t('phone')}</a>
+                <a href={LINKS.tel} className="transition hover:text-theme-color-2 hover:underline hover:underline-offset-4">{t('phone')}</a>
               </li>
               <li className="flex items-start gap-2.5">
                 <Clock size={15} className="mt-1 shrink-0 text-theme-color-2" />

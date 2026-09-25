@@ -786,7 +786,7 @@ export default function SeinPanOfficialWebsite() {
                 </div>
                 <div className="space-y-2">
                   {['09423858609'].map((num) => (
-                    <a key={num} href={`tel:${num}`}
+                    <a key={num} href="tel:+959423858609"
                       className="flex items-center justify-between rounded-xl px-4 py-3 transition-all hover:opacity-80"
                       style={{ background: C.ink800 }}>
                       <span className="text-sm font-medium text-white">{num}</span>

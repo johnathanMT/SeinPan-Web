@@ -46,7 +46,10 @@ export function LocationSection() {
   const lang = (i18n.resolvedLanguage || i18n.language || "my").split("-")[0];
 
   const phone = t("location.phoneValue");
-  const telHref = `tel:${phone.replace(/[^\d+]/g, "")}`;
+  const digits = phone.replace(/[^\d+]/g, "");
+  const telHref = digits.startsWith("+")
+    ? `tel:${digits}`
+    : `tel:+95${digits.replace(/^0/, "")}`;
   const rating = t("location.ratingValue");
 
   return (
