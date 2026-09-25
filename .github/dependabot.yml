@@ -6,6 +6,21 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    ignore:
+      # typescript-eslint supports TypeScript <6.1 (type-aware linting uses the
+      # JS compiler API that TypeScript 7's native compiler replaced). Remove
+      # this once typescript-eslint's peer range includes the newer version.
+      - dependency-name: typescript
+        versions: [">=6.1.0"]
+      # eslint-plugin-jsx-a11y (accessibility lint) supports ESLint <=9. ESLint 10
+      # would fail `npm ci` exactly like TypeScript 7 did. Remove once it does.
+      - dependency-name: eslint
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@eslint/js"
+        update-types: ["version-update:semver-major"]
+      # Keep Node type definitions on the same major as the CI runtime (Node 22).
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
       production:
         dependency-type: production
@@ -18,3 +33,6 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]

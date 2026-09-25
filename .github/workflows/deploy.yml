@@ -6,6 +6,10 @@
 # A push only deploys if every quality gate passes: types, lint (incl.
 # accessibility rules), translation parity, tests (incl. axe-core) and a
 # production dependency audit.
+#
+# All actions run on GitHub's Node 24 runtime (the Node 20 action runtime is
+# deprecated). The runner image is pinned so an upstream `ubuntu-latest`
+# switch can't change the build without a reviewed commit.
 
 name: Deploy to GitHub Pages
 
@@ -26,16 +30,16 @@ concurrency:
 jobs:
   build:
     name: Verify & build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -63,7 +67,7 @@ jobs:
 
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
@@ -71,7 +75,7 @@ jobs:
     name: Deploy
     if: github.event_name != 'pull_request'
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       pages: write
       id-token: write
@@ -81,4 +85,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

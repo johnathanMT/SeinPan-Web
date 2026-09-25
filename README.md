@@ -52,6 +52,18 @@ src/
 - **Touch targets:** interactive elements are at least 44–48px (`min-h-12`, `h-11` + `tap-48`).
 - **Links between tabs:** use `<NavLink to="services">`, a real link with an `href`.
 
+## Toolchain compatibility
+
+Some major versions are intentionally held back (also encoded as Dependabot `ignore` rules):
+
+| Package | Held at | Why |
+| --- | --- | --- |
+| `typescript` | `~6.0.x` | `typescript-eslint` (type-aware linting) supports TypeScript `<6.1`. TypeScript 7 (native compiler) breaks `npm ci`. |
+| `eslint`, `@eslint/js` | `9.x` | `eslint-plugin-jsx-a11y` supports ESLint `<=9`. |
+| `@types/node` | `22.x` | Matches the Node 22 used in CI. |
+
+When those plugins publish support for the newer versions, remove the matching rule in `.github/dependabot.yml` and upgrade.
+
 ## Deployment
 
 Every push to `main` runs the full verification in GitHub Actions and deploys `dist/` to GitHub Pages only if it all passes.
