@@ -496,6 +496,7 @@ const BEZEL =
 // ─────────────────────────────────────────────────────────────────
 function HeroSection({ setActive }) {
   const { t, list } = useOfficial();
+  const [isTvOn, setIsTvOn] = useState(true);
   const stats = list('hero.stats');
   const trust = [
     [Shield, t('hero.genuine')],
@@ -503,6 +504,9 @@ function HeroSection({ setActive }) {
     [BadgeCheck, t('hero.noFee')],
   ];
   const statBorder = ['', 'border-l', 'border-t sm:border-l sm:border-t-0', 'border-l border-t sm:border-t-0'];
+  const standbyTitle = 'text-[#d9fff8] [text-shadow:0_0_6px_rgba(126,232,224,1),0_0_16px_rgba(45,212,191,0.9),0_0_32px_rgba(20,184,166,0.45)]';
+  const standbyGold = 'text-[#ffe7a3] [text-shadow:0_0_6px_rgba(230,194,122,1),0_0_16px_rgba(230,194,122,0.75),0_0_28px_rgba(174,112,87,0.4)]';
+  const standbyBtn = 'inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#7ee8e0]/80 bg-black/30 px-7 py-3.5 text-sm font-bold text-[#d9fff8] shadow-[0_0_18px_rgba(45,212,191,0.45),inset_0_0_14px_rgba(45,212,191,0.18)] [text-shadow:0_0_8px_rgba(126,232,224,0.95)] transition hover:scale-105 sm:w-auto';
   return (
     <section className="relative isolate overflow-hidden bg-theme-color-1">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
@@ -512,28 +516,32 @@ function HeroSection({ setActive }) {
         <div className="absolute -left-40 top-1/3 h-[26rem] w-[26rem] rounded-full bg-theme-color-3/10 blur-[120px]" />
       </div>
 
-      <div className="mx-auto max-w-6xl px-3 pb-10 pt-12 sm:px-6 sm:pb-12 sm:pt-36">
+      <div className="mx-auto max-w-6xl px-3 pb-10 pt-24 sm:px-6 sm:pb-12 sm:pt-36">
         <Reveal>
           <div className="relative">
-            <div aria-hidden="true" className="pointer-events-none absolute -top-24 left-1/2 hidden h-24 w-72 -translate-x-1/2 sm:block">
-              <span className="absolute bottom-3 left-1/2 h-32 w-[3px] origin-bottom -translate-x-1/2 -rotate-[32deg] rounded-full bg-gradient-to-t from-[#8F877B] to-[#EFE6D6]">
-                <span className="absolute -left-[4px] -top-2 h-3 w-3 rounded-full bg-[#EFE6D6] shadow" />
+            <div aria-hidden="true" className="pointer-events-none absolute -top-[4.25rem] left-1/2 h-[4.25rem] w-52 -translate-x-1/2 sm:-top-24 sm:h-24 sm:w-72">
+              <span className="absolute bottom-2 left-1/2 h-20 w-[2px] origin-bottom -translate-x-1/2 -rotate-[32deg] rounded-full bg-gradient-to-t from-[#8F877B] to-[#EFE6D6] sm:bottom-3 sm:h-32 sm:w-[3px]">
+                <span className="absolute -left-[3px] -top-1.5 h-2.5 w-2.5 rounded-full bg-[#EFE6D6] shadow sm:-left-[4px] sm:-top-2 sm:h-3 sm:w-3" />
               </span>
-              <span className="absolute bottom-3 left-1/2 h-32 w-[3px] origin-bottom -translate-x-1/2 rotate-[32deg] rounded-full bg-gradient-to-t from-[#8F877B] to-[#EFE6D6]">
-                <span className="absolute -left-[4px] -top-2 h-3 w-3 rounded-full bg-[#EFE6D6] shadow" />
+              <span className="absolute bottom-2 left-1/2 h-20 w-[2px] origin-bottom -translate-x-1/2 rotate-[32deg] rounded-full bg-gradient-to-t from-[#8F877B] to-[#EFE6D6] sm:bottom-3 sm:h-32 sm:w-[3px]">
+                <span className="absolute -left-[3px] -top-1.5 h-2.5 w-2.5 rounded-full bg-[#EFE6D6] shadow sm:-left-[4px] sm:-top-2 sm:h-3 sm:w-3" />
               </span>
-              <span className="absolute bottom-0 left-1/2 h-7 w-20 -translate-x-1/2 rounded-t-full bg-wood-grain shadow-[inset_0_2px_0_rgba(255,255,255,0.14)]" />
+              <span className="absolute bottom-0 left-1/2 h-5 w-14 -translate-x-1/2 rounded-t-full bg-wood-grain shadow-[inset_0_2px_0_rgba(255,255,255,0.14)] sm:h-7 sm:w-20" />
             </div>
 
             <div className={`relative rounded-[1.75rem] bg-wood-grain p-2.5 sm:rounded-[2.75rem] sm:p-5 ${CABINET_SHADOW}`}>
               <div className="flex flex-col gap-2.5 sm:gap-5 lg:flex-row">
                 <div className={`flex-1 rounded-[1.5rem] p-2 sm:rounded-[2.25rem] sm:p-4 ${BEZEL}`}>
                   <div
-                    className="relative isolate overflow-hidden bg-crt-glow shadow-[inset_0_0_80px_rgba(0,0,0,0.65)] motion-safe:animate-crt-on"
+                    className={`relative isolate overflow-hidden transition-[background-color,box-shadow] duration-700 ${
+                      isTvOn
+                        ? 'bg-crt-glow shadow-[inset_0_0_80px_rgba(0,0,0,0.65)] motion-safe:animate-crt-on'
+                        : 'bg-[#040605] shadow-[inset_0_0_140px_rgba(0,0,0,0.95)]'
+                    }`}
                     style={CRT_RADIUS}
                   >
-                    <div className="relative z-10 flex flex-col items-center gap-6 px-4 py-12 text-center motion-safe:animate-crt-flicker sm:gap-7 sm:px-10 sm:py-16 lg:py-20">
-                      <p className="inline-flex items-center gap-3 text-xs font-semibold tracking-[0.3em] text-theme-gold sm:text-sm">
+                    <div className={`relative z-10 flex flex-col items-center gap-6 px-4 py-12 text-center transition-colors duration-700 sm:gap-7 sm:px-10 sm:py-16 lg:py-20 ${isTvOn ? 'motion-safe:animate-crt-flicker' : ''}`}>
+                      <p className={`inline-flex items-center gap-3 text-xs font-semibold tracking-[0.3em] transition-all duration-700 sm:text-sm ${isTvOn ? 'text-theme-gold' : standbyGold}`}>
                         <span aria-hidden="true" className="h-px w-8 bg-theme-gold/70 sm:w-12" />
                         {t('hero.since')}
                         <span aria-hidden="true" className="h-px w-8 bg-theme-gold/70 sm:w-12" />
@@ -541,34 +549,38 @@ function HeroSection({ setActive }) {
 
                       <div>
                         <h1 className="px-2 font-display font-bold [text-wrap:balance]">
-                          <span className="block py-1 text-5xl leading-relaxed text-white drop-shadow-[0_0_24px_rgba(255,255,255,0.25)] sm:text-7xl lg:text-8xl">
+                          <span className={`block py-1 text-5xl leading-relaxed transition-all duration-700 sm:text-7xl lg:text-8xl ${isTvOn ? 'text-white drop-shadow-[0_0_24px_rgba(255,255,255,0.25)]' : standbyTitle}`}>
                             {t('hero.titleLine1')}
                           </span>
                           <GlitchTitle
                             text={t('hero.titleLine2')}
                             className="mt-1 block py-3 text-3xl leading-relaxed sm:text-5xl lg:text-6xl"
-                            baseClassName="bg-gradient-to-r from-theme-gold-light via-theme-gold to-theme-gold-deep bg-clip-text text-transparent drop-shadow-[0_0_18px_rgba(230,194,122,0.35)]"
+                            baseClassName={isTvOn
+                              ? 'bg-gradient-to-r from-theme-gold-light via-theme-gold to-theme-gold-deep bg-clip-text text-transparent drop-shadow-[0_0_18px_rgba(230,194,122,0.35)]'
+                              : standbyGold}
                           />
                         </h1>
                         <div aria-hidden="true" className="mx-auto mt-4 h-1 w-24 rounded-full bg-gradient-to-r from-theme-gold-deep via-theme-gold to-theme-gold-deep" />
                       </div>
 
                       <div className="flex w-full flex-col items-center justify-center gap-3 pt-2 sm:w-auto sm:flex-row">
-                        <button onClick={() => setActive('inquiry')} className={`${CTA} w-full sm:w-auto`}>
+                        <button onClick={() => setActive('inquiry')} className={isTvOn ? `${CTA} w-full sm:w-auto` : standbyBtn}>
                           <ClipboardList size={16} className="shrink-0" />
                           <span>{keepWords(t('hero.quote'))}</span>
                           <ArrowUpRight size={15} />
                         </button>
                         <a
                           href={`tel:${t('phone')}`}
-                          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-theme-color-2/70 px-7 py-3.5 text-sm font-semibold text-theme-color-2 transition hover:scale-105 hover:bg-theme-color-2 hover:text-theme-color-4 sm:w-auto"
+                          className={isTvOn
+                            ? 'inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-theme-color-2/70 px-7 py-3.5 text-sm font-semibold text-theme-color-2 transition hover:scale-105 hover:bg-theme-color-2 hover:text-theme-color-4 sm:w-auto'
+                            : 'inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#E6C27A]/80 bg-black/30 px-7 py-3.5 text-sm font-semibold text-[#ffe7a3] shadow-[0_0_16px_rgba(230,194,122,0.4)] [text-shadow:0_0_8px_rgba(230,194,122,0.9)] transition hover:scale-105 sm:w-auto'}
                         >
                           <Phone size={15} />
                           {t('phone')}
                         </a>
                       </div>
 
-                      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-white sm:text-sm">
+                      <div className={`flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs transition-all duration-700 sm:text-sm ${isTvOn ? 'text-white' : standbyTitle}`}>
                         {trust.map(([Icon, label]) => (
                           <span key={label} className="inline-flex items-center gap-2">
                             <Icon size={14} className="text-theme-gold" />
@@ -577,30 +589,41 @@ function HeroSection({ setActive }) {
                         ))}
                       </div>
                     </div>
-                    <CrtOverlay />
+                    <CrtOverlay subtle={!isTvOn} roll={isTvOn} />
                   </div>
                 </div>
 
                 <div
-                  aria-hidden="true"
                   className="flex items-center justify-between gap-4 rounded-[1.1rem] bg-black/25 px-4 py-3 shadow-[inset_0_2px_6px_rgba(0,0,0,0.45)] ring-1 ring-white/5 sm:rounded-[1.5rem] sm:px-6 lg:w-44 lg:flex-col lg:justify-start lg:gap-7 lg:rounded-[1.75rem] lg:px-4 lg:py-8"
                 >
                   <div className="hidden text-center sm:block">
                     <p className="text-sm font-extrabold tracking-[0.3em] text-theme-gold">SEIN PAN</p>
                     <p className="mt-0.5 text-[9px] tracking-[0.35em] text-theme-color-2/60">EST. 1989</p>
                   </div>
-                  <div className="rounded-md bg-black px-3 py-1.5 font-mono text-sm font-bold tracking-widest text-theme-gold shadow-[inset_0_0_8px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.08)] [text-shadow:0_0_8px_rgba(230,194,122,0.8)]">
-                    CH 89
+                  <div className="rounded-md bg-black px-3 py-1.5 font-mono text-sm font-bold tracking-[0.2em] text-theme-gold shadow-[inset_0_0_8px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.08)] [text-shadow:0_0_8px_rgba(230,194,122,0.8)]">
+                    MRTV
                   </div>
                   <div className="flex gap-4 lg:flex-col lg:gap-6">
                     <TvKnob angle={-40} label="CHANNEL" />
                     <TvKnob angle={55} label="VOLUME" />
                   </div>
                   <div className="hidden h-10 w-24 rounded-lg bg-speaker-grille shadow-[inset_0_1px_3px_rgba(0,0,0,0.6)] sm:block lg:h-24 lg:w-full" />
-                  <div className="flex items-center gap-2 lg:mt-auto">
-                    <span className="h-2.5 w-2.5 rounded-full bg-theme-gold shadow-[0_0_10px_2px_rgba(230,194,122,0.75)]" />
-                    <span className="hidden text-[9px] font-semibold tracking-[0.25em] text-theme-color-2/70 sm:inline">POWER</span>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsTvOn((on) => !on)}
+                    aria-pressed={isTvOn}
+                    aria-label={isTvOn ? 'Turn the television off' : 'Turn the television on'}
+                    className="flex items-center gap-2 rounded-full lg:mt-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-theme-gold"
+                  >
+                    <span
+                      className={`h-3.5 w-3.5 rounded-full transition duration-500 ${
+                        isTvOn
+                          ? 'bg-theme-gold shadow-[0_0_12px_3px_rgba(230,194,122,0.95)]'
+                          : 'bg-[#3a2a22] shadow-[inset_0_0_4px_rgba(0,0,0,0.8)]'
+                      }`}
+                    />
+                    <span className="text-[9px] font-semibold tracking-[0.25em] text-theme-color-2/70">POWER</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -1091,6 +1114,9 @@ function AboutSection({ isDark, setActive, featured = false }) {
   const timeline = list('about.timeline');
   const stats = list('about.stats');
   const T = getT(isDark);
+  const glass = isDark
+    ? 'border border-white/20 bg-theme-color-1/55 shadow-[0_10px_30px_rgba(0,0,0,0.28)] backdrop-blur-md'
+    : 'border border-white/50 bg-[#EAE0D0]/80 shadow-[0_10px_28px_rgba(104,44,44,0.08)] backdrop-blur-md';
   return (
     <section className={`relative overflow-hidden px-4 ${featured ? 'py-16 sm:py-20' : 'min-h-screen py-20 sm:py-28'} ${T.altSec}`}>
       <CircuitDecor isDark={isDark} />
@@ -1109,14 +1135,14 @@ function AboutSection({ isDark, setActive, featured = false }) {
               </SectionHeading>
             </RevealItem>
 
-            <RevealItem className={`flex gap-4 rounded-2xl border-l-4 border-theme-color-3 p-5 shadow-sm ${isDark ? 'bg-white/5' : 'bg-white/60'}`}>
+            <RevealItem className={`flex gap-4 rounded-2xl border-l-4 border-theme-color-3 p-5 ${glass}`}>
               <MapPin size={20} className="mt-1 shrink-0 text-theme-color-3" />
               <p className={`text-[15px] font-medium leading-loose sm:text-base ${T.h}`}>
                 {keepWords(t('about.notice'))}
               </p>
             </RevealItem>
 
-            <RevealItem className={`space-y-4 text-[15px] leading-loose sm:text-base ${T.body}`}>
+            <RevealItem className={`space-y-4 rounded-2xl p-5 text-[15px] leading-loose sm:p-6 sm:text-base ${glass} ${T.body}`}>
               <p>
                 {keepWords(t('about.p1a'))}{' '}
                 <strong className={`font-semibold ${T.h}`}>{t('about.p1name')}</strong> {t('about.p1b')}{' '}
@@ -1131,7 +1157,7 @@ function AboutSection({ isDark, setActive, featured = false }) {
             </RevealItem>
 
             {!featured && (
-              <RevealItem className={`flex items-center gap-4 rounded-2xl p-5 ${T.card}`}>
+              <RevealItem className={`flex items-center gap-4 rounded-2xl p-5 ${glass}`}>
                 <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-theme-color-3 p-[3px]">
                   <TechPhoto isDark />
                 </div>
@@ -1159,7 +1185,7 @@ function AboutSection({ isDark, setActive, featured = false }) {
                   <span className="absolute left-0 top-5 grid h-10 w-10 place-items-center rounded-full bg-theme-color-1 shadow-md shadow-theme-color-4/15">
                     <span className="h-2.5 w-2.5 rounded-full bg-theme-color-2" />
                   </span>
-                  <div className={`rounded-2xl p-5 transition duration-300 hover:-translate-y-0.5 ${T.card} ${T.cardHov}`}>
+                  <div className={`rounded-2xl p-5 transition duration-300 hover:-translate-y-0.5 ${glass}`}>
                     <p className="font-display text-2xl text-theme-color-3">{year}</p>
                     <h3 className={`mt-1 text-base font-bold ${T.h}`}>{title}</h3>
                     <p className={`mt-2 text-sm leading-loose ${T.body}`}>{keepWords(body)}</p>
