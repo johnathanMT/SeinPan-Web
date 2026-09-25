@@ -41,6 +41,10 @@
     "error": "Something went wrong. Please try again, or call us directly.",
     "required": "This field is required.",
     "invalidEmail": "Please enter a valid email address.",
+    "invalidName": "Please use letters only in your name.",
+    "invalidPhone": "Please enter a valid phone number.",
+    "tooManyLinks": "Please remove extra links from your message.",
+    "unavailable": "Online messages are not available right now. Please call or message us on Viber.",
     "placeholder": {
       "name": "Your name",
       "email": "you@example.com",

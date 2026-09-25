@@ -1,66 +1,83 @@
-# .github/workflows/deploy.yml
-# Builds the Vite app and deploys to GitHub Pages automatically
-# on every push to main.
+# Builds, verifies and deploys the site to GitHub Pages on every push to main.
 #
 # ONE-TIME SETUP (in GitHub):
-#   Repository → Settings → Pages → Source: "GitHub Actions"
-#   Repository → Settings → Actions → General → Workflow permissions: "Read and write"
+#   Settings → Pages → Source: "GitHub Actions"
+#
+# A push only deploys if every quality gate passes: types, lint (incl.
+# accessibility rules), translation parity, tests (incl. axe-core) and a
+# production dependency audit.
 
 name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:   # allow manual run from the Actions tab
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 
-# Grant write access for Pages deployment
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
-# Only one concurrent deployment; cancel in-progress runs
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  # ─── Job 1: Build ───────────────────────────────────────────────
   build:
-    name: Build
+    name: Verify & build
     runs-on: ubuntu-latest
-
+    timeout-minutes: 15
     steps:
-      - name: Checkout source code
+      - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-      - name: Set up Node.js 20
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm       # caches node_modules between runs — never commits them
+          node-version: 22
+          cache: npm
 
-      - name: Install dependencies (clean install)
-        run: npm ci        # respects package-lock.json exactly; never writes node_modules to git
+      - name: Install (clean, from lockfile)
+        run: npm ci --no-audit --no-fund
 
-      - name: Build with Vite
-        run: npm run build # outputs to dist/
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
 
-      - name: Upload dist/ as Pages artifact
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Lint (incl. jsx-a11y)
+        run: npm run lint
+
+      - name: Translation parity
+        run: npm run check:locales
+
+      - name: Tests (unit + axe-core accessibility)
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
-  # ─── Job 2: Deploy ──────────────────────────────────────────────
   deploy:
     name: Deploy
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

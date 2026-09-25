@@ -1,0 +1,7 @@
+/* Self-hosted fonts (no third-party requests, no render-blocking CSS).
+ * Variable fonts: one file per script covers every weight in use.
+ * unicode-range in each @font-face means a browser only downloads the
+ * subsets the page actually renders. */
+@import "@fontsource-variable/inter/wght.css";
+@import "@fontsource/instrument-serif/400.css";
+@import "@fontsource-variable/noto-sans-myanmar/wght.css";

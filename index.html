@@ -32,16 +32,18 @@
     />
     <meta name="twitter:image" content="https://seinpanelectronic.com/technician.jpg" />
 
+    <meta name="theme-color" content="#184542" />
+    <meta name="color-scheme" content="light" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Frame-busting + SPA route restore. External file so the CSP can forbid inline scripts. -->
     <script src="/boot.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+Myanmar:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <noscript>Sein Pan Electronic — LED, LCD &amp; Plasma TV repair, Yangon. Call 09423858609.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

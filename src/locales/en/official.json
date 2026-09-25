@@ -1,6 +1,9 @@
 {
   "phone": "09423858609",
-  "lang": { "my": "မြန်မာ", "en": "English" },
+  "lang": {
+    "my": "မြန်မာ",
+    "en": "English"
+  },
   "nav": {
     "home": "Home",
     "services": "Services",
@@ -16,7 +19,12 @@
     "toggleMenu": "Toggle menu",
     "switchLanguage": "Switch language",
     "backHome": "Back to Home",
-    "breadcrumb": "Breadcrumb"
+    "breadcrumb": "Breadcrumb",
+    "skipToContent": "Skip to main content",
+    "primary": "Main navigation",
+    "quick": "Quick navigation",
+    "call": "Call {{phone}}",
+    "themeLabel": "Dark mode"
   },
   "hero": {
     "eyebrow": "Sein Pan Electronic · Yangon",
@@ -29,11 +37,25 @@
     "sameDay": "Same-day diagnosis",
     "noFee": "No-fix, no-fee",
     "stats": [
-      { "value": "1989", "label": "Established" },
-      { "value": "37+", "label": "Years of Trust" },
-      { "value": "5,000+", "label": "TVs Repaired" },
-      { "value": "3", "label": "Technologies" }
-    ]
+      {
+        "value": "1989",
+        "label": "Established"
+      },
+      {
+        "value": "37+",
+        "label": "Years of Trust"
+      },
+      {
+        "value": "5,000+",
+        "label": "TVs Repaired"
+      },
+      {
+        "value": "3",
+        "label": "Technologies"
+      }
+    ],
+    "powerOn": "Turn the television on",
+    "powerOff": "Turn the television off"
   },
   "brandsLabel": "Brands we service every week",
   "brandsDisclaimer": "All product names, logos, and brands are property of their respective owners. Sein Pan Electronic is an independent repair service.",
@@ -50,21 +72,36 @@
       "short": "LED TV",
       "badge": "Most Popular",
       "desc": "Expert diagnosis and repair for all LED TV brands and sizes. From backlight failures to mainboard shorts, we restore full picture quality.",
-      "features": ["Backlight Strip Replacement", "Main & Power Board Repair", "Panel Crack Assessment", "Firmware Reflash"]
+      "features": [
+        "Backlight Strip Replacement",
+        "Main & Power Board Repair",
+        "Panel Crack Assessment",
+        "Firmware Reflash"
+      ]
     },
     "lcd": {
       "label": "LCD TV Repair",
       "short": "LCD TV",
       "badge": "High Demand",
       "desc": "Specialized LCD panel servicing with genuine components. Our 37+ years of hands-on experience means faster turnaround and lasting repairs.",
-      "features": ["Inverter & CCFL Board Fix", "T-Con Board Replacement", "Colour Calibration", "Remote & IR Sensor Sync"]
+      "features": [
+        "Inverter & CCFL Board Fix",
+        "T-Con Board Replacement",
+        "Colour Calibration",
+        "Remote & IR Sensor Sync"
+      ]
     },
     "plasma": {
       "label": "Plasma TV Repair",
       "short": "Plasma TV",
       "badge": "Specialist",
       "desc": "One of the few remaining service centres still expertly servicing vintage and modern plasma display units across Yangon.",
-      "features": ["Y & Z Sustain Board", "Voltage Regulation Fix", "Plasma Cell Diagnostics", "High-voltage Safety Check"]
+      "features": [
+        "Y & Z Sustain Board",
+        "Voltage Regulation Fix",
+        "Plasma Cell Diagnostics",
+        "High-voltage Safety Check"
+      ]
     },
     "pageLabel": "What We Fix",
     "pageTitle": "Specialized Repair for",
@@ -85,9 +122,18 @@
     "title": "A clear path from symptom to picture.",
     "start": "Start an inquiry",
     "steps": [
-      { "title": "Describe Your Issue", "body": "Tell us your TV model and what's wrong — no technical knowledge needed." },
-      { "title": "We Call You Back", "body": "Our technician will call to confirm availability and provide an estimate." },
-      { "title": "We Fix It", "body": "Drop off your set or arrange collection in North Okkalapa township." }
+      {
+        "title": "Describe Your Issue",
+        "body": "Tell us your TV model and what's wrong — no technical knowledge needed."
+      },
+      {
+        "title": "We Call You Back",
+        "body": "Our technician will call to confirm availability and provide an estimate."
+      },
+      {
+        "title": "We Fix It",
+        "body": "Drop off your set or arrange collection in North Okkalapa township."
+      }
     ]
   },
   "why": {
@@ -117,13 +163,24 @@
   "tech": {
     "label": "The technician",
     "bio": "Started in South Okkalapa in 1989, and today personally diagnoses and repairs LED, LCD and Plasma sets near Maydar Wee Market, North Okkalapa.",
-    "values": ["5K+", "37", "100%"],
+    "values": [
+      "5K+",
+      "37",
+      "100%"
+    ],
     "name": "Ko Win Naing",
     "role": "Founder & Electronics Expert",
     "years": "37 Yrs Experience",
     "alt": "Ko Win Naing — Founder & Electronics Expert",
     "skillsLabel": "Core Specialisations",
-    "skills": ["LED Technology", "LCD Mastery", "Plasma Systems", "Circuit Diagnostics", "Smart TV Firmware", "Component Soldering"],
+    "skills": [
+      "LED Technology",
+      "LCD Mastery",
+      "Plasma Systems",
+      "Circuit Diagnostics",
+      "Smart TV Firmware",
+      "Component Soldering"
+    ],
     "repaired": "Repaired",
     "yearsShort": "Years",
     "genuine": "Genuine",
@@ -149,10 +206,22 @@
     "master": "Master-level expertise",
     "book": "Book a Repair Today",
     "stats": [
-      { "label": "Founded", "value": "1989" },
-      { "label": "Happy Customers", "value": "5,000+" },
-      { "label": "Repair Types", "value": "3" },
-      { "label": "Years Active", "value": "37+" }
+      {
+        "label": "Founded",
+        "value": "1989"
+      },
+      {
+        "label": "Happy Customers",
+        "value": "5,000+"
+      },
+      {
+        "label": "Repair Types",
+        "value": "3"
+      },
+      {
+        "label": "Years Active",
+        "value": "37+"
+      }
     ],
     "timeline": [
       {
@@ -215,9 +284,18 @@
     "facebookHandle": "facebook.com/seinpanelectronic",
     "facebookCta": "Visit on Facebook",
     "days": [
-      { "day": "Monday – Friday", "time": "9:00 AM – 8:00 PM" },
-      { "day": "Saturday", "time": "8:00 AM – 8:00 PM" },
-      { "day": "Sunday", "time": "Closed" }
+      {
+        "day": "Monday – Friday",
+        "time": "9:00 AM – 8:00 PM"
+      },
+      {
+        "day": "Saturday",
+        "time": "8:00 AM – 8:00 PM"
+      },
+      {
+        "day": "Sunday",
+        "time": "Closed"
+      }
     ]
   },
   "footer": {
@@ -229,7 +307,14 @@
     "address": "Near Maydar Wee Market, North Okkalapa, Yangon",
     "rights": "Sein Pan Electronic Service. All rights reserved.",
     "est": "Est. 1989 · North Okkalapa, Yangon",
-    "links": ["LED TV Repair", "LCD TV Repair", "Plasma TV Repair", "Remote Repair", "Component Soldering", "Smart TV Service"],
+    "links": [
+      "LED TV Repair",
+      "LCD TV Repair",
+      "Plasma TV Repair",
+      "Remote Repair",
+      "Component Soldering",
+      "Smart TV Service"
+    ],
     "connect": "Connect With Us",
     "connectBody": "Follow us on Facebook or message us directly on Viber.",
     "social": {
@@ -241,5 +326,8 @@
       "viber": "Viber",
       "email": "Email"
     }
-  }
+  },
+  "loading": "Loading…",
+  "brandsPause": "Pause the brand carousel",
+  "brandsPlay": "Play the brand carousel"
 }

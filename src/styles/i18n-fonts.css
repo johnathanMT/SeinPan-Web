@@ -1,25 +1,23 @@
-/* src/styles/i18n-fonts.css
- * Per-language font switching, driven by the data-lang attribute that
- * src/i18n.js sets on <html> for every language change.
- * Import this in your index.css:  @import "./styles/i18n-fonts.css";
- * And add the <link> for Noto fonts in index.html (see README).
- */
+/* Per-language font switching, driven by the data-lang attribute that
+ * src/shared/i18n sets on <html> for every language change. */
 
 :root {
-  --font-app: "Inter", system-ui, -apple-system, sans-serif;
+  --font-app: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-myanmar: "Noto Sans Myanmar Variable", "Noto Sans Myanmar", "Myanmar Text", "Myanmar Sangam MN", sans-serif;
 }
 
-/* Burmese — Unicode only (Noto Sans Myanmar). Never legacy Zawgyi. */
+/* Burmese: Unicode only (Noto Sans Myanmar). Never legacy Zawgyi. */
 html[data-lang="my"] {
-  --font-app: "Noto Sans Myanmar", "Inter", sans-serif;
+  --font-app: var(--font-myanmar);
   /* Extra line-height so stacked diacritics aren't clipped. */
   line-height: 1.85;
 }
 
-/* Instrument Serif has no Myanmar glyphs. Tight display leading
-   also stacks Burmese marks on top of each other. */
+/* Instrument Serif has no Myanmar glyphs, and tight display leading stacks
+   Burmese marks on top of each other. */
 html[data-lang="my"] .font-display {
-  font-family: "Noto Sans Myanmar", "Inter", sans-serif !important;
+  font-family: var(--font-myanmar) !important;
   font-weight: 600;
   letter-spacing: 0 !important;
   line-height: 1.45 !important;
@@ -32,21 +30,14 @@ html[data-lang="my"] .font-display.font-bold {
 /* Burmese snippets shown while the page is in another language
    (e.g. the language switch label). */
 [lang="my"] {
-  font-family: "Noto Sans Myanmar", "Inter", sans-serif;
-}
-
-/* Japanese */
-html[data-lang="ja"] {
-  --font-app: "Noto Sans JP", "Inter", sans-serif;
+  font-family: var(--font-myanmar);
 }
 
 body {
   font-family: var(--font-app);
 }
 
-/* Burmese has no letter case — never uppercase it (can corrupt rendering).
- * Scope any uppercase utility to English only. */
-html[data-lang="my"] .uppercase,
-html[data-lang="ja"] .uppercase {
+/* Burmese has no letter case; forcing uppercase can corrupt rendering. */
+html[data-lang="my"] .uppercase {
   text-transform: none !important;
 }
