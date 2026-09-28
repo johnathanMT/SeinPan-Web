@@ -1,11 +1,8 @@
-# Builds, verifies and deploys the site to GitHub Pages on every push to main.
+# Verifies every push to main and every pull request: dependency audit,
+# types, lint (incl. accessibility rules), translation parity, tests (incl.
+# axe-core) and a production build with a check that nothing private ships.
 #
-# ONE-TIME SETUP (in GitHub):
-#   Settings → Pages → Source: "GitHub Actions"
-#
-# A push only deploys if every quality gate passes: types, lint (incl.
-# accessibility rules), translation parity, tests (incl. axe-core) and a
-# production dependency audit.
+# Deployment is done by Vercel, which builds each push to main itself.
 #
 # All actions run on GitHub's Node 24 runtime (the Node 20 action runtime is
 # deprecated). The runner image is pinned so an upstream `ubuntu-latest`
@@ -13,7 +10,7 @@
 # pinned to a full commit SHA (a moved or hijacked tag can't inject code).
 # Dependabot keeps the SHAs and their version comments current.
 
-name: Deploy to GitHub Pages
+name: CI
 
 on:
   push:
@@ -26,7 +23,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: pages-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -72,25 +69,3 @@ jobs:
         run: |
           leaked=$(find dist \( -name '.DS_Store' -o -name '*.map' -o -name '.env*' \) -print)
           if [ -n "$leaked" ]; then echo "::error::Files that must not be deployed:"; echo "$leaked"; exit 1; fi
-
-      - name: Upload Pages artifact
-        if: github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
-        with:
-          path: dist
-
-  deploy:
-    name: Deploy
-    if: github.event_name != 'pull_request'
-    needs: build
-    runs-on: ubuntu-24.04
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

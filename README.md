@@ -67,8 +67,8 @@ When those plugins publish support for the newer versions, remove the matching r
 
 ## Deployment
 
-Every push to `main` is deployed by **Vercel** (`www.seinpanelectronic.com`). GitHub Actions runs the full
-verification on every push and pull request (it also publishes a GitHub Pages copy, which is not the live site).
+Every push to `main` is deployed by **Vercel** (`www.seinpanelectronic.com`). GitHub Actions (`.github/workflows/ci.yml`)
+runs the full verification on every push and pull request; it does not deploy.
 
 ## Security
 

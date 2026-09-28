@@ -11,9 +11,9 @@
 | SPA route restore accepts only same-site paths | `public/boot.js` |
 | `rel="noopener noreferrer"` on every external link | `features/official/content.ts` (`EXTERNAL`) |
 | Referrer policy `strict-origin-when-cross-origin` | `index.html` |
-| Dependency audit blocks deploys on high-severity issues; Dependabot opens weekly patches | `.github/workflows/deploy.yml`, `.github/dependabot.yml` |
-| Least-privilege CI (`contents: read`; Pages write only in the deploy job) | `.github/workflows/deploy.yml` |
-| Every GitHub Action pinned to a full commit SHA; deploy fails if `dist` contains `.DS_Store`, source maps or `.env` files | `.github/workflows/deploy.yml` |
+| Dependency audit fails CI on high-severity issues; Dependabot opens weekly patches | `.github/workflows/ci.yml`, `.github/dependabot.yml` |
+| Least-privilege CI (`contents: read` only; CI never deploys) | `.github/workflows/ci.yml` |
+| Every GitHub Action pinned to a full commit SHA; CI fails if `dist` contains `.DS_Store`, source maps or `.env` files | `.github/workflows/ci.yml` |
 | HTTP security headers on every response, one source test-locked to `vercel.json` | `security/headers.ts`, `vercel.json` |
 | No iframes, forms or API calls: `frame-src`, `media-src`, `worker-src` and `object-src` are all `'none'` | `security/headers.ts` |
 
