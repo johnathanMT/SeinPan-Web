@@ -28,6 +28,14 @@ const PREFETCH = [loadServices, loadInquiry, loadContact] as const;
 const HOME_TITLE = document.title;
 const MAIN_ID = "main-content";
 
+/** Header height per Tailwind breakpoint (md adds the utility bar, xl the tagline). */
+function estimateHeaderHeight(): number {
+  const width = window.innerWidth;
+  if (width >= 1280) return 96;
+  if (width >= 768) return 90;
+  return 60;
+}
+
 function TabContent({ tab }: { tab: TabId }) {
   switch (tab) {
     case "services":
@@ -59,7 +67,7 @@ export default function OfficialPage() {
   const [isDark, toggleTheme] = useThemePreference();
   const headerRef = useRef<HTMLElement>(null);
   const mainRef = useRef<HTMLElement>(null);
-  const headerH = useElementHeight(headerRef, 90);
+  const headerH = useElementHeight(headerRef, estimateHeaderHeight);
   useIdlePrefetch(PREFETCH);
 
   const theme = useMemo(() => ({ isDark, tokens: getThemeTokens(isDark), toggleTheme }), [isDark, toggleTheme]);

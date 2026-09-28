@@ -55,7 +55,7 @@ export function Navbar({ ref }: { ref?: Ref<HTMLElement> }) {
 
       <div className="bg-theme-color-1">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-2 sm:px-4">
-          <NavLink to="home" onNavigate={close} className="group flex min-h-11 min-w-0 items-center gap-3 rounded-xl">
+          <NavLink to="home" onNavigate={close} className="tap-48 group flex min-h-11 min-w-0 items-center gap-3 rounded-xl">
             <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-theme-color-3 shadow-md shadow-theme-color-4/20 transition group-hover:scale-105">
               <Tv size={18} className="text-white" aria-hidden="true" />
             </span>
@@ -71,7 +71,7 @@ export function Navbar({ ref }: { ref?: Ref<HTMLElement> }) {
                 key={id}
                 to={id}
                 markCurrent
-                className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-xl px-4 text-sm font-medium leading-snug transition-colors duration-200 ${tabCls(id)}`}
+                className={`tap-48 inline-flex min-h-11 items-center whitespace-nowrap rounded-xl px-4 text-sm font-medium leading-snug transition-colors duration-200 ${tabCls(id)}`}
               >
                 {t(`nav.${id}`)}
               </NavLink>
@@ -96,7 +96,7 @@ export function Navbar({ ref }: { ref?: Ref<HTMLElement> }) {
 
             <NavLink
               to="inquiry"
-              className="hidden min-h-11 items-center gap-2 whitespace-nowrap rounded-xl bg-theme-color-3 px-4 text-sm font-bold leading-snug text-white shadow-md shadow-theme-color-4/20 transition hover:scale-105 hover:opacity-90 xl:inline-flex"
+              className="tap-48 hidden min-h-11 items-center gap-2 whitespace-nowrap rounded-xl bg-theme-color-3 px-4 text-sm font-bold leading-snug text-white shadow-md shadow-theme-color-4/20 transition hover:scale-105 hover:opacity-90 xl:inline-flex"
             >
               <Wrench size={14} aria-hidden="true" />
               {t("nav.bookRepair")}

@@ -35,7 +35,7 @@ export function LangToggle() {
             lang={code}
             onClick={() => change(code)}
             aria-pressed={lang === code}
-            className={`inline-flex h-11 items-center px-3 transition first:rounded-l-[11px] last:rounded-r-[11px] ${
+            className={`tap-48 inline-flex h-11 items-center px-3 transition first:rounded-l-[11px] last:rounded-r-[11px] ${
               lang === code ? "bg-theme-color-3 text-white" : "text-white/80 hover:text-white"
             }`}
           >

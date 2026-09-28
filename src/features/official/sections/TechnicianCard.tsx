@@ -22,7 +22,7 @@ export function TechnicianCard() {
   ];
 
   return (
-    <section className={`overflow-x-clip px-4 py-20 sm:py-28 ${T.sec}`}>
+    <section className={`cv-auto overflow-x-clip px-4 py-20 sm:py-28 ${T.sec}`}>
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
         <Reveal className="relative mx-auto w-full max-w-sm">
           <div aria-hidden="true" className="absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-theme-color-3/25 via-transparent to-theme-color-1/30 blur-2xl" />

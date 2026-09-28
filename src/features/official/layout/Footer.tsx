@@ -8,7 +8,7 @@ import { NavLink } from "../ui/NavLink";
 import { BRAND_BUTTON } from "../ui/styles";
 
 const FOOTER_LINK =
-  "inline-flex min-h-11 items-center text-left text-sm text-white/90 transition hover:text-theme-color-2 hover:underline hover:underline-offset-4";
+  "inline-flex min-h-12 min-w-12 items-center text-left text-sm text-white/90 transition hover:text-theme-color-2 hover:underline hover:underline-offset-4";
 
 /** Footer (always dark for impact). */
 export function Footer() {
@@ -23,7 +23,7 @@ export function Footer() {
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
           <div>
-            <NavLink to="home" className="group mb-5 flex min-h-11 items-center gap-3">
+            <NavLink to="home" className="group mb-5 flex min-h-12 items-center gap-3">
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-theme-color-3 shadow-md shadow-theme-color-4/20">
                 <Tv size={18} className="text-white" aria-hidden="true" />
               </span>
@@ -77,7 +77,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone size={15} className="shrink-0 text-theme-color-2" aria-hidden="true" />
-                <a href={LINKS.tel} className="inline-flex min-h-11 items-center transition hover:text-theme-color-2 hover:underline hover:underline-offset-4">
+                <a href={LINKS.tel} className="inline-flex min-h-12 items-center transition hover:text-theme-color-2 hover:underline hover:underline-offset-4">
                   {t("phone")}
                 </a>
               </li>

@@ -17,7 +17,7 @@ export function BackBar({ top }: { top: number }) {
       <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-2">
         <NavLink
           to="home"
-          className="group inline-flex min-h-11 items-center gap-2 rounded-xl bg-theme-color-1 px-4 text-sm font-semibold text-white shadow-sm transition hover:scale-105 hover:opacity-90"
+          className="group inline-flex min-h-12 items-center gap-2 rounded-xl bg-theme-color-1 px-4 text-sm font-semibold text-white shadow-sm transition hover:scale-105 hover:opacity-90"
         >
           <ArrowLeft size={16} className="shrink-0 transition group-hover:-translate-x-0.5" aria-hidden="true" />
           {t("nav.backHome")}
@@ -25,7 +25,7 @@ export function BackBar({ top }: { top: number }) {
         <nav aria-label={t("nav.breadcrumb")} className={`hidden text-xs sm:block ${tokens.muted}`}>
           <ol className="flex items-center gap-1.5">
             <li>
-              <NavLink to="home" className="inline-flex min-h-11 items-center hover:underline hover:underline-offset-4">
+              <NavLink to="home" className="inline-flex min-h-12 min-w-12 items-center justify-center hover:underline hover:underline-offset-4">
                 {t("nav.home")}
               </NavLink>
             </li>
