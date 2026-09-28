@@ -9,7 +9,9 @@
 #
 # All actions run on GitHub's Node 24 runtime (the Node 20 action runtime is
 # deprecated). The runner image is pinned so an upstream `ubuntu-latest`
-# switch can't change the build without a reviewed commit.
+# switch can't change the build without a reviewed commit, and every action is
+# pinned to a full commit SHA (a moved or hijacked tag can't inject code).
+# Dependabot keeps the SHAs and their version comments current.
 
 name: Deploy to GitHub Pages
 
@@ -34,12 +36,12 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Set up Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
           cache: npm
@@ -65,9 +67,15 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Nothing private may be published: OS metadata, source maps, env files.
+      - name: Check build output
+        run: |
+          leaked=$(find dist \( -name '.DS_Store' -o -name '*.map' -o -name '.env*' \) -print)
+          if [ -n "$leaked" ]; then echo "::error::Files that must not be deployed:"; echo "$leaked"; exit 1; fi
+
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@v5
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: dist
 
@@ -85,4 +93,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

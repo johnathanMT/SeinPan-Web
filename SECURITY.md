@@ -6,7 +6,9 @@
 | --- | --- |
 | Content-Security-Policy: `'self'` only for scripts, styles, fonts and connections; no inline scripts; `object-src 'none'` | `vite.config.ts` (injected as `<meta>` at build) |
 | Clickjacking protection (frame-busting, because `frame-ancestors` is ignored in `<meta>`) | `public/boot.js` |
-| No third-party requests on the public site (fonts are self-hosted) | `src/styles/fonts.css` |
+| No third-party requests on the public site except the technician photo from the shop's own Cloudinary account (CSP-scoped to `res.cloudinary.com/dhlhzmmtt/`, sent with no referrer) | `src/styles/fonts.css`, `ui/TechPhoto.tsx` |
+| AI-crawler opt-out (`robots.txt`, `noai` meta) and a disclosure contact (`/.well-known/security.txt`) | `public/` , `index.html` |
+| SPA route restore accepts only same-site paths | `public/boot.js` |
 | `rel="noopener noreferrer"` on every external link | `features/official/content.ts` (`EXTERNAL`) |
 | Referrer policy `strict-origin-when-cross-origin` | `index.html` |
 | Input normalisation, control/bidi-character stripping, length caps, validation | `src/shared/lib/security/sanitize.ts` |
@@ -14,6 +16,9 @@
 | Bot friction on forms: honeypot + minimum fill time | hub `ContactForm.tsx` |
 | Dependency audit blocks deploys on high-severity issues; Dependabot opens weekly patches | `.github/workflows/deploy.yml`, `.github/dependabot.yml` |
 | Least-privilege CI (`contents: read`; Pages write only in the deploy job) | `.github/workflows/deploy.yml` |
+| Every GitHub Action pinned to a full commit SHA; deploy fails if `dist` contains `.DS_Store`, source maps or `.env` files | `.github/workflows/deploy.yml` |
+| One source for the CSP and edge headers, test-locked against this document | `security/headers.ts`, `security/headers.test.ts` |
+| Google Maps iframe sandboxed, strict referrer | hub `LocationSection.jsx` |
 
 The public shop page collects **no personal data**: inquiries go to Messenger, Viber or a phone call.
 
@@ -23,12 +28,34 @@ Every `VITE_*` variable is compiled into the JavaScript that every visitor downl
 Never put API keys, tokens, passwords or connection strings in them — secrets belong only on the server.
 `.env*` files are git-ignored (except `.env.example`).
 
-## HTTP security headers (needs an edge in front of GitHub Pages)
+## Cloudflare in front of GitHub Pages
 
 GitHub Pages cannot set custom response headers. The `<meta>` CSP and `boot.js` cover what a page can do by itself;
-the headers below need a CDN in front of the site. Cloudflare's free plan works: proxy the domain, then add a
-**Transform Rule → Modify Response Header** for `seinpanelectronic.com`:
+everything else is added by Cloudflare (free plan). The site needs no code change to be proxied: it has no inline
+scripts or styles, no server state, and every asset URL is root-relative.
 
+### 1. Turn the proxy on without breaking HTTPS
+
+1. In GitHub → **Settings → Pages**, confirm the custom domain shows a valid certificate and **Enforce HTTPS** is on
+   *before* proxying (GitHub renews its certificate over plain DNS, so issue it first).
+2. Add the domain to Cloudflare, keep the GitHub Pages `A`/`AAAA`/`CNAME` records, and switch them to **Proxied**.
+3. **SSL/TLS → Overview: Full (strict)**. Never use *Flexible*: it would serve the site over plain HTTP to GitHub.
+4. **SSL/TLS → Edge Certificates:** Always Use HTTPS **On**, Minimum TLS **1.2**, TLS 1.3 **On**, Automatic HTTPS Rewrites **On**.
+
+### 2. Turn off features that inject scripts (the CSP would block them)
+
+- **Speed → Optimization:** Rocket Loader **Off**.
+- **Scrape Shield:** Email Address Obfuscation **Off** (the site shows no email address anyway).
+- **Analytics → Web Analytics:** do not enable *automatic* injection.
+- Challenge and block pages are served by Cloudflare itself and are unaffected. Scripts under `/cdn-cgi/` are
+  same-origin, so they already pass `script-src 'self'`.
+
+### 3. Security headers
+
+**Rules → Transform Rules → Modify Response Header**, for all requests to `seinpanelectronic.com`, *set* each header
+below. `security/headers.ts` generates this list and `security/headers.test.ts` fails if this block drifts from it:
+
+<!-- edge-headers:start -->
 ```
 Strict-Transport-Security: max-age=31536000; includeSubDomains
 X-Content-Type-Options: nosniff
@@ -36,11 +63,39 @@ X-Frame-Options: DENY
 Referrer-Policy: strict-origin-when-cross-origin
 Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()
 Cross-Origin-Opener-Policy: same-origin
-Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self'; frame-src https://www.google.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+Cross-Origin-Resource-Policy: same-site
+X-Robots-Tag: noai, noimageai
+Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data: https://res.cloudinary.com/dhlhzmmtt/; connect-src 'self'; frame-src https://www.google.com; media-src 'none'; object-src 'none'; worker-src 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self'; upgrade-insecure-requests; frame-ancestors 'none'
 ```
+<!-- edge-headers:end -->
 
-Also enable **Always Use HTTPS**. Add `; preload` to HSTS only once every subdomain serves HTTPS.
+Add `; preload` to HSTS only once every subdomain serves HTTPS.
 Do not add `Cross-Origin-Embedder-Policy`: it would break the Google Maps embed on /hub.
+If `VITE_API_URL` is set, add its https origin to `connect-src` here too (the build adds it to the `<meta>` CSP automatically).
+
+### 4. Verify
+
+```
+curl -sI https://seinpanelectronic.com/ | grep -iE "strict-transport|content-security|x-frame|x-content-type|server: cloudflare"
+```
+Then check the site with https://securityheaders.com and https://observatory.mozilla.org.
+
+## Bots, scrapers and AI crawlers
+
+`robots.txt` and `<meta name="robots" content="noai, noimageai">` only stop crawlers that choose to obey them.
+Real enforcement happens at the edge. With the domain proxied through Cloudflare (free plan):
+
+1. **Security → Bots → Bot Fight Mode: On** — challenges known automated traffic.
+2. **Security → Bots → Block AI Scrapers and Crawlers: On** — blocks verified AI crawlers regardless of `robots.txt`.
+3. **Security → WAF → Rate limiting rule** — e.g. more than 60 requests / 10 s from one IP to `seinpanelectronic.com/*` → Block for 1 minute.
+4. **Security → WAF → Custom rule** — challenge requests with an empty `User-Agent`, or `cf.client.bot` false and a known scraper UA (`python-requests`, `curl`, `Go-http-client`, `Scrapy`).
+5. **Security → Settings → Security level: Medium**, and **Browser Integrity Check: On**.
+6. When the inquiry API exists, protect the form with **Cloudflare Turnstile** (verify the token server-side), in addition to the honeypot and minimum fill time.
+   Allow `https://challenges.cloudflare.com` in `script-src` and `frame-src` in `vite.config.ts` at that point.
+
+## Vulnerability disclosure
+
+`/.well-known/security.txt` (RFC 9116) lists the contact channels below. Renew its `Expires` date every year.
 
 ## Requirements for the inquiry API (.NET 8, when it is built)
 

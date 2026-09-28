@@ -25,6 +25,11 @@
         return s.replace(/~and~/g, "&");
       })
       .join("?");
+    // Only restore a plain same-site path: never "//host", "/\host" or a scheme.
+    if (!/^\/(?![\/\\])[^\s\\]*$/.test(decoded)) {
+      window.history.replaceState(null, null, "/" + l.hash);
+      return;
+    }
     window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash);
   }
 })(window.location);

@@ -1,49 +1,16 @@
 /// <reference types="vitest/config" />
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
+import { metaCsp } from "./security/headers";
 
 /**
  * Content-Security-Policy.
  *
  * GitHub Pages cannot send custom response headers, so the policy ships as a
  * <meta http-equiv> tag (build only — the dev server needs inline scripts for
- * React Fast Refresh). Directives that browsers ignore in <meta> form
- * (frame-ancestors, report-uri, sandbox) are enforced elsewhere: see
- * public/boot.js (clickjacking guard) and SECURITY.md (edge headers).
- *
- * Every font is self-hosted, so no third-party origin is allowed for
- * scripts, styles or fonts.
+ * React Fast Refresh). The directives live in security/headers.ts, which also
+ * generates the edge headers documented in SECURITY.md.
  */
-function buildCsp(env: Record<string, string>): string {
-  const connect = ["'self'"];
-  if (env.VITE_API_URL) {
-    try {
-      const api = new URL(env.VITE_API_URL);
-      if (api.protocol === "https:") connect.push(api.origin);
-    } catch {
-      /* invalid URL: connect-src stays 'self' */
-    }
-  }
-
-  return [
-    "default-src 'self'",
-    "script-src 'self'",
-    "style-src 'self'",
-    "font-src 'self'",
-    "img-src 'self' data:",
-    `connect-src ${connect.join(" ")}`,
-    // Google Maps embed on the legacy /hub page only.
-    "frame-src https://www.google.com",
-    "media-src 'none'",
-    "object-src 'none'",
-    "worker-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "manifest-src 'self'",
-    "upgrade-insecure-requests",
-  ].join("; ");
-}
-
 function contentSecurityPolicy(env: Record<string, string>): Plugin {
   return {
     name: "sp:content-security-policy",
@@ -52,7 +19,7 @@ function contentSecurityPolicy(env: Record<string, string>): Plugin {
       return [
         {
           tag: "meta",
-          attrs: { "http-equiv": "Content-Security-Policy", content: buildCsp(env) },
+          attrs: { "http-equiv": "Content-Security-Policy", content: metaCsp(env) },
           injectTo: "head-prepend",
         },
       ];

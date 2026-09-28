@@ -1,0 +1,6 @@
+# RFC 9116 security contact. Please report vulnerabilities privately.
+Contact: https://www.facebook.com/seinpanelectronic
+Contact: tel:+959423858609
+Expires: 2027-09-28T00:00:00.000Z
+Preferred-Languages: my, en
+Canonical: https://seinpanelectronic.com/.well-known/security.txt
