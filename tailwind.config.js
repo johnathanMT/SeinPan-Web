@@ -128,7 +128,8 @@ export default {
         "levitate-solid": "levitate-solid var(--dur, 14s) ease-in-out var(--delay, 0s) infinite both",
         packet: "packet 5s cubic-bezier(0.4, 0, 0.6, 1) 3s infinite both",
         "led-blink": "led-blink 3.4s steps(1, end) infinite",
-        marquee: "marquee 32s linear infinite",
+        // 12 logo cards per half: ~45 px/s on phones and desktop alike.
+        "marquee-brands": "marquee 55s linear infinite",
         scope: "marquee 3.2s linear infinite",
         "crt-roll": "crt-roll 7s linear infinite",
         "crt-flicker": "crt-flicker 5s steps(1, end) infinite",
