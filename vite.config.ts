@@ -1,7 +1,7 @@
 /// <reference types="vitest/config" />
 import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
-import { metaCsp } from "./security/headers";
+import { metaCsp } from "./security/headers.ts";
 
 /**
  * Content-Security-Policy.
@@ -51,46 +51,38 @@ function preloadCriticalFonts(patterns: RegExp[]): Plugin {
   };
 }
 
-export default defineConfig(({ mode }) => {
-  const isProd = mode === "production";
-
-  return {
-    base: "/",
-    plugins: [
-      react(),
-      contentSecurityPolicy(),
-      preloadCriticalFonts([/noto-sans-myanmar-myanmar-wght-normal-[\w-]+\.woff2$/]),
-    ],
-    server: { port: 5173, open: true },
-    build: {
-      sourcemap: false,
-      minify: "esbuild",
-      cssMinify: "esbuild",
-      target: "es2020",
-      assetsInlineLimit: 0,
-      rollupOptions: {
-        output: {
-          // Long-lived vendor chunks: app deploys don't invalidate them.
-          manualChunks(id) {
-            if (/node_modules[\\/](react|react-dom|scheduler)[\\/]/.test(id)) return "vendor-react";
-            if (/node_modules[\\/](i18next|react-i18next|html-parse-stringify|void-elements)[\\/]/.test(id)) return "vendor-i18n";
-            return undefined;
-          },
+export default defineConfig({
+  base: "/",
+  plugins: [
+    react(),
+    contentSecurityPolicy(),
+    preloadCriticalFonts([/noto-sans-myanmar-myanmar-wght-normal-[\w-]+\.woff2$/]),
+  ],
+  server: { port: 5173, open: true },
+  build: {
+    // Oxc minifies JS (drops `debugger` and legal comments by default);
+    // Lightning CSS minifies CSS.
+    sourcemap: false,
+    target: "es2020",
+    assetsInlineLimit: 0,
+    rolldownOptions: {
+      // Strip debug logging from production; console.warn/error stay.
+      treeshake: { manualPureFunctions: ["console.log", "console.info", "console.debug", "console.trace"] },
+      output: {
+        // Long-lived vendor chunks: app deploys don't invalidate them.
+        codeSplitting: {
+          groups: [
+            { name: "vendor-react", test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/ },
+            { name: "vendor-i18n", test: /node_modules[\\/](i18next|react-i18next|html-parse-stringify|void-elements)[\\/]/ },
+          ],
         },
       },
     },
-    esbuild: isProd
-      ? {
-          drop: ["debugger"],
-          pure: ["console.log", "console.info", "console.debug", "console.trace"],
-          legalComments: "none",
-        }
-      : undefined,
-    test: {
-      environment: "jsdom",
-      setupFiles: ["./src/test/setup.ts"],
-      css: false,
-      restoreMocks: true,
-    },
-  };
+  },
+  test: {
+    environment: "jsdom",
+    setupFiles: ["./src/test/setup.ts"],
+    css: false,
+    restoreMocks: true,
+  },
 });

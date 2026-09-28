@@ -22,6 +22,12 @@ updates:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
     groups:
+      # Vite and its plugins/test runner must move together: a lone
+      # @vitejs/plugin-react major (peer vite ^8) can't install next to vite 6.
+      # Listed first because a dependency joins the first group it matches.
+      vite-toolchain:
+        patterns: ["vite", "@vitejs/*", "vitest", "@vitest/*"]
+        update-types: [major, minor, patch]
       production:
         dependency-type: production
         update-types: [minor, patch]
