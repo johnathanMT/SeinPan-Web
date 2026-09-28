@@ -28,9 +28,9 @@ describe("security headers", () => {
     expect(csp).toContain("frame-ancestors 'none'");
   });
 
-  it("allows an https API origin only", () => {
-    expect(metaCsp({ VITE_API_URL: "https://api.example.com/v1" })).toContain("connect-src 'self' https://api.example.com;");
-    expect(metaCsp({ VITE_API_URL: "http://api.example.com" })).toContain("connect-src 'self';");
-    expect(metaCsp({ VITE_API_URL: "not a url" })).toContain("connect-src 'self';");
+  it("<meta> CSP matches the edge CSP minus header-only directives", () => {
+    const edge = new Map(edgeHeaders()).get("Content-Security-Policy");
+    expect(`${metaCsp()}; frame-ancestors 'none'`).toBe(edge);
   });
+
 });

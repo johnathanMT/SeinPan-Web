@@ -13,33 +13,17 @@
  * styles or fonts. The only third-party image source is the shop's own
  * Cloudinary account, scoped by path so other accounts stay blocked.
  */
-export const CLOUDINARY_IMAGES = "https://res.cloudinary.com/dhlhzmmtt/";
+const CLOUDINARY_IMAGES = "https://res.cloudinary.com/dhlhzmmtt/";
 
-type Env = Readonly<Record<string, string | undefined>>;
-
-function connectSources(env: Env): string[] {
-  const sources = ["'self'"];
-  if (env.VITE_API_URL) {
-    try {
-      const api = new URL(env.VITE_API_URL);
-      if (api.protocol === "https:") sources.push(api.origin);
-    } catch {
-      /* invalid URL: connect-src stays 'self' */
-    }
-  }
-  return sources;
-}
-
-function cspDirectives(env: Env): string[] {
+function cspDirectives(): string[] {
   return [
     "default-src 'self'",
     "script-src 'self'",
     "style-src 'self'",
     "font-src 'self'",
     `img-src 'self' data: ${CLOUDINARY_IMAGES}`,
-    `connect-src ${connectSources(env).join(" ")}`,
-    // Google Maps embed on the legacy /hub page only.
-    "frame-src https://www.google.com",
+    "connect-src 'self'",
+    "frame-src 'none'",
     "media-src 'none'",
     "object-src 'none'",
     "worker-src 'none'",
@@ -51,12 +35,12 @@ function cspDirectives(env: Env): string[] {
 }
 
 /** CSP for the <meta> tag. frame-ancestors is ignored there (boot.js guards framing instead). */
-export function metaCsp(env: Env = {}): string {
-  return cspDirectives(env).join("; ");
+export function metaCsp(): string {
+  return cspDirectives().join("; ");
 }
 
 /** Response headers the Cloudflare edge adds in front of GitHub Pages. */
-export function edgeHeaders(env: Env = {}): readonly (readonly [name: string, value: string])[] {
+export function edgeHeaders(): readonly (readonly [name: string, value: string])[] {
   return [
     ["Strict-Transport-Security", "max-age=31536000; includeSubDomains"],
     ["X-Content-Type-Options", "nosniff"],
@@ -66,6 +50,6 @@ export function edgeHeaders(env: Env = {}): readonly (readonly [name: string, va
     ["Cross-Origin-Opener-Policy", "same-origin"],
     ["Cross-Origin-Resource-Policy", "same-site"],
     ["X-Robots-Tag", "noai, noimageai"],
-    ["Content-Security-Policy", [...cspDirectives(env), "frame-ancestors 'none'"].join("; ")],
+    ["Content-Security-Policy", [...cspDirectives(), "frame-ancestors 'none'"].join("; ")],
   ];
 }

@@ -38,8 +38,3 @@ export function toLocalDigits(value: number | string, lang: Lang): string {
   const s = String(value);
   return lang === "my" ? s.replace(/[0-9]/g, (d) => MY_DIGITS[Number(d)] ?? d) : s;
 }
-
-/** Converts Burmese numerals (၀–၉) to ASCII digits. */
-export function toAsciiDigits(value: string): string {
-  return value.replace(/[၀-၉]/g, (d) => String(MY_DIGITS.indexOf(d)));
-}

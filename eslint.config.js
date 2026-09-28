@@ -39,13 +39,6 @@ export default tseslint.config(
     },
   },
 
-  // Legacy /hub JavaScript (quarantined, not type-checked). Plain ESLint cannot
-  // see JSX member usage like <motion.div>, so no-unused-vars is left to review.
-  {
-    files: ["src/features/hub/**/*.jsx"],
-    rules: { "no-unused-vars": "off" },
-  },
-
   // Node-side config and scripts.
   {
     files: ["*.{js,mjs}", "scripts/**/*.{js,mjs}"],
@@ -53,7 +46,7 @@ export default tseslint.config(
     languageOptions: { globals: globals.node },
   },
   {
-    files: ["vite.config.ts"],
+    files: ["vite.config.ts", "security/**/*.ts"],
     extends: [tseslint.configs.recommended],
     languageOptions: { globals: globals.node },
   },

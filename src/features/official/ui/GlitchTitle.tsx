@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { keepWords } from "../../../shared/lib/text";
-import { prefersReducedMotion } from "../../../shared/hooks/usePrefersReducedMotion";
+import { prefersReducedMotion } from "../../../shared/lib/motion";
 
 interface GlitchTitleProps {
   text: string;

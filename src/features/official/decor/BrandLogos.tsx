@@ -51,7 +51,7 @@ function Word({ x, y = 24, size = 15, spacing = 1.4, weight = 700, children, fil
   );
 }
 
-export function SamsungLogo() {
+function SamsungLogo() {
   return (
     <Mark label="Samsung" width="150">
       <ellipse cx="75" cy="18" rx="72" ry="15.5" fill="none" stroke="#1428A0" strokeWidth="2.2" />
@@ -60,7 +60,7 @@ export function SamsungLogo() {
   );
 }
 
-export function LgLogo() {
+function LgLogo() {
   return (
     <Mark label="LG" width="40">
       <circle cx="20" cy="18" r="16" fill="#A50034" />
@@ -77,7 +77,7 @@ export function LgLogo() {
   );
 }
 
-export function SonyLogo() {
+function SonyLogo() {
   return (
     <Mark label="Sony" width="92">
       <Word x="46" y="24" size="20" spacing="3.2" weight={600} fill="#111">SONY</Word>
@@ -85,7 +85,7 @@ export function SonyLogo() {
   );
 }
 
-export function PanasonicLogo() {
+function PanasonicLogo() {
   return (
     <Mark label="Panasonic" width="168">
       <Word x="84" y="24" size="15" spacing="0.4" fill="#0049B0">Panasonic</Word>
@@ -93,7 +93,7 @@ export function PanasonicLogo() {
   );
 }
 
-export function ToshibaLogo() {
+function ToshibaLogo() {
   return (
     <Mark label="Toshiba" width="128">
       <Word x="64" y="24" size="16" spacing="1.6" fill="#E60026">TOSHIBA</Word>
@@ -101,7 +101,7 @@ export function ToshibaLogo() {
   );
 }
 
-export function SharpLogo() {
+function SharpLogo() {
   return (
     <Mark label="Sharp" width="110">
       <Word x="55" y="24" size="18" spacing="2.8" weight={800} fill="#E31C23">SHARP</Word>
@@ -109,7 +109,7 @@ export function SharpLogo() {
   );
 }
 
-export function TclLogo() {
+function TclLogo() {
   return (
     <Mark label="TCL" width="78">
       <Word x="39" y="25" size="22" spacing="2.2" weight={800} fill="#E31C23">TCL</Word>
@@ -117,7 +117,7 @@ export function TclLogo() {
   );
 }
 
-export function HisenseLogo() {
+function HisenseLogo() {
   return (
     <Mark label="Hisense" width="130">
       <Word x="65" y="24" size="17" spacing="0.2" fill="#00B0EA">Hisense</Word>
@@ -125,7 +125,7 @@ export function HisenseLogo() {
   );
 }
 
-export function PhilipsLogo() {
+function PhilipsLogo() {
   return (
     <Mark label="Philips" width="132">
       <path d="M14 6.5 21 4l7 2.5v9.2c0 6.2-3.8 10.4-7 12.3-3.2-1.9-7-6.1-7-12.3V6.5Z" fill="#0B5CAB" />
@@ -135,7 +135,7 @@ export function PhilipsLogo() {
   );
 }
 
-export function HaierLogo() {
+function HaierLogo() {
   return (
     <Mark label="Haier" width="100">
       <Word x="50" y="24" size="18" spacing="1.1" fill="#0055A5">Haier</Word>
@@ -143,7 +143,7 @@ export function HaierLogo() {
   );
 }
 
-export function SkyworthLogo() {
+function SkyworthLogo() {
   return (
     <Mark label="Skyworth" width="140">
       <Word x="70" y="24" size="16" spacing="0.3" fill="#E31C23">Skyworth</Word>
@@ -151,7 +151,7 @@ export function SkyworthLogo() {
   );
 }
 
-export function ChanghongLogo() {
+function ChanghongLogo() {
   return (
     <Mark label="Changhong" width="150">
       <Word x="75" y="24" size="15" spacing="0.2" fill="#E31C23">Changhong</Word>

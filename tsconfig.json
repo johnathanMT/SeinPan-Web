@@ -15,8 +15,6 @@
     "noFallthroughCasesInSwitch": true,
     "useUnknownInCatchVariables": true,
 
-    "allowJs": true,
-    "checkJs": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,

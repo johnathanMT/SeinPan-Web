@@ -25,7 +25,7 @@ npm run verify       # everything CI runs: types, lint, translations, tests, bui
 ```
 src/
   main.tsx                 entry: i18n, styles, performance tier, render
-  app/App.tsx              path switch: shop (/) vs legacy layouts (/hub, /immersive)
+  app/App.tsx              renders the shop for every path (hash tabs, no router)
   features/
     official/              the public site (TypeScript)
       OfficialPage.tsx     root: theme + navigation contexts, lazy tabs
@@ -33,16 +33,16 @@ src/
       theme.tsx            colour tokens (WCAG AA verified) + ThemeContext
       navigation.tsx       hash-tab NavigationContext + real hrefs
       hooks/  layout/  sections/  ui/  decor/
-    hub/                   legacy /hub + /immersive layouts (lazy chunk, JS)
   shared/
     i18n/                  i18next setup, language store, supported languages
-    lib/security/          input sanitisation + API endpoint policy (+ tests)
     lib/text.tsx           Burmese line-breaking + numerals
-    hooks/                 shared IntersectionObserver, reduced motion, idle prefetch
+    lib/motion.ts          reduced-motion check
+    lib/storage.ts         localStorage that never throws
+    hooks/                 shared IntersectionObserver, idle prefetch
     perf/tier.ts           adaptive "lite" mode for low-end phones
   locales/{my,en}/*.json   all copy
   styles/                  Tailwind entry, self-hosted fonts, per-language fonts
-  assets/images/           responsive AVIF/WebP/JPEG
+security/headers.ts        CSP + Cloudflare edge headers (one source, test-locked to SECURITY.md)
 ```
 
 ### Conventions

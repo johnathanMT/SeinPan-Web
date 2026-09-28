@@ -13,67 +13,6 @@ export default {
         "theme-gold": { DEFAULT: "#E6C27A", light: "#F6E2AE", deep: "#C99A45" }, // text on theme-color-1 / theme-color-4 only
         // Third-party brand buttons, darkened just enough for AA white text.
         brand: { facebook: "#0D6FEE", messenger: "#0074DF", viber: "#715DF2" },
-        // Sein Pan tree — Royal Poinciana / Flamboyant
-        seinpan: {
-          red: "#E63946",
-          flame: "#FF4500",
-          "red-deep": "#C1121F",
-          "green-bg": "#3A6258",
-          "green-deep": "#2F564C",
-          "green-card": "#4A7266",
-          mist: "#D1D5DB",
-          pearl: "#F6F1E8",
-          "pearl-deep": "#EFE6D6",
-          "pearl-card": "#FFFCF6",
-          ink: "#2C2622",
-          gold: "#C4A574",
-          "gold-soft": "#E8D5A3",
-          "gold-deep": "#6F5430",
-          maroon: "#7A2432",
-          "maroon-deep": "#5C1824",
-          "blue-green": "#2A5248",
-          "forest-ink": "#16261D",
-          cta: "#D62839",
-          "cta-deep": "#B3122B",
-        },
-        ink: { DEFAULT: "#0B2412", 900: "#0F291E", 800: "#1A3A26" },
-        line: "rgba(209,213,219,0.14)",
-        forest: {
-          DEFAULT: "#2F564C",
-          950: "#264840",
-          900: "#2F564C",
-          800: "#3A6258",
-          700: "#4A7266",
-          600: "#5A8276",
-        },
-        // Leaf surfaces stay green; the bright steps are flower red
-        // so existing accent classes (icons, active tabs) match the tree.
-        pcb: {
-          50: "#F8FAF9",
-          100: "#E5E7EB",
-          200: "#D1D5DB",
-          300: "#FF6B4A",
-          400: "#FF4500",
-          500: "#E63946",
-          600: "#C1121F",
-          700: "#1A3A26",
-          800: "#143022",
-          900: "#0F291E",
-          950: "#0B2412",
-        },
-        // Former copper/gold scale, now the Sein Pan flower.
-        copper: {
-          50: "#FFF1F0",
-          100: "#FFD6D1",
-          200: "#FFB0A3",
-          300: "#FF7A66",
-          400: "#FF4500",
-          500: "#E63946",
-          600: "#C1121F",
-          700: "#9B1B2E",
-          800: "#6E1522",
-          900: "#3D0C14",
-        },
       },
       fontFamily: {
         sans: ["var(--font-app)", "system-ui", "sans-serif"],
@@ -203,15 +142,6 @@ export default {
           "repeating-linear-gradient(to bottom, rgba(0,0,0,0.55) 0px, rgba(0,0,0,0.55) 2px, rgba(255,255,255,0.05) 2px, rgba(255,255,255,0.05) 5px)",
         "grid-lines":
           "linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)",
-        "dot-grid":
-          "radial-gradient(circle, rgba(209,213,219,0.10) 1px, transparent 1px)",
-        holo:
-          "conic-gradient(from 180deg at 50% 50%, #E63946, #FF4500, #1A3A26, #FF7A66, #E63946)",
-      },
-      backgroundSize: { "dot-grid": "22px 22px" },
-      boxShadow: {
-        card: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 10px 40px -12px rgba(0,0,0,0.6)",
-        glow: "0 0 0 1px rgba(230,57,70,0.45), 0 8px 30px -8px rgba(230,57,70,0.45)",
       },
     },
   },

@@ -1,11 +1,14 @@
-import { Clock, MapPin, Phone, Tv } from "lucide-react";
+import { Clock, MapPin, Phone } from "lucide-react";
 import { keepWords } from "../../../shared/lib/text";
 import { EXTERNAL, LINKS, NAV_TABS, OPEN_DAYS } from "../content";
 import { useOfficial } from "../hooks/useOfficial";
 import type { DayHours } from "../types";
 import { FacebookIcon, ViberIcon } from "../ui/BrandIcons";
+import { BrandMark } from "../ui/BrandMark";
 import { NavLink } from "../ui/NavLink";
 import { BRAND_BUTTON } from "../ui/styles";
+
+const FOOTER_HEADING = "text-xs font-semibold tracking-[0.16em] text-theme-color-2";
 
 const FOOTER_LINK =
   "inline-flex min-h-12 min-w-12 items-center text-left text-sm text-white/90 transition hover:text-theme-color-2 hover:underline hover:underline-offset-4";
@@ -24,9 +27,7 @@ export function Footer() {
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
           <div>
             <NavLink to="home" className="group mb-5 flex min-h-12 items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-theme-color-3 shadow-md shadow-theme-color-4/20">
-                <Tv size={18} className="text-white" aria-hidden="true" />
-              </span>
+              <BrandMark />
               <span className="text-left leading-none">
                 <span className="block text-sm font-extrabold leading-snug text-theme-color-2">{t("nav.brand")}</span>
                 <span className="block text-xs leading-snug text-white/80">{t("footer.service")}</span>
@@ -43,7 +44,7 @@ export function Footer() {
           </div>
 
           <nav aria-label={t("footer.navigation")}>
-            <p className="mb-2 text-xs font-semibold tracking-[0.16em] text-theme-color-2">{t("footer.navigation")}</p>
+            <p className={`mb-2 ${FOOTER_HEADING}`}>{t("footer.navigation")}</p>
             <ul className="space-y-0.5">
               {NAV_TABS.map(({ id }) => (
                 <li key={id}>
@@ -56,7 +57,7 @@ export function Footer() {
           </nav>
 
           <div>
-            <p className="mb-2 text-xs font-semibold tracking-[0.16em] text-theme-color-2">{t("footer.services")}</p>
+            <p className={`mb-2 ${FOOTER_HEADING}`}>{t("footer.services")}</p>
             <ul className="space-y-0.5">
               {links.map((label) => (
                 <li key={label}>
@@ -69,7 +70,7 @@ export function Footer() {
           </div>
 
           <div>
-            <p className="mb-4 text-xs font-semibold tracking-[0.16em] text-theme-color-2">{t("footer.contact")}</p>
+            <p className={`mb-4 ${FOOTER_HEADING}`}>{t("footer.contact")}</p>
             <ul className="space-y-3 text-sm text-white/90">
               <li className="flex items-start gap-2.5">
                 <MapPin size={15} className="mt-1 shrink-0 text-theme-color-2" aria-hidden="true" />
@@ -103,7 +104,7 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col gap-5 rounded-2xl border border-theme-color-2/15 bg-white/[0.04] p-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs font-semibold tracking-[0.16em] text-theme-color-2">{t("footer.connect")}</p>
+            <p className={FOOTER_HEADING}>{t("footer.connect")}</p>
             <p className="mt-1.5 text-sm text-white/90">{keepWords(t("footer.connectBody"))}</p>
           </div>
           <ul className="flex flex-wrap gap-3">

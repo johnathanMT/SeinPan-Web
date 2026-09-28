@@ -46,5 +46,4 @@ i18n.on("languageChanged", (lng) => {
 });
 applyLangAttributes(i18n.language);
 
-export { SUPPORTED, DEFAULT_LANG, toLang };
 export default i18n;

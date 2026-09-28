@@ -64,16 +64,15 @@ injected violations. `eslint-plugin-jsx-a11y` runs in CI.
 - Repeated button/link class strings centralised in `ui/styles.ts`; icons paired to translations in `content.ts`.
 - Removed dead code: `SeinPanOfficialWebsite.jsx` (980 lines, never imported), Japanese locale files, `useT`,
   unused English copies inside the old data arrays, unused keyframes, `i18next-browser-languagedetector`.
-- Legacy `/hub` + `/immersive` quarantined in `features/hub/` as one lazy chunk with their own translations.
+- Legacy `/hub` + `/immersive` layouts later removed entirely (see open recommendation 3).
 - Quality gates: `npm run verify` (typecheck, lint, locale parity, 52 tests, build) — enforced in CI.
 
 ## Open recommendations
 
 1. **Put Cloudflare (free) in front of GitHub Pages** and add the headers in `SECURITY.md`. This is the only way to get
    HSTS, `X-Content-Type-Options` and `frame-ancestors` on this host.
-2. **Replace the technician photo** with a real photo of U Win Naing. The current one carries an AI-generator watermark
-   and an "EXPERT ELECTRONICS" shirt logo, which undermines trust on a heritage business site.
-3. Decide whether `/hub` and `/immersive` should stay public: they contain placeholder data (e.g. a sample customer
-   "Emily Carter", placeholder phone numbers) and are not linked from the site.
+2. ~~Replace the technician photo~~ — done: a real photo of Ko Win Naing, served from the shop's Cloudinary account.
+3. ~~Decide whether `/hub` and `/immersive` should stay public~~ — done: both removed (placeholder data, unlinked),
+   together with React Router, framer-motion, clsx and three translation namespaces.
 4. Re-run the live audit (same script, same widths) after deploying, and spot-check on a real low-end Android phone.
 5. Later: Trusted Types (`require-trusted-types-for 'script'`) once it can be tested in a real browser.

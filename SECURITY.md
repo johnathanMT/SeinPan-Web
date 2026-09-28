@@ -11,14 +11,11 @@
 | SPA route restore accepts only same-site paths | `public/boot.js` |
 | `rel="noopener noreferrer"` on every external link | `features/official/content.ts` (`EXTERNAL`) |
 | Referrer policy `strict-origin-when-cross-origin` | `index.html` |
-| Input normalisation, control/bidi-character stripping, length caps, validation | `src/shared/lib/security/sanitize.ts` |
-| API calls: https only in production, no cookies, no referrer, timeout | `src/shared/lib/security/endpoint.ts`, hub `ContactForm.tsx` |
-| Bot friction on forms: honeypot + minimum fill time | hub `ContactForm.tsx` |
 | Dependency audit blocks deploys on high-severity issues; Dependabot opens weekly patches | `.github/workflows/deploy.yml`, `.github/dependabot.yml` |
 | Least-privilege CI (`contents: read`; Pages write only in the deploy job) | `.github/workflows/deploy.yml` |
 | Every GitHub Action pinned to a full commit SHA; deploy fails if `dist` contains `.DS_Store`, source maps or `.env` files | `.github/workflows/deploy.yml` |
 | One source for the CSP and edge headers, test-locked against this document | `security/headers.ts`, `security/headers.test.ts` |
-| Google Maps iframe sandboxed, strict referrer | hub `LocationSection.jsx` |
+| No iframes, forms or API calls: `frame-src`, `media-src`, `worker-src` and `object-src` are all `'none'` | `security/headers.ts` |
 
 The public shop page collects **no personal data**: inquiries go to Messenger, Viber or a phone call.
 
@@ -65,13 +62,12 @@ Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
 Cross-Origin-Opener-Policy: same-origin
 Cross-Origin-Resource-Policy: same-site
 X-Robots-Tag: noai, noimageai
-Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data: https://res.cloudinary.com/dhlhzmmtt/; connect-src 'self'; frame-src https://www.google.com; media-src 'none'; object-src 'none'; worker-src 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self'; upgrade-insecure-requests; frame-ancestors 'none'
+Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data: https://res.cloudinary.com/dhlhzmmtt/; connect-src 'self'; frame-src 'none'; media-src 'none'; object-src 'none'; worker-src 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self'; upgrade-insecure-requests; frame-ancestors 'none'
 ```
 <!-- edge-headers:end -->
 
 Add `; preload` to HSTS only once every subdomain serves HTTPS.
-Do not add `Cross-Origin-Embedder-Policy`: it would break the Google Maps embed on /hub.
-If `VITE_API_URL` is set, add its https origin to `connect-src` here too (the build adds it to the `<meta>` CSP automatically).
+Do not add `Cross-Origin-Embedder-Policy`: it would require the Cloudinary photo to opt in with CORP/CORS headers, or it stops loading.
 
 ### 4. Verify
 
@@ -90,7 +86,7 @@ Real enforcement happens at the edge. With the domain proxied through Cloudflare
 3. **Security → WAF → Rate limiting rule** — e.g. more than 60 requests / 10 s from one IP to `seinpanelectronic.com/*` → Block for 1 minute.
 4. **Security → WAF → Custom rule** — challenge requests with an empty `User-Agent`, or `cf.client.bot` false and a known scraper UA (`python-requests`, `curl`, `Go-http-client`, `Scrapy`).
 5. **Security → Settings → Security level: Medium**, and **Browser Integrity Check: On**.
-6. When the inquiry API exists, protect the form with **Cloudflare Turnstile** (verify the token server-side), in addition to the honeypot and minimum fill time.
+6. When the inquiry API exists, protect the form with **Cloudflare Turnstile** (verify the token server-side), plus a hidden honeypot field and a minimum fill time.
    Allow `https://challenges.cloudflare.com` in `script-src` and `frame-src` in `vite.config.ts` at that point.
 
 ## Vulnerability disclosure
@@ -99,7 +95,9 @@ Real enforcement happens at the edge. With the domain proxied through Cloudflare
 
 ## Requirements for the inquiry API (.NET 8, when it is built)
 
-Client-side validation is a convenience; **the API is the security boundary.** It must:
+Inquiries currently go to Messenger, Viber or a phone call; the site has no form. When a form and API are added,
+add the API's https origin to `connect-src` in `security/headers.ts`, validate on the client for UX only, and
+remember **the API is the security boundary.** It must:
 
 1. **Validate again** with the same limits (`name` ≤ 80, `email` ≤ 254, `phone` ≤ 20, `message` ≤ 2000) and reject unknown fields.
 2. **Never build SQL from strings.** EF Core LINQ and `FromSqlInterpolated` are parameterised; never use `FromSqlRaw` with concatenation.

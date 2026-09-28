@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { isTabId, type TabId } from "../content";
-import { prefersReducedMotion } from "../../../shared/hooks/usePrefersReducedMotion";
+import { prefersReducedMotion } from "../../../shared/lib/motion";
 
 function readTab(): TabId {
   const id = window.location.hash.slice(1);

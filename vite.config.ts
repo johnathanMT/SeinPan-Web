@@ -1,5 +1,5 @@
 /// <reference types="vitest/config" />
-import { defineConfig, loadEnv, type Plugin } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import { metaCsp } from "./security/headers";
 
@@ -11,7 +11,7 @@ import { metaCsp } from "./security/headers";
  * React Fast Refresh). The directives live in security/headers.ts, which also
  * generates the edge headers documented in SECURITY.md.
  */
-function contentSecurityPolicy(env: Record<string, string>): Plugin {
+function contentSecurityPolicy(): Plugin {
   return {
     name: "sp:content-security-policy",
     apply: "build",
@@ -19,7 +19,7 @@ function contentSecurityPolicy(env: Record<string, string>): Plugin {
       return [
         {
           tag: "meta",
-          attrs: { "http-equiv": "Content-Security-Policy", content: metaCsp(env) },
+          attrs: { "http-equiv": "Content-Security-Policy", content: metaCsp() },
           injectTo: "head-prepend",
         },
       ];
@@ -52,14 +52,13 @@ function preloadCriticalFonts(patterns: RegExp[]): Plugin {
 }
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), "VITE_");
   const isProd = mode === "production";
 
   return {
     base: "/",
     plugins: [
       react(),
-      contentSecurityPolicy(env),
+      contentSecurityPolicy(),
       preloadCriticalFonts([/noto-sans-myanmar-myanmar-wght-normal-[\w-]+\.woff2$/]),
     ],
     server: { port: 5173, open: true },

@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useId, useState, type Ref } from "react";
-import { Menu, Moon, Phone, Sun, Tv, Wrench, X } from "lucide-react";
+import { Menu, Moon, Phone, Sun, Wrench, X } from "lucide-react";
 import { LINKS, NAV_TABS, type TabId } from "../content";
 import { useOfficial } from "../hooks/useOfficial";
 import { useNavigation } from "../navigation";
 import { useTheme } from "../theme";
+import { BrandMark } from "../ui/BrandMark";
 import { NavLink } from "../ui/NavLink";
 import { CTA, HEADER_ICON_BTN } from "../ui/styles";
 import { LangToggle } from "./LangToggle";
@@ -56,9 +57,7 @@ export function Navbar({ ref }: { ref?: Ref<HTMLElement> }) {
       <div className="bg-theme-color-1">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-2 sm:px-4">
           <NavLink to="home" onNavigate={close} className="tap-48 group flex min-h-11 min-w-0 items-center gap-3 rounded-xl">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-theme-color-3 shadow-md shadow-theme-color-4/20 transition group-hover:scale-105">
-              <Tv size={18} className="text-white" aria-hidden="true" />
-            </span>
+            <BrandMark className="transition group-hover:scale-105" />
             <span className="min-w-0 text-left leading-none">
               <span className="block truncate text-sm font-extrabold leading-snug tracking-wide text-theme-color-2">{t("nav.brand")}</span>
               <span className="hidden text-xs uppercase leading-snug tracking-[0.18em] text-white/80 xl:block">{t("nav.tagline")}</span>
