@@ -183,6 +183,7 @@ export default {
         levitate: "levitate var(--dur, 14s) ease-in-out var(--delay, 0s) infinite both",
         "pulse-travel": "pulse-travel var(--dur, 7s) linear var(--delay, 2s) infinite both",
         marquee: "marquee 32s linear infinite",
+        scope: "marquee 3.2s linear infinite",
         "crt-roll": "crt-roll 7s linear infinite",
         "crt-flicker": "crt-flicker 5s steps(1, end) infinite",
         "crt-on": "crt-on 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both",

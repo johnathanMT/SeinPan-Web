@@ -154,6 +154,44 @@
       }
     ]
   },
+  "lab": {
+    "label": "The repair lab",
+    "title": "Premium care,",
+    "titleEm": "bench-tested.",
+    "body": "Every set is traced at board level, repaired with genuine parts and tested on the bench before it goes home — the same standard since 1989.",
+    "items": [
+      {
+        "tag": "DIAG",
+        "title": "Board-level diagnosis",
+        "body": "We trace the fault on the main, power and T-Con boards instead of guessing and swapping parts."
+      },
+      {
+        "tag": "PARTS",
+        "title": "Genuine components",
+        "body": "Quality, genuine parts fitted to every repair — never a cheap shortcut that fails again."
+      },
+      {
+        "tag": "QUOTE",
+        "title": "Price before we repair",
+        "body": "You hear the fault and the price first. If we can't fix it, you don't pay a repair fee."
+      },
+      {
+        "tag": "HV SAFE",
+        "title": "High-voltage safety check",
+        "body": "Power and plasma sustain circuits are checked for safe voltages before the set is handed back."
+      },
+      {
+        "tag": "CAL",
+        "title": "Picture & colour calibration",
+        "body": "Backlight, colour and sound are tested on the bench so the picture looks right at home."
+      },
+      {
+        "tag": "FW",
+        "title": "Smart TV firmware",
+        "body": "Firmware reflash and remote/IR sync for smart sets that freeze, restart in a loop or stop responding."
+      }
+    ]
+  },
   "closing": {
     "label": "Walk in or write first",
     "title": "Bring the set. Leave with a straight answer.",

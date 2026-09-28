@@ -14,6 +14,13 @@ export interface WhyItem {
   body: string;
 }
 
+export interface LabItem {
+  title: string;
+  body: string;
+  /** Short instrument-style label, e.g. "DIAG". */
+  tag: string;
+}
+
 export interface TimelineItem {
   year: string;
   title: string;

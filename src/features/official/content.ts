@@ -6,7 +6,9 @@
 import type { LucideIcon } from "lucide-react";
 import {
   Award,
+  BadgeCheck,
   Camera,
+  CircuitBoard,
   ClipboardList,
   Cpu,
   Handshake,
@@ -14,7 +16,9 @@ import {
   Home,
   Info,
   Lightbulb,
+  Microscope,
   Monitor,
+  Palette,
   Phone,
   PhoneCall,
   Radio,
@@ -64,6 +68,7 @@ export const ABOUT_STAT_ICONS: readonly LucideIcon[] = [History, Users, Wrench, 
 export const PROCESS_ICONS: readonly LucideIcon[] = [ClipboardList, Phone, Wrench];
 export const WHY_ICONS: readonly LucideIcon[] = [Award, ShieldCheck, Handshake];
 export const GUIDE_ICONS: readonly LucideIcon[] = [User, Tv, ClipboardList, Camera];
+export const LAB_ICONS: readonly LucideIcon[] = [Microscope, CircuitBoard, BadgeCheck, Zap, Palette, Cpu];
 
 /** Opening days, paired by index with contact.days (Mon–Fri, Sat, Sun). */
 export const OPEN_DAYS: readonly boolean[] = [true, true, false];
