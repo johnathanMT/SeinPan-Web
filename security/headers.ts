@@ -1,13 +1,10 @@
 /**
  * Single source of truth for the site's browser security policy.
  *
- *  - metaCsp():     the <meta http-equiv> CSP injected at build (vite.config.ts)
- *  - edgeHeaders(): the full response-header set for the Cloudflare
- *                   Transform Rule documented in SECURITY.md
- *
- * GitHub Pages cannot send headers, so the page carries what a <meta> tag can
- * enforce and the edge adds the rest. headers.test.ts fails if SECURITY.md
- * drifts from what this file generates.
+ *  - metaCsp():     the <meta http-equiv> CSP injected at build (vite.config.ts),
+ *                   a fallback wherever the page is served without headers
+ *  - edgeHeaders(): the response headers Vercel sends for every path
+ *                   (vercel.json; headers.test.ts fails if the two drift)
  *
  * Every font is self-hosted, so no third-party origin is allowed for scripts,
  * styles or fonts. The only third-party image source is the shop's own
@@ -39,10 +36,11 @@ export function metaCsp(): string {
   return cspDirectives().join("; ");
 }
 
-/** Response headers the Cloudflare edge adds in front of GitHub Pages. */
+/** Response headers for every path, served by Vercel from vercel.json. */
 export function edgeHeaders(): readonly (readonly [name: string, value: string])[] {
   return [
-    ["Strict-Transport-Security", "max-age=31536000; includeSubDomains"],
+    // Add includeSubDomains (and later preload) only once every subdomain serves HTTPS.
+    ["Strict-Transport-Security", "max-age=63072000"],
     ["X-Content-Type-Options", "nosniff"],
     ["X-Frame-Options", "DENY"],
     ["Referrer-Policy", "strict-origin-when-cross-origin"],

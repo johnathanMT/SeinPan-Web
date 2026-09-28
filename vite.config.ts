@@ -6,10 +6,10 @@ import { metaCsp } from "./security/headers.ts";
 /**
  * Content-Security-Policy.
  *
- * GitHub Pages cannot send custom response headers, so the policy ships as a
- * <meta http-equiv> tag (build only — the dev server needs inline scripts for
- * React Fast Refresh). The directives live in security/headers.ts, which also
- * generates the edge headers documented in SECURITY.md.
+ * Vercel sends the full policy as a header (vercel.json). The same directives
+ * also ship as a <meta http-equiv> tag as a fallback wherever the page is
+ * served without headers (build only — the dev server needs inline scripts
+ * for React Fast Refresh). Both come from security/headers.ts.
  */
 function contentSecurityPolicy(): Plugin {
   return {

@@ -69,8 +69,8 @@ injected violations. `eslint-plugin-jsx-a11y` runs in CI.
 
 ## Open recommendations
 
-1. **Put Cloudflare (free) in front of GitHub Pages** and add the headers in `SECURITY.md`. This is the only way to get
-   HSTS, `X-Content-Type-Options` and `frame-ancestors` on this host.
+1. ~~Put Cloudflare in front of GitHub Pages~~ — superseded: the live site is on Vercel, which now sends every
+   security header from `vercel.json`.
 2. ~~Replace the technician photo~~ — done: a real photo of Ko Win Naing, served from the shop's Cloudinary account.
 3. ~~Decide whether `/hub` and `/immersive` should stay public~~ — done: both removed (placeholder data, unlinked),
    together with React Router, framer-motion, clsx and three translation namespaces.

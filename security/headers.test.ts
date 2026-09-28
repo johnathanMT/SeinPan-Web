@@ -3,21 +3,19 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { edgeHeaders, metaCsp } from "./headers";
 
-const START = "<!-- edge-headers:start -->";
-const END = "<!-- edge-headers:end -->";
+interface VercelConfig {
+  headers: { source: string; headers: { key: string; value: string }[] }[];
+}
 
-function documentedHeaders(): string {
-  const doc = readFileSync(resolve(process.cwd(), "SECURITY.md"), "utf8");
-  const block = doc.slice(doc.indexOf(START) + START.length, doc.indexOf(END));
-  return block.replace(/```/g, "").trim();
+function vercelGlobalHeaders(): [string, string][] {
+  const config = JSON.parse(readFileSync(resolve(process.cwd(), "vercel.json"), "utf8")) as VercelConfig;
+  const global = config.headers.find((rule) => rule.source === "/(.*)");
+  return (global?.headers ?? []).map(({ key, value }) => [key, value]);
 }
 
 describe("security headers", () => {
-  it("SECURITY.md lists exactly the headers the edge must send", () => {
-    const expected = edgeHeaders()
-      .map(([name, value]) => `${name}: ${value}`)
-      .join("\n");
-    expect(documentedHeaders()).toBe(expected);
+  it("vercel.json sends exactly the headers this module defines", () => {
+    expect(vercelGlobalHeaders()).toEqual(edgeHeaders().map(([name, value]) => [name, value]));
   });
 
   it("forbids inline script, plugins and foreign framing", () => {

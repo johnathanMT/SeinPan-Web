@@ -1,9 +1,9 @@
 // Runs before the app mounts. Kept as a file (not inline) so the
 // Content-Security-Policy can forbid all inline scripts.
 
-// Clickjacking guard. GitHub Pages cannot send X-Frame-Options or a
-// frame-ancestors CSP header, and browsers ignore both in <meta>, so the page
-// hides itself when embedded in someone else's frame.
+// Clickjacking guard. Vercel sends X-Frame-Options and frame-ancestors
+// (vercel.json); this covers hosts that don't, since browsers ignore both in
+// <meta>. The page hides itself when embedded in someone else's frame.
 (function () {
   if (window.top === window.self) return;
   document.documentElement.style.display = "none";

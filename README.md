@@ -2,7 +2,7 @@
 
 LED, LCD & Plasma TV repair in Yangon, since 1989. Live at **https://seinpanelectronic.com**.
 
-Vite · React 19 · TypeScript (strict) · Tailwind CSS · i18next (Burmese default, English) · GitHub Pages
+Vite · React 19 · TypeScript (strict) · Tailwind CSS · i18next (Burmese default, English) · Vercel
 
 ## Quick start
 
@@ -42,7 +42,8 @@ src/
     perf/tier.ts           adaptive "lite" mode for low-end phones
   locales/{my,en}/*.json   all copy
   styles/                  Tailwind entry, self-hosted fonts, per-language fonts
-security/headers.ts        CSP + Cloudflare edge headers (one source, test-locked to SECURITY.md)
+security/headers.ts        CSP + response headers (one source, test-locked to vercel.json)
+vercel.json                security headers + long-lived caching for /assets
 ```
 
 ### Conventions
@@ -66,8 +67,8 @@ When those plugins publish support for the newer versions, remove the matching r
 
 ## Deployment
 
-Every push to `main` runs the full verification in GitHub Actions and deploys `dist/` to GitHub Pages only if it all passes.
-One-time setting: **Settings → Pages → Source: GitHub Actions**.
+Every push to `main` is deployed by **Vercel** (`www.seinpanelectronic.com`). GitHub Actions runs the full
+verification on every push and pull request (it also publishes a GitHub Pages copy, which is not the live site).
 
 ## Security
 
