@@ -75,15 +75,21 @@ export default {
           "0%, 100%": { opacity: "0" },
           "50%": { opacity: "1" },
         },
-        levitate: {
-          "0%, 100%": { transform: "translateY(0) rotate(var(--rot-a, 0deg))", opacity: "0.35" },
-          "50%": { transform: "translateY(var(--lev-y, -10px)) rotate(var(--rot-b, 4deg))", opacity: "0.45" },
+        "levitate-solid": {
+          "0%, 100%": { transform: "translateY(0) rotate(var(--rot-a, 0deg))" },
+          "50%": { transform: "translateY(var(--lev-y, -10px)) rotate(var(--rot-b, 4deg))" },
         },
-        "pulse-travel": {
-          "0%": { strokeDashoffset: "0", opacity: "0" },
-          "5%": { opacity: "0.9" },
-          "90%": { opacity: "0.9" },
-          "100%": { strokeDashoffset: "-2400", opacity: "0" },
+        packet: {
+          "0%": { strokeDashoffset: "0.05", opacity: "0" },
+          "8%": { opacity: "1" },
+          "88%": { opacity: "1" },
+          "100%": { strokeDashoffset: "-1", opacity: "0" },
+        },
+        "led-blink": {
+          "0%, 40%, 100%": { opacity: "1" },
+          "46%": { opacity: "0.3" },
+          "52%": { opacity: "1" },
+          "58%": { opacity: "0.45" },
         },
         marquee: {
           "0%": { transform: "translateX(0)" },
@@ -119,8 +125,9 @@ export default {
         "spark-down": "spark-down 1.25s ease-out 0.2s infinite both",
         breathe: "breathe 5.2s ease-in-out infinite",
         "glow-breathe": "glow-breathe 5.2s ease-in-out infinite",
-        levitate: "levitate var(--dur, 14s) ease-in-out var(--delay, 0s) infinite both",
-        "pulse-travel": "pulse-travel var(--dur, 7s) linear var(--delay, 2s) infinite both",
+        "levitate-solid": "levitate-solid var(--dur, 14s) ease-in-out var(--delay, 0s) infinite both",
+        packet: "packet 5s cubic-bezier(0.4, 0, 0.6, 1) 3s infinite both",
+        "led-blink": "led-blink 3.4s steps(1, end) infinite",
         marquee: "marquee 32s linear infinite",
         scope: "marquee 3.2s linear infinite",
         "crt-roll": "crt-roll 7s linear infinite",

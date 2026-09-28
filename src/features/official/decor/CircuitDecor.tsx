@@ -1,225 +1,101 @@
-import { useRef, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type RefObject } from "react";
 import { useInViewOnce } from "../../../shared/hooks/useInViewOnce";
+import { prefersReducedMotion } from "../../../shared/lib/motion";
 import { getPerformanceTier } from "../../../shared/perf/tier";
 import { useTheme } from "../theme";
+import { BoardStrip, Packets, Rail } from "./circuit/Board";
+import { CapacitorArt, ChipArt, FloatingPart, ResistorArt, ToroidArt } from "./circuit/FloatingParts";
+import { BOTTOM, TOP } from "./circuit/geometry";
+import { LENS_SIZE, useInspectionLight } from "./circuit/useInspectionLight";
 
 /**
- * Animated PCB backdrop for the About section — loaded as its own chunk
- * when the section nears the viewport.
+ * "The board powers on" — the About section's backdrop, loaded as its own
+ * chunk when the section nears the viewport.
  *
- * Previous version: a JS scroll listener driving 3 parallax layers plus
- * 5 SVG pulses each re-rendering a triple drop-shadow filter every frame.
- * Now:
- *  - trace draw-in: CSS transition on stroke-dashoffset (pathLength="1")
- *  - parallax: CSS scroll-driven animation (off the main thread) where
- *    supported; static elsewhere, in the lite tier and for reduced motion
- *  - pulses: CSS stroke-dashoffset loop; glow drawn with a wide faint stroke
- *    instead of filters; not rendered at all in the lite tier
- *  - chip glow: a pre-blurred copy fading in/out (opacity is composited)
+ *  1. Assemble: traces draw in along the edges, then parts drop onto the
+ *     board like a pick-and-place machine (one-off CSS transitions).
+ *  2. Power on: status LEDs light in sequence and a gold inspection light
+ *     sweeps the board once.
+ *  3. Live (full tier): data packets run along the traces, LEDs blink, the
+ *     pointer becomes an inspection lamp revealing gold copper, and four
+ *     floating parts levitate and shift with the pointer.
+ *
+ * Budget: only transform/opacity loops (plus a few short dash offsets), no
+ * animated filters, no React renders after mount, and every loop pauses
+ * while the section is off-screen. The lite tier (phones, low-end devices,
+ * reduced motion) keeps the assembled board and the one-off sweep only.
  */
 
-const TEAL = "#184542";
-const TERRACOTTA = "#AE7057";
-const MAROON = "#682C2C";
-const PULSE_TEAL = "#14B8A6";
-const PULSE_GOLD = "#E6C27A";
+type Palette = Record<"--c-trace" | "--c-pad" | "--c-silk" | "--c-body" | "--c-copper", string>;
 
-interface Trace {
-  d: string;
-  gold: boolean;
-  delay: number;
-  pulse: boolean;
-}
+const LIGHT: Palette = {
+  "--c-trace": "rgba(24,69,66,0.42)",
+  "--c-pad": "rgba(162,102,78,0.8)",
+  "--c-silk": "rgba(104,44,44,0.55)",
+  "--c-body": "#1E2A28",
+  "--c-copper": "#B7764F",
+};
+const DARK: Palette = {
+  "--c-trace": "rgba(234,224,208,0.22)",
+  "--c-pad": "rgba(230,194,122,0.6)",
+  "--c-silk": "rgba(234,224,208,0.45)",
+  "--c-body": "#101816",
+  "--c-copper": "#B7764F",
+};
+/** Copper under the inspection light. */
+const GOLD: Palette = {
+  "--c-trace": "#F0CF8A",
+  "--c-pad": "#F6E2AE",
+  "--c-silk": "rgba(246,226,174,0.9)",
+  "--c-body": "#1E2A28",
+  "--c-copper": "#E09A68",
+};
 
-const TRACE_PATHS: readonly Trace[] = [
-  { d: "M48 72 H168 V148 H292 V88 H420 V168 H548 V112 H692 V196", gold: false, delay: 0, pulse: true },
-  { d: "M92 36 V128 H216 V248 H148 V348 H268 V428", gold: true, delay: 0.25, pulse: true },
-  { d: "M752 48 V132 H608 V248 H728 V336 H580 V412", gold: false, delay: 0.4, pulse: false },
-  { d: "M36 292 H156 V392 H288 V468 H400", gold: true, delay: 0.55, pulse: true },
-  { d: "M360 52 V168 H488 V96 H560 V200 H640", gold: false, delay: 0.7, pulse: false },
-  { d: "M720 220 H560 V320 H680 V400 H760", gold: true, delay: 0.85, pulse: true },
-  { d: "M200 200 H320 V280 H240 V360", gold: false, delay: 1.0, pulse: false },
-  { d: "M480 300 H620 V380 H520 V460 H700", gold: false, delay: 1.15, pulse: true },
-];
+const TOP_CLASS = "absolute inset-x-0 top-0 h-[200px] w-full sm:h-[260px] [mask-image:linear-gradient(to_bottom,black_55%,transparent)]";
+const BOTTOM_CLASS = "absolute inset-x-0 bottom-0 h-[180px] w-full sm:h-[220px] [mask-image:linear-gradient(to_top,black_55%,transparent)]";
+const RAIL_CLASS = "rail absolute top-[140px] bottom-[120px] w-[90px] [mask-image:linear-gradient(to_bottom,transparent,black_12%,black_88%,transparent)]";
 
-const VIAS: readonly (readonly [number, number])[] = [
-  [168, 72], [292, 148], [420, 88], [548, 168], [216, 128],
-  [148, 348], [608, 132], [728, 248], [156, 292], [288, 392],
-  [488, 168], [560, 320], [320, 200], [620, 300], [692, 112],
-];
-
-const CORNER_TRACES = ["M0 100 H80 V40 H0", "M800 80 H720 V20 H800", "M0 420 H100 V500 H0", "M800 440 H700 V510 H800"];
-
-const MASK = "radial-gradient(ellipse 28% 24% at 38% 32%, transparent 0%, transparent 6%, black 42%)";
-
-function FieldSvg({ children }: { children: ReactNode }) {
+/** The whole board: strips on the top and bottom edges, rails down the sides. */
+function Board({ gleam = false, blink = false }: { gleam?: boolean; blink?: boolean }) {
   return (
-    <svg viewBox="0 0 800 520" className="h-full w-full" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
-      {children}
-    </svg>
-  );
-}
-
-function CircuitField() {
-  return (
-    <FieldSvg>
-      <defs>
-        <pattern id="pcb-micro" width="40" height="40" patternUnits="userSpaceOnUse">
-          <path d="M40 0 H0 V40" fill="none" stroke={TEAL} strokeWidth="0.6" opacity="0.45" />
-        </pattern>
-      </defs>
-      <rect width="800" height="520" fill="url(#pcb-micro)" opacity="0.25" />
-
-      {VIAS.map(([cx, cy], i) => (
-        <g key={`${cx}-${cy}`} className="via">
-          <circle cx={cx} cy={cy} r="3.2" fill="none" stroke={i % 2 ? TERRACOTTA : TEAL} strokeWidth="1.5" />
-          <circle cx={cx} cy={cy} r="1.6" fill={i % 2 ? TERRACOTTA : TEAL} />
-        </g>
-      ))}
-
-      {TRACE_PATHS.map(({ d, gold, delay }) => (
-        <path
-          key={d}
-          d={d}
-          pathLength={1}
-          fill="none"
-          stroke={gold ? TERRACOTTA : TEAL}
-          strokeWidth="1.75"
-          strokeLinecap="square"
-          strokeLinejoin="miter"
-          className="trace-draw"
-          style={{ "--draw-delay": `${delay}s` } as CSSProperties}
-        />
-      ))}
-    </FieldSvg>
-  );
-}
-
-function EnergyPulses() {
-  return (
-    <FieldSvg>
-      {TRACE_PATHS.filter((trace) => trace.pulse).map(({ d, gold, delay }) => {
-        const stroke = gold ? PULSE_GOLD : PULSE_TEAL;
-        const style = { "--dur": `${6.8 + delay}s`, "--delay": `${delay + 2.2}s` } as CSSProperties;
-        const common = {
-          d,
-          fill: "none",
-          stroke,
-          strokeLinecap: "round" as const,
-          strokeDasharray: "10 2400",
-          opacity: 0,
-          className: "perf-loop motion-safe:animate-pulse-travel",
-          style,
-        };
-        return (
-          <g key={d}>
-            <path {...common} strokeWidth={16} strokeOpacity={0.12} />
-            <path {...common} strokeWidth={9} strokeOpacity={0.28} />
-            <path {...common} strokeWidth={4} />
-          </g>
-        );
-      })}
-    </FieldSvg>
-  );
-}
-
-function MicrochipWire({ className = "" }: { className?: string }) {
-  const pins = [0, 1, 2, 3, 4, 5, 6];
-  return (
-    <svg viewBox="0 0 120 120" className={className} xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none">
-      <rect x="30" y="30" width="60" height="60" rx="2" stroke={TEAL} strokeWidth="1.75" />
-      <rect x="38" y="38" width="44" height="44" rx="1" stroke={TEAL} strokeWidth="1.25" opacity="0.7" />
-      <rect x="50" y="50" width="20" height="20" stroke={TERRACOTTA} strokeWidth="1.6" />
-      <path d="M52 30 A8 8 0 0 0 68 30" stroke={TEAL} strokeWidth="1.5" />
-      <circle cx="42" cy="42" r="2" stroke={TERRACOTTA} strokeWidth="1.5" />
-      <path d="M54 56h12M60 50v12" stroke={MAROON} strokeWidth="1.4" opacity="0.85" />
-      {pins.map((i) => {
-        const o = 36 + i * 7.5;
-        return (
-          <g key={i} stroke={TERRACOTTA} strokeWidth="1.6">
-            <path d={`M${o} 30 V18`} />
-            <path d={`M${o} 90 V102`} />
-            <path d={`M30 ${o} H18`} />
-            <path d={`M90 ${o} H102`} />
-          </g>
-        );
-      })}
-    </svg>
-  );
-}
-
-function CapacitorWire({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 64 140" className={className} xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none">
-      <path d="M32 8 V48" stroke={TEAL} strokeWidth="1.75" strokeLinecap="round" />
-      <path d="M32 92 V132" stroke={TEAL} strokeWidth="1.75" strokeLinecap="round" />
-      <path d="M14 48 H50" stroke={TERRACOTTA} strokeWidth="2" strokeLinecap="round" />
-      <path d="M14 58 H50" stroke={MAROON} strokeWidth="2" strokeLinecap="round" />
-      <path d="M18 72 H46" stroke={TEAL} strokeWidth="1.5" opacity="0.7" />
-      <path d="M22 80 H42" stroke={TEAL} strokeWidth="1.5" opacity="0.5" />
-      <circle cx="32" cy="8" r="2.2" stroke={TERRACOTTA} strokeWidth="1.5" />
-      <circle cx="32" cy="132" r="2.2" stroke={TERRACOTTA} strokeWidth="1.5" />
-    </svg>
-  );
-}
-
-function CoilWire({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 180 64" className={className} xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none">
-      <path d="M4 32 H22" stroke={TEAL} strokeWidth="1.75" strokeLinecap="round" />
-      <path d="M158 32 H176" stroke={TEAL} strokeWidth="1.75" strokeLinecap="round" />
-      {[0, 1, 2, 3, 4, 5, 6].map((i) => {
-        const a = 22 + i * 19.5;
-        const b = 41.5 + i * 19.5;
-        return <path key={i} d={`M${a} 32 C${a} 10, ${b} 10, ${b} 32 C${b} 54, ${a} 54, ${a} 32`} stroke={i % 2 ? TERRACOTTA : TEAL} strokeWidth="1.75" />;
-      })}
-      <circle cx="4" cy="32" r="2" stroke={MAROON} strokeWidth="1.5" />
-      <circle cx="176" cy="32" r="2" stroke={MAROON} strokeWidth="1.5" />
-    </svg>
-  );
-}
-
-function BreathingChip({ className = "" }: { className?: string }) {
-  return (
-    <div className={`perf-loop opacity-40 motion-safe:animate-breathe ${className}`}>
-      <MicrochipWire className="h-auto w-full" />
-      <div className="perf-glow pointer-events-none absolute inset-0 opacity-0 motion-safe:animate-glow-breathe">
-        <MicrochipWire className="h-auto w-full [filter:drop-shadow(0_0_14px_rgba(94,234,212,0.45))_drop-shadow(0_0_6px_rgba(230,194,122,0.35))]" />
+    <>
+      <div className="parallax-mid absolute inset-0">
+        <BoardStrip strip={TOP} align="top" className={TOP_CLASS} gleam={gleam} blink={blink} />
       </div>
-    </div>
+      <div className="parallax-near absolute inset-0">
+        <BoardStrip strip={BOTTOM} align="bottom" className={BOTTOM_CLASS} gleam={gleam} blink={blink} />
+      </div>
+      <Rail className={`${RAIL_CLASS} left-0`} />
+      <Rail className={`${RAIL_CLASS} right-0 -scale-x-100`} />
+    </>
   );
 }
 
-interface LevitateProps {
-  children: ReactNode;
-  className?: string;
-  rotateAmp?: number;
-  floatY?: number;
-  duration?: number;
-  delay?: number;
-}
-
-function LevitatingWire({ children, className = "", rotateAmp = 4, floatY = 10, duration = 14, delay = 0 }: LevitateProps) {
-  const style = {
-    "--lev-y": `-${floatY}px`,
-    "--rot-a": `${-rotateAmp * 0.15}deg`,
-    "--rot-b": `${rotateAmp}deg`,
-    "--dur": `${duration}s`,
-    "--delay": `${delay}s`,
-  } as CSSProperties;
-  return (
-    <div style={style} className={`perf-loop opacity-40 motion-safe:animate-levitate ${className}`}>
-      {children}
-    </div>
-  );
+/** Sets data-live while the section is on screen, so every loop pauses off-screen. */
+function useLiveWhileVisible(ref: RefObject<HTMLElement | null>): void {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") return undefined;
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) el.dataset.live = "";
+      else delete el.dataset.live;
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref]);
 }
 
 export default function CircuitDecor() {
   const { isDark } = useTheme();
   const rootRef = useRef<HTMLDivElement>(null);
-  const drawn = useInViewOnce(rootRef, { threshold: 0.15 });
-  const lite = getPerformanceTier() === "lite";
-  const overlay = isDark ? "mix-blend-overlay" : "";
+  const lensRef = useRef<HTMLDivElement>(null);
+  const lensInnerRef = useRef<HTMLDivElement>(null);
+  const floatRef = useRef<HTMLDivElement>(null);
+  const drawn = useInViewOnce(rootRef, { threshold: 0.12 });
+  const full = getPerformanceTier() === "full" && !prefersReducedMotion();
+
+  useLiveWhileVisible(rootRef);
+  useInspectionLight({ root: rootRef, lens: lensRef, lensInner: lensInnerRef, parallax: floatRef }, full);
 
   return (
     <div
@@ -227,47 +103,52 @@ export default function CircuitDecor() {
       aria-hidden="true"
       data-drawn={drawn || undefined}
       className="circuit-decor pointer-events-none absolute inset-0 z-0 overflow-hidden"
-      style={{ WebkitMaskImage: MASK, maskImage: MASK }}
+      style={(isDark ? DARK : LIGHT) as CSSProperties}
     >
-      <div className={`parallax-far absolute inset-[-8%] opacity-40 ${overlay}`}>
-        <CircuitField />
+      <Board blink={full} />
+
+      {/* Power-on sweep: a band of gold light crosses the board once. */}
+      <div className="circuit-sweep absolute inset-y-0 left-0 w-[240px] overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_45%,black_55%,transparent)]">
+        <div className="circuit-sweep-inner absolute left-0 top-0 h-full w-[var(--w)]" style={GOLD as CSSProperties}>
+          <Board gleam />
+        </div>
       </div>
 
-      {!lite && (
-        <div className="parallax-far-plain absolute inset-[-8%] opacity-90">
-          <EnergyPulses />
-        </div>
+      {full && (
+        <>
+          <div className="absolute inset-0">
+            <Packets strip={TOP} align="top" className={TOP_CLASS} />
+          </div>
+          <div className="absolute inset-0">
+            <Packets strip={BOTTOM} align="bottom" className={BOTTOM_CLASS} />
+          </div>
+
+          {/* Inspection lamp: the lens moves, its content moves the other way. */}
+          <div ref={lensRef} className="circuit-lens" style={{ width: LENS_SIZE, height: LENS_SIZE }}>
+            <div ref={lensInnerRef} className="absolute left-0 top-0 will-change-transform" style={GOLD as CSSProperties}>
+              <Board gleam />
+            </div>
+          </div>
+        </>
       )}
 
-      <div className={`parallax-mid absolute inset-0 ${overlay} ${isDark ? "opacity-35" : "opacity-40"}`}>
-        <FieldSvg>
-          {CORNER_TRACES.map((d, i) => (
-            <path
-              key={d}
-              d={d}
-              pathLength={1}
-              fill="none"
-              stroke={i % 2 ? TERRACOTTA : TEAL}
-              strokeWidth="1.75"
-              className="trace-draw"
-              style={{ "--draw-delay": `${0.4 + i * 0.15}s`, "--draw-duration": "2.2s" } as CSSProperties}
-            />
-          ))}
-        </FieldSvg>
-      </div>
-
-      <div className="parallax-near absolute inset-0">
-        <BreathingChip className="absolute -right-1 top-4 w-12 sm:right-[2%] sm:top-[7%] sm:w-16 lg:w-[5.5rem] xl:right-[3.5%] xl:w-[6.5rem]" />
-        <LevitatingWire className="absolute -left-1 top-[34%] w-8 sm:left-[1.5%] sm:w-10 xl:left-[2.5%] xl:w-12" rotateAmp={6} floatY={12} duration={16} delay={0.4}>
-          <CapacitorWire className="h-auto w-full" />
-        </LevitatingWire>
-        <LevitatingWire className="absolute -right-2 bottom-[6%] w-28 sm:bottom-[9%] sm:right-[4%] sm:w-36 lg:w-40 xl:right-[6%] xl:w-48" rotateAmp={3} floatY={8} duration={18} delay={1.1}>
-          <CoilWire className="h-auto w-full" />
-        </LevitatingWire>
-        <BreathingChip className="absolute -left-1 bottom-[16%] w-11 rotate-[8deg] sm:bottom-[18%] sm:left-[2%] sm:w-14 xl:w-16" />
-        <LevitatingWire className="absolute right-1 top-[46%] w-7 -rotate-6 sm:right-[3%] sm:w-8 lg:w-9" rotateAmp={8} floatY={9} duration={13} delay={0.8}>
-          <CapacitorWire className="h-auto w-full" />
-        </LevitatingWire>
+      {/* Showpieces live in the side margins, which are ≥64px only from xl. */}
+      <div ref={floatRef} className="float-layer parallax-near absolute inset-0 hidden xl:block">
+        <FloatingPart className="right-1 top-[7%] w-14 min-[1400px]:right-[3%] min-[1400px]:w-24" depth={18} float={[10, 3, 14, 0]} loop={full}>
+          <div className="relative">
+            <div className="perf-glow absolute -inset-6 rounded-full bg-[radial-gradient(closest-side,rgba(126,232,224,0.35),transparent)] opacity-0 motion-safe:animate-glow-breathe" />
+            <ChipArt />
+          </div>
+        </FloatingPart>
+        <FloatingPart className="left-[1.2%] top-[36%] w-8 min-[1400px]:left-[3.5%] min-[1400px]:w-11" depth={26} float={[12, 6, 16, 0.4]} loop={full}>
+          <CapacitorArt />
+        </FloatingPart>
+        <FloatingPart className="bottom-[9%] right-1 w-14 min-[1400px]:right-[3%] min-[1400px]:w-24" depth={12} float={[8, 4, 18, 1.1]} loop={full}>
+          <ToroidArt />
+        </FloatingPart>
+        <FloatingPart className="bottom-[24%] left-0 w-16 -rotate-[68deg] min-[1400px]:left-[2.5%] min-[1400px]:w-24 min-[1400px]:-rotate-[18deg]" depth={22} float={[9, 5, 13, 0.8]} loop={full}>
+          <ResistorArt />
+        </FloatingPart>
       </div>
     </div>
   );
